@@ -11,15 +11,20 @@ _.templateSettings.evaluate = /\{\%(.+?)\%\}/g
 require([
   "models/user",
   "routers/application",
-  "controllers/application",
-  "controllers/user"
-], function (User, AppRouter, appController, userController) {
+  "views/application",
+  "controllers/user",
+  "controllers/project"
+], function (User, AppRouter, ApplicationView, appController, userController, projectController) {
   window.appController = appController
   window.userController = userController
+  window.projectController = projectController
 
   window.user = new User
   window.user.current(function (model) {
     if (true === window.authenticated) {
+      window.app = new ApplicationView
+      window.app.render()
+
       window.router = new AppRouter
       Backbone.history.start()
     } else {
@@ -27,7 +32,7 @@ require([
     }
   })
 
-  window.user.on("logged_in", function () {
+  window.user.on("logged_in logged_out", function () {
     location.reload()
   })
 })

@@ -4,6 +4,6 @@ GET     /user                       translator.controllers.UserController.curren
 POST    /authenticate               translator.controllers.UserController.authenticate
 DELETE  /logout                     translator.controllers.UserController.logout
 
-GET     /projects/list              translator.controllers.ProjectController.list
+GET     /projects                   translator.controllers.ProjectController.list
 
 GET     /assets/*file               controllers.Assets.at(path="/public", file)

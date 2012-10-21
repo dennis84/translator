@@ -2,11 +2,16 @@ define([], function () {
 
   var module = Backbone.Router.extend({
     routes: {
-      "": "home"
+      "": "dashboard",
+      ":project": "project"
     },
 
     home: function () {
-      window.appController.home()
+      window.pageController.dashboard()
+    },
+
+    project: function (name) {
+      console.log("show project: " + name)
     }
   })
 

@@ -7,16 +7,16 @@ import translator.models._
 
 trait Fixtures {
 
-  val user1 = User("d.dietrich84@gmail.com", "demo" sha512, Nil, None)
-  val user2 = User("frank.drebin.1984@gmail.com", "demo" sha512, Nil, None)
+  private val _user1 = User("d.dietrich84@gmail.com", "demo" sha512, Nil, None)
+  private val _user2 = User("frank.drebin.1984@gmail.com", "demo" sha512, Nil, None)
   
-  val project1 = Project("acme", user1.id)
+  val project1 = Project("acme", _user1.id)
   
-  val role1 = Role("ROLE_ADMIN", user1.id, project1.id)
-  val role2 = Role("ROLE_AUTHOR", user2.id, project1.id)
+  val role1 = Role("ROLE_ADMIN", _user1.id, project1.id)
+  val role2 = Role("ROLE_AUTHOR", _user2.id, project1.id)
 
-  user1.copy(roles = List(role1))
-  user2.copy(roles = List(role2))
+  def user1 = _user1.copy(roles = List(role1))
+  def user2 = _user2.copy(roles = List(role2))
 
   lazy val entry1 = Entry("hello_world", "", project1.id, List(
     Translation("en", "Hello World", user1.id),
