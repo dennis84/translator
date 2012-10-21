@@ -1,0 +1,9 @@
+GET     /                           translator.controllers.PageController.home
+
+GET     /user                       translator.controllers.UserController.current
+POST    /authenticate               translator.controllers.UserController.authenticate
+DELETE  /logout                     translator.controllers.UserController.logout
+
+GET     /projects/list              translator.controllers.ProjectController.list
+
+GET     /assets/*file               controllers.Assets.at(path="/public", file)
