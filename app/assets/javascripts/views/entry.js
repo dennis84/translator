@@ -3,11 +3,20 @@ define([
 ], function (entryTemplate) {
 
   var module = Backbone.View.extend({
-    tagName: "li",
+    tagName: "tr",
+
+    events: {
+      "click td": "open"
+    },
 
     render: function () {
       this.$el.html(_.template(entryTemplate, this.model.toJSON()))
       return this
+    },
+
+    open: function (e) {
+      e.preventDefault()
+      console.log("open")
     }
   })
 

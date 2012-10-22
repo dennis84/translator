@@ -19,7 +19,7 @@ define([
 
     add: function (model) {
       var view = new EntryView({ model: model })
-      this.$el.find("ul").append(view.render().el)
+      this.$el.find("#entry-list").append(view.render().el)
     }
   })
 

@@ -5,6 +5,8 @@
 @navigationBackgroundColorActive: #448AFA;
 @navigationLinkColor: #9F98AA;
 
+@borderColorLight: #eee;
+
 
 /* =============================================================================
    Layout
@@ -101,4 +103,24 @@ body {
   .border-radius(@radius);
   .box-shadow(@shadow);
   .background-clip(padding-box);
+}
+
+
+/* =============================================================================
+   Entries
+   ========================================================================== */
+
+.entry-table {
+  td {
+    padding: 10px;
+    border: 0;
+    border-bottom: 1px solid @borderColorLight;
+    background: #fff;
+  }
+  td.open {
+    width: 10px;
+  }
+  tr:hover td {
+    background: darken(#fff, 2%);
+  }
 }
