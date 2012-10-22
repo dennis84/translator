@@ -10,12 +10,13 @@ _.templateSettings.evaluate = /\{\%(.+?)\%\}/g
 
 require([
   "models/user",
+  "collections/project",
   "routers/application",
   "views/application",
   "controllers/page",
   "controllers/user",
   "controllers/project"
-], function (User, AppRouter, ApplicationView, pageController, userController, projectController) {
+], function (User, ProjectCollection, AppRouter, ApplicationView, pageController, userController, projectController) {
   window.pageController = pageController
   window.userController = userController
   window.projectController = projectController
@@ -23,11 +24,15 @@ require([
   window.user = new User
   window.user.current(function (model) {
     if (true === window.authenticated) {
+      window.projectList = new ProjectCollection
       window.app = new ApplicationView
       window.app.render()
 
+      window.projectList.fetch()
+
       window.router = new AppRouter
       Backbone.history.start()
+      
     } else {
       window.userController.login()
     }

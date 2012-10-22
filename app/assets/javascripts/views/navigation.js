@@ -8,9 +8,7 @@ define([
     className: "navigation spaceless2",
 
     initialize: function () {
-      this.projects = new ProjectCollection
-      this.projects.on("reset", this.addProjects, this)
-      this.projects.fetch()
+      window.projectList.on("reset", this.addProjects, this)
     },
 
     render: function () {
@@ -20,11 +18,11 @@ define([
 
     addProjects: function () {
       this.$el.find("#nav-list").append("<li class='nav-header'>Projects</li>")
-      this.projects.each(this.addProject, this)
+      window.projectList.each(this.addProject, this)
     },
 
     addProject: function (model) {
-      this.$el.find("#nav-list").append("<li><a href='#" + model.get("name") + "'>" + model.get("name") + "</a></li>")
+      this.$el.find("#nav-list").append("<li><a href='#/@/" + model.id + "'>" + model.get("name") + "</a></li>")
     }
   })
 
