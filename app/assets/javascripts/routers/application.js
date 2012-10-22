@@ -6,12 +6,12 @@ define([], function () {
       ":project": "project"
     },
 
-    home: function () {
+    dashboard: function () {
       window.pageController.dashboard()
     },
 
     project: function (name) {
-      console.log("show project: " + name)
+      window.projectController.show(name)
     }
   })
 

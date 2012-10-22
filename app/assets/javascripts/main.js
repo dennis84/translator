@@ -12,10 +12,11 @@ require([
   "models/user",
   "routers/application",
   "views/application",
+  "controllers/page",
   "controllers/user",
   "controllers/project"
-], function (User, AppRouter, ApplicationView, appController, userController, projectController) {
-  window.appController = appController
+], function (User, AppRouter, ApplicationView, pageController, userController, projectController) {
+  window.pageController = pageController
   window.userController = userController
   window.projectController = projectController
 

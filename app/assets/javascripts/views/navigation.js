@@ -9,7 +9,7 @@ define([
 
     initialize: function () {
       this.projects = new ProjectCollection
-      this.projects.on("reset", this.renderProjects, this)
+      this.projects.on("reset", this.addProjects, this)
       this.projects.fetch()
     },
 
@@ -18,12 +18,13 @@ define([
       $("#application").append(this.el)
     },
 
-    renderProjects: function () {
+    addProjects: function () {
+      this.$el.find("#nav-list").append("<li class='nav-header'>Projects</li>")
       this.projects.each(this.addProject, this)
     },
 
     addProject: function (model) {
-      console.log("add nav project")
+      this.$el.find("#nav-list").append("<li><a href='#" + model.get("name") + "'>" + model.get("name") + "</a></li>")
     }
   })
 

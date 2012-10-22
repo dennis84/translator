@@ -1,13 +1,9 @@
 define([
-  "collections/project",
-  "views/projects"
-], function (ProjectCollection, ProjectsView) {
+], function () {
 
   var module = {
-    list: function () {
-      var coll = new ProjectCollection
-      var view = new ProjectsView({ collection: coll })
-      coll.fetch()
+    show: function (model) {
+      console.log("show")
     }
   }
 
