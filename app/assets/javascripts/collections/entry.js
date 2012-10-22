@@ -1,9 +1,12 @@
-define(["models/project"], function (Project) {
+define([
+  "models/entry"
+], function (Entry) {
+
   var module = Backbone.Collection.extend({
-    model: Project,
+    model: Entry,
 
     url: function () {
-      return "/projects"
+      return "/entries"
     }
   })
 

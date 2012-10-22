@@ -15,8 +15,8 @@ define([
       this.navigation.render()
     },
 
-    addPane: function (html) {
-      var pane = $(html).appendTo(this.$el).addClass("pane")
+    addPane: function (html, size) {
+      var pane = $(html).appendTo(this.$el).addClass("pane spaceless" + (size || 2))
     },
 
     removePanes: function () {

@@ -7,7 +7,7 @@ import com.codahale.jerkson.Json
 import translator._
 import translator.models._
 
-trait BaseController extends Controller with Actions with Results
+trait BaseController extends Controller with Actions with Results with RequestGetter
 
 trait Results extends Controller {
 
@@ -20,6 +20,8 @@ trait Results extends Controller {
   def JsonBadRequest(map: Map[String, Any]) = BadRequest(Json generate map) as JSON
 
   def JsonUnauthorized = Unauthorized
+
+  def JsonNotFound = NotFound
 }
 
 trait Actions extends Controller with Results {
@@ -38,4 +40,13 @@ trait Actions extends Controller with Results {
       f(ctx.copy(projects = ProjectDAO.findAllByUser(user)))
     } getOrElse JsonUnauthorized
   }
+}
+
+trait RequestGetter {
+
+  protected def get(name: String)(implicit ctx: Context[_]): Option[String] = get(name, ctx.req)
+
+  protected def get(name: String, req: RequestHeader): Option[String] = req.queryString get name flatMap (_.headOption) filter (""!=)
+
+  protected def getOr(name: String, default: String)(implicit ctx: Context[_]) = get(name, ctx.req) getOrElse default
 }

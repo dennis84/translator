@@ -4,19 +4,8 @@ define([
 
   var module = {
     show: function (id) {
-      var view  = new ProjectView
-      var model = window.projectList.get(id)
-
-      if (undefined !== model) {
-        view.model = model
-        view.render()
-        return
-      }
-
-      window.projectList.on("reset", function () {
-        view.model = window.projectList.get(id)
-        view.render()
-      })
+      var view  = new ProjectView({ model: window.project })
+      view.render()
     }
   }
 

@@ -10,16 +10,21 @@ _.templateSettings.evaluate = /\{\%(.+?)\%\}/g
 
 require([
   "models/user",
+  "models/project",
   "collections/project",
   "routers/application",
   "views/application",
   "controllers/page",
   "controllers/user",
-  "controllers/project"
-], function (User, ProjectCollection, AppRouter, ApplicationView, pageController, userController, projectController) {
+  "controllers/project",
+  "controllers/entry"
+], function (User, Project, ProjectCollection, AppRouter, ApplicationView, pageController, userController, projectController, entryController) {
   window.pageController = pageController
   window.userController = userController
   window.projectController = projectController
+  window.entryController = entryController
+
+  window.project = new Project
 
   window.user = new User
   window.user.current(function (model) {

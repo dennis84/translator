@@ -9,6 +9,7 @@ define([
 
     initialize: function () {
       window.projectList.on("reset", this.addProjects, this)
+      window.project.on("change", this.updateProject, this)
     },
 
     render: function () {
@@ -23,6 +24,11 @@ define([
 
     addProject: function (model) {
       this.$el.find("#nav-list").append("<li><a href='#/@/" + model.id + "'>" + model.get("name") + "</a></li>")
+    },
+
+    updateProject: function (model) {
+      this.$el.find("#nav-list").append("<li class='nav-header'>Current Project</li>")
+      this.$el.find("#nav-list").append("<li><a href='#/@/" + model.id + "/entries'>Entries</a></li>")
     }
   })
 
