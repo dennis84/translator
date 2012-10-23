@@ -36,7 +36,6 @@ body {
    ========================================================================== */
 
 .navigation {
-  height: 100%;
   background: @navigationBackgroundColor;
   .nav {
     li a {
@@ -122,5 +121,41 @@ body {
   }
   tr:hover td {
     background: darken(#fff, 2%);
+  }
+}
+
+.entry-edit {
+  background: #f2f2f2;
+  label {
+    text-transform: uppercase;
+    font-weight: bold;
+    font-size: 11px;
+    margin-bottom: 0;
+  }
+  input, textarea {
+    width: 100%;
+    border-color: #dadada;
+    border-top-color: #bbb;
+    padding: 8px 0;
+    .box-shadow(inset 0 1px 0 rgba(0, 0, 0, 0.07));
+  }
+  h2 {
+    margin: 0;
+    font-size: 14px;
+    line-height: 14px;
+    color: #666;
+    text-transform: uppercase;
+    text-align: center;
+  }
+  form {
+    .scollable {
+      overflow-y: auto;
+    }
+    .form-actions {
+      position: fixed;
+      bottom: 0;
+      margin-bottom: 0;
+      width: 100%;
+    }
   }
 }

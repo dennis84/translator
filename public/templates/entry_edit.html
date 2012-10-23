@@ -1,0 +1,17 @@
+<form>
+  <div class="scollable">
+    <h2>{{ name }}</h2>
+
+    <div class="padding10">
+      {% _.each(translations, function (translation, index) { %}
+      <label for="translation[{{ index }}].text">{{ translation.code }}</label>
+      <textarea name="translations[{{ index }}].text">{{ translation.text }}</textarea>
+      {% }) %}
+    </div>
+  </div>
+
+  <div class="form-actions">
+    <button type="submit" class="btn btn-primary save"><i class="icon-save"></i> Save changes</button>
+    <button class="btn cancel">Cancel</button>
+  </div>
+</form>

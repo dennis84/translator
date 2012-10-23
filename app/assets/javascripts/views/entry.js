@@ -16,7 +16,7 @@ define([
 
     open: function (e) {
       e.preventDefault()
-      console.log("open")
+      window.entryController.edit(this.model)
     }
   })
 

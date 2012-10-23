@@ -21,12 +21,16 @@ trait Fixtures {
   lazy val entry1 = Entry("hello_world", "", project1.id, List(
     Translation("en", "Hello World", user1.id),
     Translation("de", "Hallo Welt", user1.id),
-    Translation("fr", "Bonjour", user1.id)
+    Translation("fr", "Bonjour", user1.id),
+    Translation("es", "Olá", user1.id),
+    Translation("it", "Ciao", user1.id)
   ))
 
   lazy val entry2 = Entry("bye_bye", "", project1.id, List(
     Translation("en", "Bye bye", user1.id),
     Translation("de", "Tschüs", user1.id),
-    Translation("fr", "Ourevoir", user1.id)
+    Translation("fr", "Ourevoir", user1.id),
+    Translation("es", "", user1.id),
+    Translation("it", "Ciao", user1.id)
   ))
 }
