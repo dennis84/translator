@@ -1,10 +1,10 @@
 define([
-  "text!templates/entry_edit.html"
-], function (entryEditTemplate) {
+  "text!templates/language_edit.html"
+], function (languageEditTemplate) {
 
   var module = Backbone.View.extend({
-    id: "entry-edit",
-    className: "entry-edit",
+    id: "language-edit",
+    className: "language-edit",
 
     events: {
       "click .save": "save",
@@ -12,10 +12,8 @@ define([
     },
 
     render: function () {
-      var data = this.model.toJSON()
-      this.$el.html(_.template(entryEditTemplate, data))
-      $("#entry-edit").remove()
-      window.app.addPane(this.el, "entry-edit", "spaceless6")
+      this.$el.html(_.template(languageEditTemplate, this.model.toJSON()))
+      window.app.addPane(this.el, "language-edit", "spaceless6")
     },
 
     save: function (e) {

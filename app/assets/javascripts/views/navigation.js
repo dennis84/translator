@@ -29,6 +29,7 @@ define([
     updateProject: function (model) {
       this.$el.find("#nav-list").append("<li class='nav-header'>Current Project</li>")
       this.$el.find("#nav-list").append("<li><a href='#/@/" + model.id + "/entries'>Entries</a></li>")
+      this.$el.find("#nav-list").append("<li><a href='#/@/" + model.id + "/languages'>Languages</a></li>")
     }
   })
 

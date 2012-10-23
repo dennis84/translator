@@ -3,14 +3,14 @@ package translator.models
 import com.novus.salat.annotations._
 import com.mongodb.casbah.Imports._
 
-case class Project(
+case class Language(
+  val code: String,
   val name: String,
-  val adminId: ObjectId,
+  val projectId: ObjectId,
   @Key("_id") val id: ObjectId = new ObjectId) {
 
-  def admin = UserDAO.findOneById(adminId) get
-
   def toMap = Map(
-    "id" -> id.toString,
+    "id"   -> id.toString,
+    "code" -> code,
     "name" -> name)
 }

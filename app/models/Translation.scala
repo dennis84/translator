@@ -7,13 +7,15 @@ case class Translation(
   val code: String,
   val text: String,
   val authorId: ObjectId,
+  val active: Boolean = false,
   @Key("_id") val id: ObjectId = new ObjectId) {
 
   def toMap = Map(
     "id" -> id.toString,
     "code" -> code,
     "text" -> text,
-    "author" -> "")
+    "author" -> "",
+    "active" -> active)
 }
 
 case class Entry(
@@ -23,9 +25,15 @@ case class Entry(
   val translations: List[Translation] = Nil,
   @Key("_id") val id: ObjectId = new ObjectId) {
 
+  def project = ProjectDAO.findOneById(projectId) get
+
+  def translationsFixed = translations ++ LanguageDAO.findAllByProjectId(projectId).map(_.code).diff(translations.map(_.code)).map { code =>
+    Translation(code, "", project.adminId, true)
+  }
+
   def toMap = Map(
     "id" -> id.toString,
     "name" -> name,
     "description" -> description,
-    "translations" -> translations.map(_.toMap))
+    "translations" -> translationsFixed.map(_.toMap))
 }

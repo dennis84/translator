@@ -12,7 +12,7 @@ define([
     render: function () {
       this.$el.html(_.template(projectTemplate, this.model.toJSON()))
       window.app.removePanes()
-      window.app.addPane(this.el)
+      window.app.addPane(this.el, "project")
     }
   })
 

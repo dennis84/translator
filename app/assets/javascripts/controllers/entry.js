@@ -8,12 +8,15 @@ define([
     list: function (project) {
       var coll = new EntryCollection
       var view = new EntriesView({ collection: coll })
-      coll.fetch({ data: { "project": project } })
+      coll.fetchByProject(project)
     },
 
     edit: function (model) {
       var view = new EntryEditView({ model: model })
       view.render()
+    },
+
+    create: function () {
     }
   }
 

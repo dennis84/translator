@@ -6,7 +6,7 @@ define([
     render: function () {
       this.$el.html(_.template(dashboardTemplate, {}))
       window.app.removePanes()
-      window.app.addPane(this.el)
+      window.app.addPane(this.el, "dashboard", "spaceless10")
     }
   })
 

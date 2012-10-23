@@ -1,9 +1,9 @@
 define([
-  "models/entry"
-], function (Entry) {
+  "models/language"
+], function (Language) {
 
   var module = Backbone.Collection.extend({
-    model: Entry,
+    model: Language,
 
     project: null,
 
@@ -12,7 +12,7 @@ define([
         throw new Error("The collection needs a project.")
       }
 
-      return "/" + this.project + "/entries" 
+      return "/" + this.project + "/languages" 
     },
 
     fetchByProject: function (project, options) {

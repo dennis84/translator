@@ -6,6 +6,7 @@ DELETE  /logout                     translator.controllers.UserController.logout
 
 GET     /projects                   translator.controllers.ProjectController.list
 
-GET     /entries                    translator.controllers.EntryController.list
+GET     /:project/entries           translator.controllers.EntryController.list(project)
+GET     /:project/languages         translator.controllers.LanguageController.list(project)
 
 GET     /assets/*file               controllers.Assets.at(path="/public", file)

@@ -2,9 +2,10 @@ define([], function () {
 
   var module = Backbone.Router.extend({
     routes: {
-      "":                   "dashboard",
-      "@/:project":         "project",
-      "@/:project/entries": "entries"
+      "":                     "dashboard",
+      "@/:project":           "project",
+      "@/:project/entries":   "entries",
+      "@/:project/languages": "languages"
     },
 
     initialize: function (options) {
@@ -37,6 +38,10 @@ define([], function () {
 
     entries: function (project) {
       window.entryController.list(project)
+    },
+
+    languages: function (project) {
+      window.languageController.list(project)
     }
   })
 
