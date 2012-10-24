@@ -7,11 +7,9 @@ case class Translation(
   val code: String,
   val text: String,
   val authorId: ObjectId,
-  val active: Boolean = false,
-  @Key("_id") val id: ObjectId = new ObjectId) {
+  val active: Boolean = false) {
 
   def toMap = Map(
-    "id" -> id.toString,
     "code" -> code,
     "text" -> text,
     "author" -> "",

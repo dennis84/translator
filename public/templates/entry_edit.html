@@ -1,9 +1,12 @@
 <form>
   <div class="scollable">
-    <h2>{{ name }}</h2>
+    <div class="padding10">
+      <input type="text" name="name" value="{{ name }}" placeholder="Name"/>
+    </div>
 
     <div class="padding10">
       {% _.each(translations, function (translation, index) { %}
+      <input type="hidden" name="translations[{{ index }}].code" value="{{ translation.code }}">
       <label for="translation[{{ index }}].text">{{ translation.code }}</label>
       <textarea name="translations[{{ index }}].text">{{ translation.text }}</textarea>
       {% }) %}

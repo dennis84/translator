@@ -14,9 +14,6 @@ define([
     edit: function (model) {
       var view = new EntryEditView({ model: model })
       view.render()
-    },
-
-    create: function () {
     }
   }
 

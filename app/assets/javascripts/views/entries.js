@@ -1,7 +1,8 @@
 define([
+  "models/entry",
   "views/entry",
   "text!templates/entries.html"
-], function (EntryView, entriesTemplate) {
+], function (Entry, EntryView, entriesTemplate) {
 
   var module = Backbone.View.extend({
     id: "entries",
@@ -12,6 +13,7 @@ define([
 
     initialize: function () {
       this.collection.on("reset", this.render, this)
+      this.collection.on("add", this.add, this)
     },
 
     render: function () {
@@ -28,7 +30,18 @@ define([
 
     create: function (e) {
       e.preventDefault()
-      window.entryController.create()
+      var view = this
+        , model = new Entry()
+
+      model.on("filled", function () {
+        window.app.removePane(1)
+        window.entryController.edit(model)
+      })
+      model.fillLanguages()
+      model.on("sync", function (model) {
+        view.collection.add(model)
+        model.off("sync")
+      }, this)
     }
   })
 

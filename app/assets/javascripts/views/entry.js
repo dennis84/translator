@@ -20,6 +20,7 @@ define([
 
     open: function (e) {
       e.preventDefault()
+      window.app.removePane(1)
       window.entryController.edit(this.model)
     }
   })
