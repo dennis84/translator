@@ -8,40 +8,57 @@ define([], function () {
       "@/:project/languages": "languages"
     },
 
-    initialize: function (options) {
-      Backbone.history.on("route", function (obj, name, args) {
-        var maybeId = _.first(args)
-        if (undefined === maybeId || 24 !== maybeId.length || false === maybeId.match(/^[a-z0-9]+/)) {
-          return;
-        }
-
-        var model = window.projectList.get(maybeId)
-
-        if (undefined !== model) {
-          window.project.set(model)
-        }
-
-        window.projectList.on("reset", function () {
-          var model = window.projectList.get(maybeId)
-          window.project.set(model)
-        })
-      })
-    },
-
     dashboard: function () {
       window.pageController.dashboard()
     },
 
-    project: function (project) {
-      window.projectController.show(project)
+    project: function (projectId) {
+      this.resolveProject(projectId)
+
+      if (false === window.project.isNew()) {
+        return window.projectController.show()
+      }
+
+      window.project.on("change", function (project) {
+        return window.projectController.show(projectId)
+      })
     },
 
-    entries: function (project) {
-      window.entryController.list(project)
+    entries: function (projectId) {
+      this.resolveProject(projectId)
+
+      if (false === window.project.isNew()) {
+        return window.entryController.list()
+      }
+
+      window.project.on("change", function (project) {
+        return window.entryController.list()
+      })
     },
 
-    languages: function (project) {
-      window.languageController.list(project)
+    languages: function (projectId) {
+      this.resolveProject(projectId)
+
+      if (false === window.project.isNew()) {
+        return window.languageController.list()
+      }
+
+      window.project.on("change", function (project) {
+        return window.languageController.list()
+      })
+    },
+
+    resolveProject: function (id) {
+      var model = window.projectList.get(id)
+
+      if (undefined !== model) {
+        window.project.set(model)
+      }
+
+      window.projectList.on("reset", function () {
+        var model = window.projectList.get(id)
+        window.project.set(model)
+      })
     }
   })
 

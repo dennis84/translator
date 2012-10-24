@@ -18,6 +18,8 @@ define([
 
     save: function (e) {
       e.preventDefault()
+      this.model.set(this.$el.find("form").serializeObject())
+      this.model.save()
     },
 
     cancel: function (e) {

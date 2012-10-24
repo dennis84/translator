@@ -5,10 +5,10 @@ define([
 ], function (EntryCollection, EntriesView, EntryEditView) {
 
   var module = {
-    list: function (project) {
+    list: function () {
       var coll = new EntryCollection
       var view = new EntriesView({ collection: coll })
-      coll.fetchByProject(project)
+      coll.fetch()
     },
 
     edit: function (model) {

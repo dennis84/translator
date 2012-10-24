@@ -7,6 +7,10 @@ DELETE  /logout                     translator.controllers.UserController.logout
 GET     /projects                   translator.controllers.ProjectController.list
 
 GET     /:project/entries           translator.controllers.EntryController.list(project)
+
 GET     /:project/languages         translator.controllers.LanguageController.list(project)
+POST    /:project/languages         translator.controllers.LanguageController.create(project)
+PUT     /:project/languages/:id     translator.controllers.LanguageController.update(project, id)
+DELETE  /:project/languages/:id     translator.controllers.LanguageController.delete(project, id)
 
 GET     /assets/*file               controllers.Assets.at(path="/public", file)

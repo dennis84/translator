@@ -1,24 +1,17 @@
 define([
-  "models/language",
   "collections/language",
   "views/languages",
   "views/language_edit"
-], function (Language, LanguageCollection, LanguagesView, LanguagesEditView) {
+], function (LanguageCollection, LanguagesView, LanguagesEditView) {
 
   var module = {
-    list: function (project) {
+    list: function () {
       var coll = new LanguageCollection
       var view = new LanguagesView({ collection: coll })
-      coll.fetchByProject(project)
+      coll.fetch()
     },
 
     edit: function (model) {
-      var view = new LanguagesEditView({ model: model })
-      view.render()
-    },
-
-    create: function () {
-      var model = new Language
       var view = new LanguagesEditView({ model: model })
       view.render()
     }

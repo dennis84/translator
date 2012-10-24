@@ -5,19 +5,12 @@ define([
   var module = Backbone.Collection.extend({
     model: Entry,
 
-    project: null,
-
     url: function () {
-      if (null === this.project) {
-        throw new Error("The collection needs a project.")
+      if (window.project.isNew()) {
+        throw new Error("There must be a current project")
       }
 
-      return "/" + this.project + "/entries" 
-    },
-
-    fetchByProject: function (project, options) {
-      this.project = project
-      this.fetch(options)
+      return "/" + window.project.id + "/entries" 
     }
   })
 

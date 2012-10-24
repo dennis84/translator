@@ -2,11 +2,15 @@ define([], function () {
 
   var module = Backbone.Model.extend({
     url: function () {
-      if (true === this.isNew()) {
-        return "/languages"
+      if (window.project.isNew()) {
+        throw new Error("There must be a current project")
       }
 
-      return "/languages/" + this.id
+      if (true === this.isNew()) {
+        return "/" + window.project.id + "/languages"
+      }
+
+      return "/" + window.project.id + "/languages/" + this.id
     },
 
     defaults: {

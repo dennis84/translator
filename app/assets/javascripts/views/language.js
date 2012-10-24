@@ -9,6 +9,10 @@ define([
       "click td": "open"
     },
 
+    initialize: function () {
+      this.model.on("change", this.render, this)
+    },
+
     render: function () {
       this.$el.html(_.template(languageTemplate, this.model.toJSON()))
       return this

@@ -1,7 +1,8 @@
 define([
+  "models/language",
   "views/language",
   "text!templates/languages.html"
-], function (LanguageView, languagesTemplate) {
+], function (Language, LanguageView, languagesTemplate) {
 
   var module = Backbone.View.extend({
     id: "languages",
@@ -12,6 +13,7 @@ define([
 
     initialize: function () {
       this.collection.on("reset", this.render, this)
+      this.collection.on("add", this.add, this)
     },
 
     render: function () {
@@ -28,8 +30,15 @@ define([
 
     create: function (e) {
       e.preventDefault()
+      var view = this
+        , model = new Language
+
       window.app.removePane(1)
-      window.languageController.create()
+      window.languageController.edit(model)
+      model.on("sync", function (model) {
+        view.collection.add(model)
+        model.off("sync")
+      }, this)
     }
   })
 
