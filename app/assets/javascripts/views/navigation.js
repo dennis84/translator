@@ -1,7 +1,8 @@
 define([
   "collections/project",
-  "text!templates/navigation.html"
-], function (ProjectCollection, navigationTemplate) {
+  "text!templates/navigation.html",
+  "text!templates/navigation_project.html"
+], function (ProjectCollection, navigationTemplate, navigationProjectTemplate) {
 
   var module = Backbone.View.extend({
     id: "navigation",
@@ -27,9 +28,9 @@ define([
     },
 
     updateProject: function (model) {
-      this.$el.find("#nav-list").append("<li class='nav-header'>Current Project</li>")
-      this.$el.find("#nav-list").append("<li><a href='#/@/" + model.id + "/entries'>Entries</a></li>")
-      this.$el.find("#nav-list").append("<li><a href='#/@/" + model.id + "/languages'>Languages</a></li>")
+      var template = $(_.template(navigationProjectTemplate, model.toJSON())).addClass("nav-project")
+      this.$el.find(".nav-project").remove()
+      this.$el.append(template)
     }
   })
 

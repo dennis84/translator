@@ -20,8 +20,8 @@ object DataFixtures extends Fixtures {
     LanguageDAO.collection.drop
 
     UserDAO.insert(user1, user2)
-    ProjectDAO.insert(project1)
-    EntryDAO.insert(entry1, entry2)
-    LanguageDAO.insert(language1, language2, language3, language4, language5, language6)
+    ProjectDAO.insert(project1, project2)
+    EntryDAO.insert(entry1, entry2, entry3, entry4)
+    LanguageDAO.insert(language1, language2, language3, language4, language5, language6, language7, language8, language9)
   }
 }
