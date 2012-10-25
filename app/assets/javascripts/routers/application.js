@@ -3,13 +3,18 @@ define([], function () {
   var module = Backbone.Router.extend({
     routes: {
       "":                     "dashboard",
-      "@/:project":           "project",
-      "@/:project/entries":   "entries",
-      "@/:project/languages": "languages"
+      "import":               "importer",
+      "!/:project":           "project",
+      "!/:project/entries":   "entries",
+      "!/:project/languages": "languages"
     },
 
     dashboard: function () {
       window.pageController.dashboard()
+    },
+
+    importer: function () {
+      window.importController.show()
     },
 
     project: function (projectId) {

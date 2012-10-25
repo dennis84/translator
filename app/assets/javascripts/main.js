@@ -18,15 +18,17 @@ require([
   "controllers/user",
   "controllers/project",
   "controllers/entry",
-  "controllers/language"
+  "controllers/language",
+  "controllers/import"
 ], function (User, Project, ProjectCollection, AppRouter, ApplicationView,
-  pageController, userController, projectController, entryController, languageController) {
+  pageController, userController, projectController, entryController, languageController, importController) {
 
   window.pageController = pageController
   window.userController = userController
   window.projectController = projectController
   window.entryController = entryController
   window.languageController = languageController
+  window.importController = importController
 
   window.project = new Project
 

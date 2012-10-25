@@ -24,7 +24,7 @@ define([
     },
 
     addProject: function (model) {
-      this.$el.find("#nav-list").append("<li><a href='#/@/" + model.id + "'>" + model.get("name") + "</a></li>")
+      this.$el.find("#nav-list").append("<li><a href='#!/" + model.id + "'>" + model.get("name") + "</a></li>")
     },
 
     updateProject: function (model) {
