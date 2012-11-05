@@ -3,10 +3,10 @@ define([], function () {
   var module = Backbone.Router.extend({
     routes: {
       "":                     "dashboard",
-      "import":               "importer",
       "!/:project":           "project",
       "!/:project/entries":   "entries",
-      "!/:project/languages": "languages"
+      "!/:project/languages": "languages",
+      "!/:project/import":    "importer"
     },
 
     dashboard: function () {
