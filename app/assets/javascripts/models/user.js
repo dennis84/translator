@@ -17,34 +17,22 @@ define([], function () {
 
     login: function () {
       var self = this
-      $.ajax({
-        "type": "POST",
-        "url": "/authenticate",
-        "data": this.toJSON(),
-        "dataType": "json",
-        "success": function (data) {
-          window.authenticated = true
-          self.set("password", "")
-          self.set("password2", "")
-          self.trigger("logged_in", self)
-        }
+      $.postJSON("/authenticate", this.toJSON(), function (data) {
+        window.authenticated = true
+        self.set("password", "")
+        self.set("password2", "")
+        self.trigger("logged_in", self)
       })
     },
 
     logout: function () {
       var self = this
-      $.ajax({
-        "type": "DELETE",
-        "url": "/logout",
-        "data": this.toJSON(),
-        "dataType": "json",
-        "success": function (data) {
-          window.authenticated = false
-          self.set("username", "")
-          self.set("password", "")
-          self.set("password2", "")
-          self.trigger("logged_out", self)
-        }
+      $.deleteJSON("/logout", this.toJSON(), function (data) {
+        window.authenticated = false
+        self.set("username", "")
+        self.set("password", "")
+        self.set("password2", "")
+        self.trigger("logged_out", self)
       })
     },
 
