@@ -16,4 +16,6 @@ POST    /:project/languages         translator.controllers.LanguageController.cr
 PUT     /:project/languages/:id     translator.controllers.LanguageController.update(project, id)
 DELETE  /:project/languages/:id     translator.controllers.LanguageController.delete(project, id)
 
+POST    /:project/import            translator.controllers.ImportController.entries(project)
+
 GET     /assets/*file               controllers.Assets.at(path="/public", file)

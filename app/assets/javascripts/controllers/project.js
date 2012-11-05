@@ -3,7 +3,7 @@ define([
 ], function (ProjectView) {
 
   var module = {
-    show: function (id) {
+    show: function () {
       var view  = new ProjectView({ model: window.project })
       view.render()
     }

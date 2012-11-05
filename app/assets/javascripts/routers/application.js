@@ -18,42 +18,24 @@ define([], function () {
     },
 
     project: function (projectId) {
-      this.resolveProject(projectId)
-
-      if (false === window.project.isNew()) {
+      this.withProject(projectId, function (project) {
         return window.projectController.show()
-      }
-
-      window.project.on("change", function (project) {
-        return window.projectController.show(projectId)
       })
     },
 
     entries: function (projectId) {
-      this.resolveProject(projectId)
-
-      if (false === window.project.isNew()) {
-        return window.entryController.list()
-      }
-
-      window.project.on("change", function (project) {
+      this.withProject(projectId, function (project) {
         return window.entryController.list()
       })
     },
 
     languages: function (projectId) {
-      this.resolveProject(projectId)
-
-      if (false === window.project.isNew()) {
-        return window.languageController.list()
-      }
-
-      window.project.on("change", function (project) {
+      this.withProject(projectId, function (project) {
         return window.languageController.list()
       })
     },
 
-    resolveProject: function (id) {
+    withProject: function (id, func) {
       var model = window.projectList.get(id)
 
       if (undefined !== model) {
@@ -64,6 +46,15 @@ define([], function () {
         var model = window.projectList.get(id)
         window.project.set(model)
       })
+
+      if (false === window.project.isNew()) {
+        func(window.project)
+      } else {
+        window.project.on("change", function (project) {
+          func(project)
+        })
+        window.project.current()
+      }
     }
   })
 
