@@ -53,7 +53,6 @@ define([], function () {
         window.project.on("change", function (project) {
           func(project)
         })
-        window.project.current()
       }
     }
   })
