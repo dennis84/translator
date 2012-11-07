@@ -29,7 +29,7 @@ case class Entry(
     Translation(code, "", project.adminId, true)
   }
 
-  def percentage = {
+  def progress = {
     val languages = LanguageDAO.findAllByProjectId(projectId)
 
     languages.filter { lang =>
@@ -42,5 +42,5 @@ case class Entry(
     "name" -> name,
     "description" -> description,
     "translations" -> translationsFixed.map(_.toMap),
-    "percentage" -> percentage)
+    "progress" -> progress)
 }

@@ -8,8 +8,8 @@ import translator.models._
 class EntrySpec extends Specification with Fixtures {
 
   "Entry" should {
-    "percentage" in new EntryContext {
-      println(entry1.percentage)
+    "progress" in new EntryContext {
+      println(entry1.progress)
       1 must_== 1
     }
   }
