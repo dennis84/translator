@@ -1,12 +1,22 @@
 package translator.controllers
 
+import play.api.data._
+import play.api.data.Forms._
 import translator.utils.Importer
 
 object ImportController extends BaseController {
 
-  def entries(project: String) = SecuredIO(parse.multipartFormData) { implicit ctx =>
-    ctx.req.body.file("file") map { file =>
-      JsonOk(List())
-    } getOrElse JsonBadRequest(Map("error" -> "no file"))
+  val form = Form(tuple(
+    "language" -> text,
+    "content" -> text
+  ))
+
+  def entries(project: String) = SecuredIO { implicit ctx =>
+    form.bindFromRequest.fold(
+      formWithErrors => JsonBadRequest(Map("error" -> "form error")),
+      formData => {
+        JsonOk(List(formData._2))
+      }
+    )
   }
 }
