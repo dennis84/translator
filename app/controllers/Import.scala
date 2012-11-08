@@ -17,18 +17,19 @@ object ImportController extends BaseController {
       form.bindFromRequest.fold(
         formWithErrors => JsonBadRequest(Map("error" -> "form error")),
         formData => {
-          val response = (Json parse formData._2).as[Map[String, String]].map { row =>
+          (Json parse formData._2).as[Map[String, String]].map { row =>
             EntryDAO.findOneByNameAndProject(row._1, project) map { entry =>
-              entry
+              if (!entry.translations.exists(_.code == formData._1)) {
+                val updated = entry.copy(translations = entry.translations ++ List(Translation(formData._1, row._2, ctx.user.get.id, true)))
+                EntryDAO.save(updated)
+              }
             } getOrElse {
               val created = Entry(row._1, "", project.id, List(Translation(formData._1, row._2, ctx.user.get.id, true)))
               EntryDAO.insert(created)
-
-              created
             }
-          }.toList.map(_.toMap)
+          }
 
-          JsonOk(response)
+          JsonOk(List())
         }
       )
     } getOrElse JsonNotFound
