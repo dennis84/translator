@@ -1,6 +1,7 @@
 define([
+  "collections/language",
   "text!templates/import.html"
-], function (importTemplate) {
+], function (LanguageCollection, importTemplate) {
 
   var module = Backbone.View.extend({
     id: "import",
@@ -9,7 +10,14 @@ define([
       "click .upload": "upload"
     },
 
+    initialize: function () {
+      this.languages = new LanguageCollection
+      this.languages.on("reset", this.render, this)
+      this.languages.fetch()
+    },
+
     render: function () {
+      this.model.set("languages", this.languages.toJSON())
       this.$el.html(_.template(importTemplate, this.model.toJSON()))
       window.app.removePanes()
       window.app.addPane(this.el, "import", "spaceless4")

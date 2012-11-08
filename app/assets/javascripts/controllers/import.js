@@ -7,7 +7,6 @@ define([
     show: function () {
       var model = new ImportModel
       var view = new ImportView({ model: model })
-      view.render()
     }
   }
 

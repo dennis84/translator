@@ -23,6 +23,10 @@ define([], function () {
       }
     
       reader.readAsText(fileList[0])
+    },
+
+    defaults: {
+      languages: []
     }
   })
 

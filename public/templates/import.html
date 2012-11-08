@@ -12,9 +12,9 @@
   <form>
     <label for="language">Language</label>
     <select name="language">
-      <option value="en">en</option>
-      <option value="de">de</option>
-      <option value="fr">fr</option>
+      {% _.each(languages, function (language) { %}
+      <option value="{{ language.code }}">{{ language.code }}</option>
+      {% }) %}
     </select>
     <input id="file" type="file">
     <br>
