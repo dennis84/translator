@@ -8,6 +8,19 @@ define([
     id: "navigation",
     className: "navigation spaceless2",
 
+    colors: [
+      "#cc99ff",
+      "#99eeff",
+      "#00ff00",
+      "#ff00cc",
+      "#ffff00",
+      "#0000ff",
+      "#9c6f3a",
+      "#ccaa99",
+      "#00ffcc",
+      "#99aaff"
+    ],
+
     initialize: function () {
       window.projectList.on("reset", this.addProjects, this)
       window.project.on("change", this.updateProject, this)
@@ -23,8 +36,9 @@ define([
       window.projectList.each(this.addProject, this)
     },
 
-    addProject: function (model) {
-      this.$el.find("#nav-list").append("<li><a href='#!/" + model.id + "'>" + model.get("name") + "</a></li>")
+    addProject: function (model, index) {
+      this.$el.find("#nav-list").append(
+        "<li><a href='#!/" + model.id + "'><i class='icon-sign-blank' style='color: " + this.colors[index] + "'></i> " + model.get("name") + "</a></li>")
     },
 
     updateProject: function (model) {

@@ -7,7 +7,7 @@ import java.io.File
 object Importer {
 
   def parse(file: FilePart[TemporaryFile]) = file.filename.substring(file.filename.lastIndexOf(".") + 1, file.filename.length) match {
-    case "json" => Some("json")
+    case "json" => json(file)
     case "po" => Some("po")
     case _ => None
   }

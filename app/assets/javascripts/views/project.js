@@ -12,7 +12,7 @@ define([
     render: function () {
       this.$el.html(_.template(projectTemplate, this.model.toJSON()))
       window.app.removePanes()
-      window.app.addPane(this.el, "project")
+      window.app.addPane(this.el, "project", "spaceless10")
     }
   })
 
