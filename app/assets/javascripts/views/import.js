@@ -6,7 +6,7 @@ define([
     id: "import",
 
     events: {
-      "change #file": "upload"
+      "click .upload": "upload"
     },
 
     render: function () {
@@ -17,7 +17,7 @@ define([
 
     upload: function (e) {
       e.preventDefault()
-      this.model.upload(e.currentTarget.files[0])
+      this.model.upload(document.getElementById("file").files, this.$el.find("form").serializeObject())
     }
   })
 

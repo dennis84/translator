@@ -12,4 +12,6 @@ object EntryDAO
   def findAll = find(DBObject()) toList
 
   def findAllByProject(project: Project) = find(MongoDBObject("projectId" -> project.id)) toList
+
+  def findOneByNameAndProject(name: String, project: Project) = findOne(MongoDBObject("name" -> name, "projectId" -> project.id))
 }
