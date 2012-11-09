@@ -1,3 +1,5 @@
+msgid ""
+msgstr ""
 "Project-Id-Version: Translator\n"
 "Report-Msgid-Bugs-To: Translator <d.dietrich84@gmail.com>\n"
 "POT-Creation-Date: 2012-11-08 18:00+0100\n"
@@ -15,4 +17,4 @@ msgid "bar"
 msgstr "Bar"
 
 msgid "hello_world"
-msgstr "hello_world": "This Text should only imported for language pt."
+msgstr "This Text should only imported for language pt."

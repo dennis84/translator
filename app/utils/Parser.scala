@@ -19,10 +19,12 @@ object Parser {
   def po(content: String) = {
     val regex = 
 """
-msgid "(.*)"
-msgstr "(.*)"
+msgid "(.+)"
+msgstr "(.+)"
 """.r
 
     (for (regex(id, str) <- regex findAllIn content) yield (id -> str)) toMap
   }
+
+  def xml(content: String) = Map.empty[String, String]
 }

@@ -21,12 +21,12 @@ object ImportController extends BaseController {
         formData => {
           Parser.parse(formData._1, formData._2) map { row =>
             EntryDAO.findOneByNameAndProject(row._1, project) map { entry =>
-              if (!entry.translations.exists(_.code == formData._1)) {
-                val updated = entry.copy(translations = entry.translations ++ List(Translation(formData._1, row._2, ctx.user.get.id, true)))
+              if (!entry.translations.exists(_.code == formData._3)) {
+                val updated = entry.copy(translations = entry.translations ++ List(Translation(formData._3, row._2, ctx.user.get.id, true)))
                 EntryDAO.save(updated)
               }
             } getOrElse {
-              val created = Entry(row._1, "", project.id, List(Translation(formData._1, row._2, ctx.user.get.id, true)))
+              val created = Entry(row._1, "", project.id, List(Translation(formData._3, row._2, ctx.user.get.id, true)))
               EntryDAO.insert(created)
             }
           }

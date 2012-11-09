@@ -28,6 +28,6 @@ object ApplicationBuild extends Build with Resolvers with Dependencies {
   )
 
   lazy val translator = PlayProject("translator", settings = buildSettings).settings(
-    libraryDependencies ++= Seq(salat, hasher, scalastic)
+    libraryDependencies ++= Seq(salat, hasher, scalastic, scalaTime)
   )
 }
