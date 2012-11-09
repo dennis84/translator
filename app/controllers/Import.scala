@@ -4,12 +4,14 @@ import play.api.data._
 import play.api.data.Forms._
 import play.api.libs.json.Json
 import translator.models._
+import translator.utils.Parser
 
 object ImportController extends BaseController {
 
   val form = Form(tuple(
-    "language" -> text,
-    "content" -> text
+    "content"  -> text,
+    "type"     -> nonEmptyText,
+    "language" -> nonEmptyText
   ))
 
   def entries(project: String) = SecuredIO { implicit ctx =>
@@ -17,7 +19,7 @@ object ImportController extends BaseController {
       form.bindFromRequest.fold(
         formWithErrors => JsonBadRequest(Map("error" -> "form error")),
         formData => {
-          (Json parse formData._2).as[Map[String, String]].map { row =>
+          Parser.parse(formData._1, formData._2) map { row =>
             EntryDAO.findOneByNameAndProject(row._1, project) map { entry =>
               if (!entry.translations.exists(_.code == formData._1)) {
                 val updated = entry.copy(translations = entry.translations ++ List(Translation(formData._1, row._2, ctx.user.get.id, true)))

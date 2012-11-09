@@ -11,18 +11,21 @@ define([], function () {
       }
 
       var reader = new FileReader
+        , file = fileList[0]
 
-      reader.onloadend = function () {
+      reader.onloadend = function (a, b, c) {
+        console.log(a, b, c)
         _.extend(fields, {
-          "content": reader.result
+          "content": reader.result,
+          "type": file.name.substring(file.name.lastIndexOf(".") + 1)
         })
 
         $.postJSON("/" + window.project.id + "/import", fields, function (data) {
           console.log(data)
         })
       }
-    
-      reader.readAsText(fileList[0])
+
+      reader.readAsText(file)
     },
 
     defaults: {
