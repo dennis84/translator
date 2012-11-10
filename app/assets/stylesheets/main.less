@@ -1,5 +1,6 @@
 @import "mixins.less";
 @import "my-bootstrap.less";
+@import "my-chosen.less";
 
 @navigationBackgroundColor: #34313A;
 @navigationBackgroundColorActive: #448AFA;
@@ -188,5 +189,21 @@ body {
       margin-bottom: 0;
       width: 100%;
     }
+  }
+}
+
+
+/* =============================================================================
+   Filter
+   ========================================================================== */
+
+.popover-container {
+  form {
+    select {
+      width: 300px;
+    }
+  }
+  .filter-config {
+    display: none;
   }
 }

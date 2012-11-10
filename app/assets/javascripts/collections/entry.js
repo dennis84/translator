@@ -1,9 +1,15 @@
 define([
-  "models/entry"
-], function (Entry) {
+  "models/entry",
+  "models/entry_filter"
+], function (Entry, EntryFilter) {
 
   var module = Backbone.Collection.extend({
     model: Entry,
+
+    initialize: function () {
+      this.filter = new EntryFilter
+      this.filter.on("change", this.updateFilter, this)
+    },
 
     url: function () {
       if (window.project.isNew()) {
@@ -11,6 +17,10 @@ define([
       }
 
       return "/" + window.project.id + "/entries" 
+    },
+
+    updateFilter: function (filter) {
+      console.log(filter.toJSON())
     }
   })
 

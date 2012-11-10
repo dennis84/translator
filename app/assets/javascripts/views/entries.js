@@ -1,8 +1,9 @@
 define([
   "models/entry",
   "views/entry",
+  "views/entry_filter",
   "text!templates/entries.html"
-], function (Entry, EntryView, entriesTemplate) {
+], function (Entry, EntryView, EntryFilterView, entriesTemplate) {
 
   var module = Backbone.View.extend({
     id: "entries",
@@ -21,6 +22,24 @@ define([
       this.collection.each(this.add, this)
       window.app.removePanes()
       window.app.addPane(this.el, "entries", "spaceless4")
+
+      var view = this
+
+      $("#filter", this.$el).popover({
+        "html": true,
+        "trigger": "manual"
+      }).on("click", function (e) {
+        var self = this
+          , filter = new EntryFilterView({ model: view.collection.filter })
+
+        filter.on("close", function (view) {
+          $(self).popover("destroy")
+        })
+
+        $(this).popover("toggle")
+        $(".popover-container").html(filter.render().el)
+        $("select").chosen()
+      })
     },
 
     add: function (model) {
