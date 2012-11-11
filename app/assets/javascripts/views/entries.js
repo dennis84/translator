@@ -9,18 +9,19 @@ define([
     id: "entries",
 
     events: {
-      "click .create": "create"
+      "click .create": "create",
+      "click #clear-filter": "clearFilter"
     },
 
     initialize: function () {
-      this.collection.on("reset", this.render, this)
+      this.collection.on("reset", this.reset, this)
       this.collection.on("add", this.add, this)
+      this.render()
     },
 
     render: function () {
       var view = this
       this.$el.html(_.template(entriesTemplate, {}))
-      this.collection.each(this.add, this)
 
       $("#filter", this.$el).popover({
         "html": true,
@@ -42,6 +43,17 @@ define([
       window.app.addPane(this.el, "entries", "spaceless4")
     },
 
+    reset: function (e) {
+      this.$el.find("#entry-list").html("")
+      this.collection.each(this.add, this)
+
+      if (this.collection.filter.isEmpty()) {
+        this.$el.find("#clear-filter").hide()
+      } else {
+        this.$el.find("#clear-filter").show()
+      }
+    },
+
     add: function (model) {
       var view = new EntryView({ model: model })
       this.$el.find("#entry-list").append(view.render().el)
@@ -61,6 +73,10 @@ define([
         view.collection.add(model)
         model.off("sync")
       }, this)
+    },
+
+    clearFilter: function (e) {
+      this.collection.filter.set(this.collection.filter.defaults)
     }
   })
 

@@ -10,7 +10,7 @@ define([
     },
 
     render: function () {
-      this.$el.html(_.template(entryFilterTemplate, {}))
+      this.$el.html(_.template(entryFilterTemplate, this.model.toJSON() ))
       return this
     },
 

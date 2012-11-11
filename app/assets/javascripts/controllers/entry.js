@@ -11,7 +11,6 @@ define([
       coll.fetch()
 
       coll.filter.on("change", function () {
-        var view = new EntriesView({ collection: coll })
         coll.fetch({ data: coll.filter.toJSON() })
       })
     },
