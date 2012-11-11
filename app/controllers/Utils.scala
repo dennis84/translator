@@ -49,4 +49,8 @@ trait RequestGetter {
   protected def get(name: String, req: RequestHeader): Option[String] = req.queryString get name flatMap (_.headOption) filter (""!=)
 
   protected def getOr(name: String, default: String)(implicit ctx: Context[_]) = get(name, ctx.req) getOrElse default
+
+  protected def getAll(name: String, req: RequestHeader) = req.queryString get name
+
+  protected def getAllOr(name: String, default: Seq[String])(implicit ctx: Context[_]) = getAll(name, ctx.req) getOrElse (default)
 }

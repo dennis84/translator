@@ -16,6 +16,10 @@ case class Translation(
     "active" -> active)
 }
 
+case class Filter(
+  val untranslated: String,
+  val untranslatedLanguages: Seq[String])
+
 case class Entry(
   val name: String,
   val description: String,

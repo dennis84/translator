@@ -13,5 +13,18 @@ object EntryDAO
 
   def findAllByProject(project: Project) = find(MongoDBObject("projectId" -> project.id)) toList
 
+  def findAllByProjectAndFilter(project: Project, filter: Filter) = {
+    find(MongoDBObject("projectId" -> project.id)).toList.map { entry =>
+      if ("true" == filter.untranslated) {
+        entry.translationsFixed.exists(trans => filter.untranslatedLanguages.exists(_ == trans.code) && trans.text == "") match {
+          case true => Some(entry)
+          case false => None
+        }
+      } else {
+        Some(entry)
+      }
+    } flatten
+  }
+
   def findOneByNameAndProject(name: String, project: Project) = findOne(MongoDBObject("name" -> name, "projectId" -> project.id))
 }

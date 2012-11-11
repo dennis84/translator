@@ -18,12 +18,9 @@ define([
     },
 
     render: function () {
+      var view = this
       this.$el.html(_.template(entriesTemplate, {}))
       this.collection.each(this.add, this)
-      window.app.removePanes()
-      window.app.addPane(this.el, "entries", "spaceless4")
-
-      var view = this
 
       $("#filter", this.$el).popover({
         "html": true,
@@ -40,6 +37,9 @@ define([
         $(".popover-container").html(filter.render().el)
         $("select").chosen()
       })
+
+      window.app.removePanes()
+      window.app.addPane(this.el, "entries", "spaceless4")
     },
 
     add: function (model) {

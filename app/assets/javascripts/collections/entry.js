@@ -8,7 +8,6 @@ define([
 
     initialize: function () {
       this.filter = new EntryFilter
-      this.filter.on("change", this.updateFilter, this)
     },
 
     url: function () {
@@ -17,10 +16,6 @@ define([
       }
 
       return "/" + window.project.id + "/entries" 
-    },
-
-    updateFilter: function (filter) {
-      console.log(filter.toJSON())
     }
   })
 

@@ -5,6 +5,11 @@ requirejs.config({
   }
 })
 
+$.ajaxSetup({
+  // Removes the brackets on uri parsing.
+  traditional: true
+})
+
 _.templateSettings.interpolate = /\{\{(.+?)\}\}/g
 _.templateSettings.evaluate = /\{\%(.+?)\%\}/g
 

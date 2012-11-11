@@ -23,6 +23,7 @@ define([
     apply: function (e) {
       e.preventDefault()
       this.model.set(this.$el.find("form").serializeObject())
+      this.trigger("close", this)
     },
 
     cancel: function (e) {

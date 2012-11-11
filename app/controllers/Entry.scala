@@ -18,7 +18,11 @@ object EntryController extends BaseController {
 
   def list(project: String) = SecuredIO { implicit ctx =>
     ctx.projects.find(_.id == project) map { project =>
-      JsonOk(EntryDAO.findAllByProject(project) map (_.toMap))
+      val filter = Filter(
+        getOr("untranslated", "false"),
+        getAllOr("untranslated_languages", Seq.empty[String]))
+
+      JsonOk(EntryDAO.findAllByProjectAndFilter(project, filter) map (_.toMap))
     } getOrElse JsonNotFound
   }
 
