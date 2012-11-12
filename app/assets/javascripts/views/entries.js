@@ -10,7 +10,8 @@ define([
 
     events: {
       "click .create": "create",
-      "click #clear-filter": "clearFilter"
+      "click #clear-filter": "clearFilter",
+      "keyup .search": "search"
     },
 
     initialize: function () {
@@ -77,6 +78,16 @@ define([
 
     clearFilter: function (e) {
       this.collection.filter.set(this.collection.filter.defaults)
+    },
+
+    search: function (e) {
+      e.preventDefault()
+      var term = $(e.currentTarget).val()
+      if (term.length > 0) {
+        this.collection.search(term)
+      } else {
+        this.collection.fetch()
+      }
     }
   })
 

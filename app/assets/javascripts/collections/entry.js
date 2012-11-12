@@ -16,6 +16,20 @@ define([
       }
 
       return "/" + window.project.id + "/entries" 
+    },
+
+    search: function (term) {
+      var collection = this
+      $.getJSON(this.url() + "/search?term=" + term, function (data) {
+        var models = []
+        _.each(data, function (item) {
+          models.push(new Entry(item))
+        })
+
+        if (models.length > 0) {
+          collection.reset(models)
+        }
+      })
     }
   })
 
