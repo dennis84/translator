@@ -76,10 +76,6 @@ object EntryController extends BaseController {
         JsonOk(EntryDAO.findAllByProjectAndIds(project, Search.indexer.search(query = queryString(term)).hits.hits.toList.map { searchResponse =>
           new ObjectId(searchResponse.id)
         }).map(_.toMap))
-        //JsonOk(EntryDAO.findAllByIdsAndProject()
-          //Search.indexer.search(query = queryString(term)).hits.hits.toList map { item =>
-          //EntryDAO.findOneById(item.id)
-        //}.flatten)
       } getOrElse JsonOk(List())
     } getOrElse JsonNotFound
   }
