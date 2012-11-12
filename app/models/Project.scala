@@ -6,9 +6,10 @@ import com.mongodb.casbah.Imports._
 case class Project(
   val name: String,
   val adminId: ObjectId,
+  val token: String,
   @Key("_id") val id: ObjectId = new ObjectId) {
 
-  def admin = UserDAO.findOneById(adminId) get
+  def admin = UserDAO.findOneById(adminId)
 
   def toMap = Map(
     "id" -> id.toString,

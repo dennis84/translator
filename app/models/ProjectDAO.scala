@@ -14,4 +14,6 @@ object ProjectDAO
   def findAllByUser(user: User) = user.roles map { role =>
     ProjectDAO.findOneById(role.projectId) get
   }
+
+  def findOneByToken(token: String) = findOne(MongoDBObject("token" -> token))
 }

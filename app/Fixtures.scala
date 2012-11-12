@@ -10,8 +10,8 @@ trait Fixtures {
   private val _user1 = User("d.dietrich84@gmail.com", "demo" sha512, Nil, None)
   private val _user2 = User("frank.drebin.1984@gmail.com", "demo" sha512, Nil, None)
   
-  val project1 = Project("acme", _user1.id)
-  val project2 = Project("foo", _user1.id)
+  val project1 = Project("acme", _user1.id, "12345678")
+  val project2 = Project("foo", _user1.id, "123456")
   
   val role1 = Role("ROLE_ADMIN", _user1.id, project1.id)
   val role2 = Role("ROLE_AUTHOR", _user2.id, project1.id)

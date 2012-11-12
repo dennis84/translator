@@ -24,7 +24,7 @@ trait Results extends Controller {
   def JsonNotFound = NotFound
 }
 
-trait Actions extends Controller with Results {
+trait Actions extends Controller with Results with RequestGetter {
 
   def OpenIO(f: Context[AnyContent] => Result): Action[AnyContent] = OpenIO(BodyParsers.parse.anyContent)(f)
 
@@ -36,9 +36,17 @@ trait Actions extends Controller with Results {
   def SecuredIO(f: Context[AnyContent] => Result): Action[AnyContent] = SecuredIO(BodyParsers.parse.anyContent)(f)
 
   def SecuredIO[A](p: BodyParser[A])(f: Context[A] => Result): Action[A] = OpenIO(p) { implicit ctx =>
-    ctx.user map { user =>
-      f(ctx.copy(projects = ProjectDAO.findAllByUser(user)))
-    } getOrElse JsonUnauthorized
+    (for {
+      token <- get("token")
+      project <- ProjectDAO.findOneByToken(token)
+      user <- project.admin
+    } yield {
+      f(ctx.copy(user = Some(user), projects = List(project)))
+    }) getOrElse {
+      ctx.user map { user =>
+        f(ctx.copy(projects = ProjectDAO.findAllByUser(user)))
+      } getOrElse JsonUnauthorized
+    }
   }
 }
 
