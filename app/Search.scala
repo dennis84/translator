@@ -16,7 +16,10 @@ object Search {
     indexer.waitTillActive()
     indexer.putMapping("translator", "entry", Json generate Map("entry" -> Map(
       "properties" -> Map(
-        "name" -> Map("type" -> "string"))
+        "name" -> Map("type" -> "string"),
+        "translations" -> Map(
+          "properties" -> Map(
+            "text" -> Map("type" -> "string"))))
     )))
 
     indexer.refresh()
