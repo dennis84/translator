@@ -65,4 +65,15 @@ object EntryController extends BaseController {
   }
 
   def delete(project: String, id: String) = TODO
+
+  def search(project: String) = SecuredIO { implicit ctx =>
+    import org.elasticsearch.index.query._, FilterBuilders._, QueryBuilders._
+    import org.elasticsearch.search._, facet._, terms._, sort._, SortBuilders._, builder._
+
+    get("term") map { term =>
+      JsonOk(Search.indexer.search(query = queryString(term)).hits.hits.toList map { item =>
+        EntryDAO.findOneById(item.id)
+      }.flatten)
+    } getOrElse JsonOk(List())
+  }
 }
