@@ -67,6 +67,14 @@ object EntryController extends BaseController {
 
   def delete(project: String, id: String) = TODO
 
+  def export(project: String) = SecuredIO { implicit ctx =>
+    ctx.projects.find(_.id == project) map { project =>
+      JsonOk(EntryDAO.findAllByProject(project).map { entry =>
+        entry.name -> entry.translations.find(_.code == getOr("language", "en")).map(_.text).getOrElse("")
+      }.toMap)
+    } getOrElse JsonNotFound
+  }
+
   def search(project: String) = SecuredIO { implicit ctx =>
     ctx.projects.find(_.id == project) map { project =>
       import org.elasticsearch.index.query._, FilterBuilders._, QueryBuilders._
