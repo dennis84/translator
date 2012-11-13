@@ -9,6 +9,10 @@ define([], function () {
       })
 
       return output
+    },
+
+    checked: function (value) {
+      return (true === value) ? "checked='checked'" : ""
     }
   }
 

@@ -28,16 +28,18 @@ define([
         "html": true,
         "trigger": "manual"
       }).on("click", function (e) {
-        var self = this
+        var button = this
           , filter = new EntryFilterView({ model: view.collection.filter })
 
         filter.on("close", function (view) {
-          $(self).popover("destroy")
+          $(button).popover("destroy")
         })
 
-        $(this).popover("toggle")
-        $(".popover-container").html(filter.render().el)
-        $("select").chosen()
+        $(button).popover("toggle")
+        filter.on("ready", function () {
+          $(".popover-container").html(filter.render().el)
+          $("select").chosen()
+        })
       })
 
       window.app.removePanes()

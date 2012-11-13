@@ -1,23 +1,38 @@
 define([
+  "helpers/form",
+  "collections/language",
   "text!templates/entry_filter.html"
-], function (entryFilterTemplate) {
+], function (formHelper, LanguageCollection, entryFilterTemplate) {
 
   var module = Backbone.View.extend({
     events: {
-      "change input[data-config]": "toggleConfig",
       "click .apply": "apply",
       "click .cancel": "cancel"
     },
 
-    render: function () {
-      this.$el.html(_.template(entryFilterTemplate, this.model.toJSON() ))
-      return this
+    initialize: function () {
+      this.languages = new LanguageCollection
+      this.languages.on("reset", this.ready, this)
+      this.languages.fetch()
     },
 
-    toggleConfig: function (e) {
-      e.preventDefault()
-      var config = $(e.currentTarget).attr("data-config")
-      $(config).toggle()
+    ready: function () {
+      this.trigger("ready", this)
+    },
+
+    render: function () {
+      var languages = {}
+      _.each(this.languages.toJSON(), function (lang) {
+        languages[lang.code] = lang.name
+      })
+
+      var data = _.extend(this.model.toJSON(), {
+        "formHelper": formHelper,
+        "languages": languages
+      })
+
+      this.$el.html(_.template(entryFilterTemplate, data ))
+      return this
     },
 
     apply: function (e) {

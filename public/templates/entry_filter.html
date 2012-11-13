@@ -1,9 +1,10 @@
 <form>
   <div class="padding10">
-    <label class="checkbox"><input type="checkbox" id="filter-untranslated" name="untranslated" data-config="#untranslated-config"> Untranslated</label>
+    <label class="checkbox"><input type="checkbox" name="untranslated" {{ formHelper.checked(untranslated) }}> Untranslated</label>
+
     <div id="untranslated-config" class="filter-config">
       <select name="untranslated_languages" multiple="multiple">
-        {{ formHelper.options({"de": "DE", "en": "EN" }, untranslated_languages) }}
+        {{ formHelper.options(languages, untranslated_languages) }}
       </select>
     </div>
   </div>
