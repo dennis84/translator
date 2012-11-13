@@ -20,6 +20,7 @@ define([
       e.preventDefault()
       this.model.set(this.$el.find("form").serializeObject())
       this.model.save()
+      window.app.addMessage("success", "Saved")
     },
 
     cancel: function (e) {

@@ -1,6 +1,7 @@
 define([
+  "helpers/message",
   "views/navigation"
-], function (NavigationView) {
+], function (Message, NavigationView) {
 
   var module = Backbone.View.extend({
     id: "application",
@@ -29,6 +30,15 @@ define([
 
     removePanes: function () {
       this.$el.find(".pane").remove()
+    },
+
+    addMessage: function (type, message) {
+      var message = new Message(type, message)
+      var message = message.render().$el.appendTo($("body"))
+
+      //setTimeout(function () {
+        //message.alert("close")
+      //}, 2000)
     }
   })
 
