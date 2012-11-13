@@ -12,7 +12,7 @@ define([], function () {
     },
 
     checked: function (value) {
-      return (true === value) ? "checked='checked'" : ""
+      return (value) ? "checked='checked'" : ""
     }
   }
 
