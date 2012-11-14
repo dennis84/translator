@@ -5,6 +5,7 @@ GET     /:project/user              translator.controllers.UserController.curren
 POST    /authenticate               translator.controllers.UserController.authenticate
 DELETE  /logout                     translator.controllers.UserController.logout
 GET     /:project/users             translator.controllers.UserController.list(project)
+POST    /:project/users             translator.controllers.UserController.create(project)
 
 GET     /projects                   translator.controllers.ProjectController.list
 

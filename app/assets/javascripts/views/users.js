@@ -14,6 +14,7 @@ define([
 
     initialize: function () {
       this.collection.on("reset", this.render, this)
+      this.collection.on("add", this.add, this)
     },
 
     render: function () {
@@ -31,8 +32,13 @@ define([
     create: function (e) {
       e.preventDefault()
       var model = new User
+        , view  = this
+
       window.app.removePane(1)
-      window.userController.edit(user)
+      window.userController.edit(model)
+      model.on("sync", function () {
+        view.collection.add(model)
+      }, this)
     },
 
     addUser: function (e) {

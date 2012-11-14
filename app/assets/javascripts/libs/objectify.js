@@ -10,7 +10,7 @@
       this.checked = true
       this.value = "false"
     })
-
+    
     var arr = _.reduce(this.serializeArray(), function (memo, field) {
       if (_.has(memo, field.name)) {
         var value = memo[field.name]

@@ -14,6 +14,7 @@ import translator.forms._
 object UserController extends BaseController {
 
   lazy val loginForm = DataForm.login
+  lazy val createForm = DataForm.createUser
 
   def authenticate = OpenIO { implicit ctx =>
     loginForm.bindFromRequest.fold(
@@ -43,6 +44,23 @@ object UserController extends BaseController {
       JsonOk(project.contributors.map { user =>
         user.toMap ++ Map("roles" -> user.roles(project))
       })
+    } getOrElse JsonNotFound
+  }
+
+  def create(project: String) = SecuredIO { implicit ctx =>
+    ctx.projects.find(_.id == project) map { project =>
+      createForm.bindFromRequest.fold(
+        formWithErrors => JsonBadRequest(Map("error" -> "fail")),
+        formData => {
+          val created = User(
+            formData._1,
+            formData._2,
+            formData._3.map(Role(_, project.id))
+          )
+          UserDAO.insert(created)
+          JsonOk(created.toMap)
+        }
+      )
     } getOrElse JsonNotFound
   }
 }

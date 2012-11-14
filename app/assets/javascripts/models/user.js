@@ -2,7 +2,15 @@ define([], function () {
 
   var module = Backbone.Model.extend({
     url: function () {
-      return "/users"
+      if (window.project.isNew()) {
+        throw new Error("There must be a current project")
+      }
+
+      if (true === this.isNew()) {
+        return "/" + window.project.id + "/users"
+      }
+
+      return "/" + window.project.id + "/users/" + this.id
     },
 
     current: function (func) {

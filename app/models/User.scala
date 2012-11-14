@@ -21,5 +21,4 @@ case class User(
 
 case class Role(
   val role: String,
-  val userId: ObjectId,
   val projectId: ObjectId)
