@@ -11,7 +11,10 @@ case class Project(
 
   def admin = UserDAO.findOneById(adminId)
 
+  def contributors = UserDAO.findAllByProject(this)
+
   def toMap = Map(
     "id" -> id.toString,
-    "name" -> name)
+    "name" -> name,
+    "admin" -> admin.map(_.toMap).getOrElse(Map()))
 }

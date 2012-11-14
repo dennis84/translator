@@ -11,6 +11,8 @@ case class User(
   val email: Option[String] = None,
   @Key("_id") val id: ObjectId = new ObjectId) {
 
+  def roles(project: Project): List[String] = roles filter (_.projectId == project.id) map (_.role)
+
   def toMap = Map(
     "id" -> id.toString,
     "username" -> username,

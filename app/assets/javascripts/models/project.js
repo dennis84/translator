@@ -7,7 +7,8 @@ define([], function () {
 
     defaults: {
       id: null,
-      name: ""
+      name: "",
+      admin: {}
     }
   })
 

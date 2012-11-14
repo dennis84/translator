@@ -15,4 +15,6 @@ object UserDAO
 
   def findOneByUsernameAndPassword(username: String, password: String): Option[User] =
     findOne(MongoDBObject("username" -> username, "password" -> password))
+
+  def findAllByProject(project: Project) = find(MongoDBObject("roles.projectId" -> project.id)) toList
 }

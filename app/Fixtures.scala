@@ -11,15 +11,15 @@ trait Fixtures {
   private val _user2 = User("frank.drebin.1984@gmail.com", "demo" sha512, Nil, None)
   
   val project1 = Project("acme", _user1.id, "12345678")
-  val project2 = Project("foo", _user1.id, "123456")
+  val project2 = Project("foo", _user2.id, "123456")
   
   val role1 = Role("ROLE_ADMIN", _user1.id, project1.id)
-  val role2 = Role("ROLE_AUTHOR", _user2.id, project1.id)
-  val role3 = Role("ROLE_ADMIN", _user1.id, project2.id)
-  val role4 = Role("ROLE_AUTHOR", _user2.id, project2.id)
+  val role2 = Role("ROLE_AUTHOR", _user1.id, project2.id)
+  val role3 = Role("ROLE_AUTHOR", _user2.id, project1.id)
+  val role4 = Role("ROLE_ADMIN", _user2.id, project2.id)
 
-  def user1 = _user1.copy(roles = List(role1, role3))
-  def user2 = _user2.copy(roles = List(role2, role4))
+  def user1 = _user1.copy(roles = List(role1, role2))
+  def user2 = _user2.copy(roles = List(role3, role4))
 
   lazy val language1 = Language("en", "English", project1.id)
   lazy val language2 = Language("de", "German", project1.id)

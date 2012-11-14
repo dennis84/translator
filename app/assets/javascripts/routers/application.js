@@ -6,7 +6,8 @@ define([], function () {
       "!/:project":           "project",
       "!/:project/entries":   "entries",
       "!/:project/languages": "languages",
-      "!/:project/import":    "importer"
+      "!/:project/import":    "importer",
+      "!/:project/users":     "users"
     },
 
     dashboard: function () {
@@ -35,8 +36,15 @@ define([], function () {
       })
     },
 
+    users: function (projectId) {
+      this.withProject(projectId, function (project) {
+        return window.userController.list()
+      })
+    },
+
     withProject: function (id, func) {
       var model = window.projectList.get(id)
+      window.user.currentByProject(id)
 
       if (undefined !== model) {
         window.project.set(model)

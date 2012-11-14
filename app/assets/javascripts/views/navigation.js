@@ -1,8 +1,9 @@
 define([
   "collections/project",
   "text!templates/navigation.html",
-  "text!templates/navigation_project.html"
-], function (ProjectCollection, navigationTemplate, navigationProjectTemplate) {
+  "text!templates/navigation_project.html",
+  "text!templates/navigation_admin.html"
+], function (ProjectCollection, navigationTemplate, navigationProjectTemplate, navigationAdminTemplate) {
 
   var module = Backbone.View.extend({
     id: "navigation",
@@ -42,9 +43,17 @@ define([
     },
 
     updateProject: function (model) {
-      var template = $(_.template(navigationProjectTemplate, model.toJSON())).addClass("nav-project")
+      var projectTemplate = $(_.template(navigationProjectTemplate, model.toJSON())).addClass("nav-project")
       this.$el.find(".nav-project").remove()
-      this.$el.append(template)
+      this.$el.append(projectTemplate)
+
+      if (true === window.user.equals(window.project.get("admin"))) {
+        var adminTemplate = $(_.template(navigationAdminTemplate, model.toJSON())).addClass("nav-admin")
+        this.$el.find(".nav-admin").remove()
+        this.$el.append(adminTemplate)
+      } else {
+        this.$el.find(".nav-admin").remove()
+      }
     }
   })
 

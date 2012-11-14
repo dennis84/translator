@@ -1,0 +1,7 @@
+<td><code>{{ username }}</code></td>
+<td>
+  {% _.each(roles, function (role) { %}
+  <code>{{ role }}</code>
+  {% }) %}
+</td>
+<td class="open"><i class="icon-chevron-right"></i></td>

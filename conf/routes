@@ -1,8 +1,10 @@
 GET     /                           translator.controllers.PageController.home
 
 GET     /user                       translator.controllers.UserController.current
+GET     /:project/user              translator.controllers.UserController.currentByProject(project)
 POST    /authenticate               translator.controllers.UserController.authenticate
 DELETE  /logout                     translator.controllers.UserController.logout
+GET     /:project/users             translator.controllers.UserController.list(project)
 
 GET     /projects                   translator.controllers.ProjectController.list
 

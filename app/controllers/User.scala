@@ -27,8 +27,22 @@ object UserController extends BaseController {
   }
 
   def current = SecuredIO { implicit ctx =>
-    ctx.user map { user =>
-      JsonOk(user.toMap)
-    } getOrElse JsonUnauthorized
+    ctx.user map (user => JsonOk(user.toMap)) getOrElse JsonUnauthorized
+  }
+
+  def currentByProject(project: String) = SecuredIO { implicit ctx =>
+    ctx.projects.find(_.id == project) map { project =>
+      ctx.user map { user =>
+        JsonOk(user.toMap ++ Map("roles" -> user.roles(project)))
+      } getOrElse JsonUnauthorized
+    } getOrElse JsonNotFound
+  }
+
+  def list(project: String) = SecuredIO { implicit ctx =>
+    ctx.projects.find(_.id == project) map { project =>
+      JsonOk(project.contributors.map { user =>
+        user.toMap ++ Map("roles" -> user.roles(project))
+      })
+    } getOrElse JsonNotFound
   }
 }

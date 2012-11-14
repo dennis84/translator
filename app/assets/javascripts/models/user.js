@@ -6,41 +6,53 @@ define([], function () {
     },
 
     current: function (func) {
-      var self = this
+      var model = this
       $.getJSON("/user", function (data) {
-        self.set(data)
+        model.set(data)
         window.authenticated = true
       }).complete(function () {
-        func(self)
+        func(model)
+      })
+    },
+
+    currentByProject: function (project) {
+      var model = this
+      $.getJSON("/" + project + "/user", function (data) {
+        model.set(data)
       })
     },
 
     login: function () {
-      var self = this
+      var model = this
       $.postJSON("/authenticate", this.toJSON(), function (data) {
         window.authenticated = true
-        self.set("password", "")
-        self.set("password2", "")
-        self.trigger("logged_in", self)
+        model.set("password", "")
+        model.set("password2", "")
+        model.trigger("logged_in", model)
       })
     },
 
     logout: function () {
-      var self = this
+      var model = this
       $.deleteJSON("/logout", this.toJSON(), function (data) {
         window.authenticated = false
-        self.set("username", "")
-        self.set("password", "")
-        self.set("password2", "")
-        self.trigger("logged_out", self)
+        model.set("username", "")
+        model.set("password", "")
+        model.set("password2", "")
+        model.trigger("logged_out", model)
       })
+    },
+
+    equals: function (other) {
+      return this.id === other.id
     },
 
     defaults: {
       id: null,
       username: "",
       password: "",
-      password2: ""
+      password2: "",
+      roles: []
     }
   })
 
