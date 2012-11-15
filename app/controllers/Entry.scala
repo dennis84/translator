@@ -52,8 +52,8 @@ object EntryController extends BaseController {
             var updated = entry.copy(
               name = formData._1,
               description = formData._2,
-              translations = (formData._3 map { data =>
-                new Translation(data._1, data._2, ctx.user.get.id, true)
+              translations = entry.translations ++ (formData._3 map { data =>
+                Translation(data._1, data._2, ctx.user.get.id, false)
               })
             )
 

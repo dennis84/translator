@@ -6,9 +6,18 @@
 
     <div class="padding10">
       {% _.each(translations, function (translation, index) { %}
+      {% if (translation.active) { %}
       <input type="hidden" name="translations[{{ index }}].code" value="{{ translation.code }}">
       <label for="translation[{{ index }}].text">{{ translation.code }}</label>
       <textarea name="translations[{{ index }}].text">{{ translation.text }}</textarea>
+      {% } else { %}
+      <div class="well translation-request">
+        <p>{{ translation.text }}</p>
+        <small>by {{ translation.author }}</small>
+        <a href="#">accept</a>
+        <a href="#">delete</a>
+      </div> 
+      {% } %}
       {% }) %}
     </div>
   </div>

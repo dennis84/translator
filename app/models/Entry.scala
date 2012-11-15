@@ -9,10 +9,12 @@ case class Translation(
   val authorId: ObjectId,
   val active: Boolean = false) {
 
+  def author = UserDAO.findOneById(authorId)
+
   def toMap = Map(
     "code" -> code,
     "text" -> text,
-    "author" -> "",
+    "author" -> author.map(_.username).getOrElse("unknown"),
     "active" -> active)
 }
 
@@ -29,9 +31,9 @@ case class Entry(
 
   def project = ProjectDAO.findOneById(projectId) get
 
-  def translationsFixed = translations ++ LanguageDAO.findAllByProjectId(projectId).map(_.code).diff(translations.map(_.code)).map { code =>
+  def translationsFixed = (translations ++ LanguageDAO.findAllByProjectId(projectId).map(_.code).diff(translations.map(_.code)).map { code =>
     Translation(code, "", project.adminId, true)
-  }
+  }) sortBy (_.code)
 
   def progress = {
     val languages = LanguageDAO.findAllByProjectId(projectId)

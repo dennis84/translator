@@ -38,6 +38,26 @@ define([
       return this
     },
 
+    changedTranslations: function (diff) {
+      var val
+        , changed = false
+        , filterTranslation = function (translation) {
+            return {
+              "code": translation.code,
+              "text": translation.text
+            }
+          }
+        , oldTranslations = _.map(this._previousAttributes.translations, filterTranslation)
+        , newTranslations = _.map(diff.translations, filterTranslation)
+
+      for (var trans in newTranslations) {
+        if (_.isEqual(oldTranslations[trans], (val = newTranslations[trans]))) continue
+        (changed || (changed = []))[trans] = val
+      }
+
+      return changed
+    },
+
     defaults: {
       "id": null,
       "name": "",

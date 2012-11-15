@@ -18,9 +18,14 @@ define([
 
     save: function (e) {
       e.preventDefault()
-      this.model.set(this.$el.find("form").serializeObject())
-      this.model.save()
-      window.app.addMessage("success", "Saved")
+      var data = this.$el.find("form").serializeObject()
+        , changes = this.model.changedTranslations(data)
+
+      if (false !== changes) {
+        this.model.set("translations", changes)
+        this.model.save()
+        window.app.addMessage("success", "Saved")
+      }
     },
 
     cancel: function (e) {
