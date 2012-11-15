@@ -8,7 +8,9 @@ define([
 
     events: {
       "click .save": "save",
-      "click .cancel": "cancel"
+      "click .cancel": "cancel",
+      "click .accept": "accept",
+      "click .reject": "reject"
     },
 
     render: function () {
@@ -31,6 +33,21 @@ define([
     cancel: function (e) {
       e.preventDefault()
       this.$el.remove()
+    },
+
+    accept: function (e) {
+      e.preventDefault()
+      console.log("accept")
+    },
+
+    reject: function (e) {
+      e.preventDefault()
+      var id = $(e.currentTarget).closest(".translation-request").attr("data-id")
+      var translations = _.filter(this.model.get("translations"), function (translation) {
+        return translation.id !== id
+      })
+
+      this.model.set("translations", translations)
     }
   })
 

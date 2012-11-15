@@ -7,11 +7,13 @@ case class Translation(
   val code: String,
   val text: String,
   val authorId: ObjectId,
-  val active: Boolean = false) {
+  val active: Boolean = false,
+  val id: String = new ObjectId().toString) {
 
   def author = UserDAO.findOneById(authorId)
 
   def toMap = Map(
+    "id" -> id,
     "code" -> code,
     "text" -> text,
     "author" -> author.map(_.username).getOrElse("unknown"),
