@@ -3,25 +3,6 @@
     <div class="padding10">
       <input type="text" name="name" value="{{ name }}" placeholder="Name"/>
     </div>
-
-    <div class="padding10">
-      {% _.each(translations, function (translation, index) { %}
-      {% if (translation.active) { %}
-      <div class="translation" data-id="{{ translation.id }}">
-        <input type="hidden" name="translations[{{ index }}].code" value="{{ translation.code }}">
-        <label for="translation[{{ index }}].text">{{ translation.code }}</label>
-        <textarea name="translations[{{ index }}].text">{{ translation.text }}</textarea>
-      </div>
-      {% } else { %}
-      <div class="translation-request" data-id="{{ translation.id }}">
-        <p>{{ translation.text }}</p>
-        <small>by {{ translation.author }}</small>
-        <a class="accept" href="#">accept</a>
-        <a class="reject" href="#">delete</a>
-      </div> 
-      {% } %}
-      {% }) %}
-    </div>
   </div>
 
   <div class="form-actions">

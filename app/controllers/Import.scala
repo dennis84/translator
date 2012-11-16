@@ -15,25 +15,26 @@ object ImportController extends BaseController {
   ))
 
   def entries(project: String) = SecuredIO { implicit ctx =>
-    ctx.projects.find(_.id == project) map { project =>
-      form.bindFromRequest.fold(
-        formWithErrors => JsonBadRequest(Map("error" -> "form error")),
-        formData => {
-          Parser.parse(formData._1, formData._2) map { row =>
-            EntryDAO.findOneByNameAndProject(row._1, project) map { entry =>
-              if (!entry.translations.exists(_.code == formData._3)) {
-                val updated = entry.copy(translations = entry.translations ++ List(Translation(formData._3, row._2, ctx.user.get.id, true)))
-                EntryDAO.save(updated)
-              }
-            } getOrElse {
-              val created = Entry(row._1, "", project.id, List(Translation(formData._3, row._2, ctx.user.get.id, true)))
-              EntryDAO.insert(created)
-            }
-          }
+    JsonOk(List())
+    //ctx.projects.find(_.id == project) map { project =>
+      //form.bindFromRequest.fold(
+        //formWithErrors => JsonBadRequest(Map("error" -> "form error")),
+        //formData => {
+          //Parser.parse(formData._1, formData._2) map { row =>
+            //EntryDAO.findOneByNameAndProject(row._1, project) map { entry =>
+              //if (!entry.translations.exists(_.code == formData._3)) {
+                //val updated = entry.copy(translations = entry.translations ++ List(Translation(formData._3, row._2, ctx.user.get.id, true)))
+                //EntryDAO.save(updated)
+              //}
+            //} getOrElse {
+              //val created = Entry(row._1, "", project.id, List(Translation(formData._3, row._2, ctx.user.get.id, true)))
+              //EntryDAO.insert(created)
+            //}
+          //}
 
-          JsonOk(List())
-        }
-      )
-    } getOrElse JsonNotFound
+          //JsonOk(List())
+        //}
+      //)
+    //} getOrElse JsonNotFound
   }
 }

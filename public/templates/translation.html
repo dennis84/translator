@@ -1,0 +1,14 @@
+{% if (active) { %}
+<div class="translation" data-id="{{ id }}">
+  <input type="hidden" name="translations[{{ id }}].code" value="{{ code }}">
+  <label for="translation[{{ id }}].text">{{ code }}</label>
+  <textarea name="translations[{{ id }}].text">{{ text }}</textarea>
+</div>
+{% } else { %}
+<div class="translation-request" data-id="{{ id }}">
+  <p>{{ text }}</p>
+  <small>by {{ author }}</small>
+  <a class="accept" href="#">accept</a>
+  <a class="reject" href="#">delete</a>
+</div> 
+{% } %}

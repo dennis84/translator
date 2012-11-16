@@ -16,6 +16,8 @@ POST    /:project/entries           translator.controllers.EntryController.creat
 PUT     /:project/entries/:id       translator.controllers.EntryController.update(project, id)
 DELETE  /:project/entries/:id       translator.controllers.EntryController.delete(project, id)
 
+GET     /:entry/translations        translator.controllers.TranslationController.list(entry)
+
 GET     /:project/languages         translator.controllers.LanguageController.list(project)
 POST    /:project/languages         translator.controllers.LanguageController.create(project)
 PUT     /:project/languages/:id     translator.controllers.LanguageController.update(project, id)

@@ -30,3 +30,9 @@ object EntryDAO
 
   def findAllByProjectAndIds(project: Project, ids: List[ObjectId]) = find(MongoDBObject("projectId" -> project.id, "_id" -> MongoDBObject("$in" -> ids))) toList
 }
+
+object TranslationDAO
+  extends SalatDAO[Translation, ObjectId](collection = MongoConnection()("translator")("translations")) {
+
+  def findAllByIds(ids: List[ObjectId]) = find(MongoDBObject("_id" -> MongoDBObject("$in" -> ids))) toList
+}

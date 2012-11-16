@@ -1,6 +1,8 @@
 define([
+  "collections/translation",
+  "views/translations",
   "text!templates/entry_edit.html"
-], function (entryEditTemplate) {
+], function (TranslationCollection, TranslationsView, entryEditTemplate) {
 
   var module = Backbone.View.extend({
     id: "entry-edit",
@@ -11,6 +13,14 @@ define([
       "click .cancel": "cancel",
       "click .accept": "accept",
       "click .reject": "reject"
+    },
+
+    initialize: function () {
+      var translationCollection = new TranslationCollection
+      this.translations = new TranslationsView({ collection: translationCollection })
+      
+      translationCollection.entry = this.model
+      translationCollection.fetch()
     },
 
     render: function () {

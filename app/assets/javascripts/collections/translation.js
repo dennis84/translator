@@ -6,7 +6,11 @@ define([
     model: Translation,
 
     url: function () {
-      return "/translation"
+      if (undefined === this.entry) {
+        throw new Error("There must be an entry set.")
+      }
+
+      return "/" + this.entry.id + "/translations"
     }
   })
 
