@@ -4,16 +4,12 @@ define([
 ], function (TranslationView, translationsTemplate) {
 
   var module = Backbone.View.extend({
-    id: "translations",
-
     initialize: function () {
       this.collection.on("reset", this.reset, this)
     },
 
     render: function () {
       this.$el.html(_.template(translationsTemplate, {}))
-      $(".scollable").append(this.el)
-      return this
     },
 
     reset: function () {

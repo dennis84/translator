@@ -16,15 +16,21 @@ define([
     },
 
     initialize: function () {
-      var translationCollection = new TranslationCollection
-      this.translations = new TranslationsView({ collection: translationCollection })
       
-      translationCollection.entry = this.model
-      translationCollection.fetch()
     },
 
     render: function () {
       this.$el.html(_.template(entryEditTemplate, this.model.toJSON()))
+  
+      var translationCollection = new TranslationCollection
+      this.translationsView = new TranslationsView({
+        collection: translationCollection,
+        el: this.$("#translation-container")
+      })
+
+      translationCollection.entry = this.model
+      translationCollection.fetch()
+      
       window.app.addPane(this.el, "entry-edit", "spaceless6")
     },
 
