@@ -8,11 +8,9 @@ import translator.models._
 
 object TranslationController extends BaseController {
 
-  lazy val form = Form(single(
-    "translations" -> Forms.list(tuple(
-      "code" -> nonEmptyText,
-      "text" -> text
-    ))
+  lazy val form = Form(tuple(
+    "code" -> nonEmptyText,
+    "text" -> text
   ))
 
   def list(entryId: String) = SecuredIO { implicit ctx =>
@@ -28,7 +26,21 @@ object TranslationController extends BaseController {
     JsonOk(List())
   }
 
-  def update = SecuredIO { implicit ctx =>
-    JsonOk(List())
+  def update(entryId: String, id: String) = SecuredIO { implicit ctx =>
+    (for {
+      entry   <- EntryDAO.findOneById(entryId)
+      project <- ctx.projects.find(_.id == entry.projectId)
+      trans   <- TranslationDAO.findOneById(id)
+    } yield {
+      form.bindFromRequest.fold(
+        formWithErrors => JsonBadRequest(Map("error" -> "fail")),
+        formData => {
+          var created = Translation(formData._1, formData._2, ctx.user.get.id, false)
+          TranslationDAO.insert(created)
+          EntryDAO.save(entry.copy(translationIds = entry.translationIds ++ List(created.id)))
+          JsonOk(created.toMap)
+        }
+      )
+    }) getOrElse JsonNotFound
   }
 }

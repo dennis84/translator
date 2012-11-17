@@ -13,6 +13,13 @@ define([], function () {
       return "/" + this.entry.id + "/translations/" + this.id
     },
 
+    hasChanged: function (diff) {
+      return false === _.isEqual({
+        code: this.get("code"),
+        text: this.get("text")
+      }, diff)
+    },
+
     defaults: {
       id: null,
       code: "",

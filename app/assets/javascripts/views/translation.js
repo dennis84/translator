@@ -3,11 +3,24 @@ define([
 ], function (translationTemplate) {
 
   var module = Backbone.View.extend({
-    className: "translation",
+    events: {
+      "click .accept": "accept",
+      "click .reject": "reject"
+    },
 
     render: function () {
       this.$el.html(_.template(translationTemplate, this.model.toJSON()))
       return this
+    },
+
+    accept: function (e) {
+      e.preventDefault()
+      console.log("accept")
+    },
+
+    reject: function (e) {
+      e.preventDefault()
+      console.log("reject")
     }
   })
 

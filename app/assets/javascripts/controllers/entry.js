@@ -1,8 +1,9 @@
 define([
   "collections/entry",
+  "collections/translation",
   "views/entries",
-  "views/entry_edit"
-], function (EntryCollection, EntriesView, EntryEditView) {
+  "views/translations"
+], function (EntryCollection, TranslationCollection, EntriesView, TranslationsView) {
 
   var module = {
     list: function () {
@@ -16,8 +17,11 @@ define([
     },
 
     edit: function (model) {
-      var view = new EntryEditView({ model: model })
-      view.render()
+      var coll = new TranslationCollection
+      coll.entry = model
+
+      var translations = new TranslationsView({ collection: coll })
+      coll.fetch()
     }
   }
 
