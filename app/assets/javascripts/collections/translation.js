@@ -20,26 +20,29 @@ define([
 
     fetchFixed: function () {
       var collection = this
-      var languages = new LanguageCollection
-      var languagesReady = false
-      var translationsReady = false
-      var handle = function () {
-        if (translationsReady && languagesReady) {
-          var langCodes = _.map(languages.models, function (lang) {
-            return lang.get("code")
-          })
+        , languages = new LanguageCollection
+        , languagesReady = false
+        , translationsReady = false
+        , handle = function () {
+            if (!translationsReady || !languagesReady) {
+              return
+            }
 
-          var transCodes = _.map(collection.models, function (trans) {
-            return trans.get("code")
-          })
+            var langCodes = _.map(languages.models, function (lang) {
+                  return lang.get("code")
+                })
+              , transCodes = _.map(collection.models, function (trans) {
+                  return trans.get("code")
+                })
 
-          _.map(_.difference(langCodes, transCodes), function (code) {
-            collection.add(new Translation({ "code": code, "active": true }))
-          })
+            _.map(_.difference(langCodes, transCodes), function (code, index) {
+              var trans = new Translation({ "code": code, "active": true })
+              trans.cid = "fixed-" + index
+              collection.add(trans)
+            })
 
-          collection.trigger("fetched_fixed", collection)
-        }
-      }
+            collection.trigger("fetched_fixed", collection)
+          }
 
       this.on("reset", function () {
         translationsReady = true

@@ -9,7 +9,11 @@ define([
     },
 
     render: function () {
-      this.$el.html(_.template(translationTemplate, this.model.toJSON()))
+      var data = _.extend(this.model.toJSON(), {
+        "id": this.model.id || this.model.cid
+      })
+
+      this.$el.html(_.template(translationTemplate, data))
       return this
     },
 

@@ -39,6 +39,10 @@ define([
 
       _.each(data.translations, function (item, id) {
         var translation = collection.get(id)
+        if (undefined === translation) {
+          translation = collection.getByCid(id)
+        }
+
         if (true === translation.hasChanged(item)) {
           if (window.user.isAdmin()) {
             translation.set(item)

@@ -26,11 +26,13 @@ object TranslationController extends BaseController {
     (for {
       entry   <- EntryDAO.findOneById(entryId)
       project <- ctx.projects.find(_.id == entry.projectId)
+      user    <- ctx.user
     } yield {
       form.bindFromRequest.fold(
         formWithErrors => JsonBadRequest(Map("error" -> "fail")),
         formData => {
-          var created = Translation(formData._1, formData._2, ctx.user.get.id, false)
+          val active  = if (user.roles(project).contains("ROLE_ADMIN")) true else false
+          val created = Translation(formData._1, formData._2, user.id, active)
           TranslationDAO.insert(created)
           EntryDAO.save(entry.copy(translationIds = entry.translationIds ++ List(created.id)))
           JsonOk(created.toMap)
