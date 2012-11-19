@@ -13,9 +13,16 @@ define([], function () {
       return "/" + this.entry.id + "/translations/" + this.id
     },
 
+    clone: function() {
+      var clone = new this.constructor(this.attributes)
+      clone.entry = this.entry
+      clone.id = null
+
+      return clone
+    },
+
     hasChanged: function (diff) {
       return false === _.isEqual({
-        code: this.get("code"),
         text: this.get("text")
       }, diff)
     },

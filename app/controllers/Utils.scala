@@ -34,7 +34,7 @@ trait Actions extends Controller with Results with RequestGetter {
   }
 
   def SecuredIO(f: Context[AnyContent] => Result): Action[AnyContent] = SecuredIO(BodyParsers.parse.anyContent)(f)
-
+  
   def SecuredIO[A](p: BodyParser[A])(f: Context[A] => Result): Action[A] = OpenIO(p) { implicit ctx =>
     (for {
       token <- get("token")

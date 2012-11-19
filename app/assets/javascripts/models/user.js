@@ -55,6 +55,10 @@ define([], function () {
       return this.id === other.id
     },
 
+    isAdmin: function () {
+      return _.include(this.get("roles"), "ROLE_ADMIN")
+    },
+
     defaults: {
       id: null,
       username: "",

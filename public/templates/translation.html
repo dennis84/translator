@@ -1,14 +1,15 @@
 {% if (active) { %}
 <div class="translation">
   <label>{{ code }}</label>
-  <textarea rows="1" type="text" disabled>{{ text }}</textarea>
-  <textarea name="text" rows="1" type="text" placeholder="Enter your translation suggestion"></textarea>
+  <textarea name="translations[{{ id }}].text" rows="1" type="text" placeholder="Enter your translation suggestion">{{ text }}</textarea>
 </div>
 {% } else { %}
 <div class="translation-request">
   <blockquote>
     <p>{{ text }}</p>
     <small>by <cite>{{ author }}</cite></small>
+    <a href="#" class="accept">accept</a>
+    <a href="#" class="reject">reject</a>
   </blockquote>
 </div>
 {% } %}

@@ -22,15 +22,10 @@ object TranslationController extends BaseController {
     }) getOrElse JsonNotFound
   }
 
-  def create = SecuredIO { implicit ctx =>
-    JsonOk(List())
-  }
-
-  def update(entryId: String, id: String) = SecuredIO { implicit ctx =>
+  def create(entryId: String) = SecuredIO { implicit ctx =>
     (for {
       entry   <- EntryDAO.findOneById(entryId)
       project <- ctx.projects.find(_.id == entry.projectId)
-      trans   <- TranslationDAO.findOneById(id)
     } yield {
       form.bindFromRequest.fold(
         formWithErrors => JsonBadRequest(Map("error" -> "fail")),
@@ -41,6 +36,39 @@ object TranslationController extends BaseController {
           JsonOk(created.toMap)
         }
       )
+    }) getOrElse JsonNotFound
+  }
+
+  def update(entryId: String, id: String) = SecuredIO { implicit ctx =>
+    (for {
+      entry   <- EntryDAO.findOneById(entryId)
+      project <- ctx.projects.find(_.id == entry.projectId)
+      trans   <- TranslationDAO.findOneById(id)
+      user    <- ctx.user
+      if (user.roles(project).contains("ROLE_ADMIN"))
+    } yield {
+      form.bindFromRequest.fold(
+        formWithErrors => JsonBadRequest(Map("error" -> "fail")),
+        formData => {
+          var updated = trans.copy(text = formData._2)
+          TranslationDAO.save(updated)
+          JsonOk(updated.toMap)
+        }
+      )
+    }) getOrElse JsonNotFound
+  }
+
+  def delete(entryId: String, id: String) = SecuredIO { implicit ctx =>
+    (for {
+      entry   <- EntryDAO.findOneById(entryId)
+      project <- ctx.projects.find(_.id == entry.projectId)
+      trans   <- TranslationDAO.findOneById(id)
+      user    <- ctx.user
+      if (user.roles(project).contains("ROLE_ADMIN"))
+    } yield {
+      EntryDAO.save(entry.copy(translationIds = entry.translationIds filterNot (_ == trans.id)))
+      TranslationDAO.remove(trans)
+      JsonOk(trans.toMap)
     }) getOrElse JsonNotFound
   }
 }

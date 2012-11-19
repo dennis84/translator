@@ -33,13 +33,21 @@ define([
 
     save: function (e) {
       e.preventDefault()
-      var collection = this.collection
-      var data = this.$el.find("form").serializeObject()
-        _.each(data.translations, function (item, id) {
+      var view = this
+        , collection = this.collection
+        , data = this.$el.find("form").serializeObject()
+
+      _.each(data.translations, function (item, id) {
         var translation = collection.get(id)
         if (true === translation.hasChanged(item)) {
-          translation.set(item)
-          translation.save()
+          if (window.user.isAdmin()) {
+            translation.set(item)
+            translation.save()
+          } else {
+            var clone = translation.clone()
+            clone.set(item)
+            collection.create(clone)
+          }
         }
       })
     },

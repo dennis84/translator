@@ -20,7 +20,8 @@ define([
 
     reject: function (e) {
       e.preventDefault()
-      console.log("reject")
+      this.model.destroy()
+      this.$el.remove()
     }
   })
 
