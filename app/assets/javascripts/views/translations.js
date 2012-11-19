@@ -13,7 +13,7 @@ define([
     },
 
     initialize: function () {
-      this.collection.on("reset", this.reset, this)
+      this.collection.on("fetched_fixed", this.reset, this)
       this.render()
     },
 

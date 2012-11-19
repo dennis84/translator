@@ -18,7 +18,7 @@ object TranslationController extends BaseController {
       entry   <- EntryDAO.findOneById(entryId)
       project <- ctx.projects.find(_.id == entry.projectId)
     } yield {
-      JsonOk(entry.translationsFixed map (_.toMap))
+      JsonOk(entry.translations map (_.toMap))
     }) getOrElse JsonNotFound
   }
 

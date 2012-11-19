@@ -21,7 +21,7 @@ define([
       coll.entry = model
 
       var translations = new TranslationsView({ collection: coll })
-      coll.fetch()
+      coll.fetchFixed()
     }
   }
 
