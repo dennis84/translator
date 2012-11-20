@@ -67,16 +67,15 @@ object EntryController extends BaseController {
   }
 
   def search(project: String) = SecuredIO { implicit ctx =>
-    JsonOk(List())
-    //ctx.projects.find(_.id == project) map { project =>
-      //import org.elasticsearch.index.query._, FilterBuilders._, QueryBuilders._
-      //import org.elasticsearch.search._, facet._, terms._, sort._, SortBuilders._, builder._
+    ctx.projects.find(_.id == project) map { project =>
+      import org.elasticsearch.index.query._, FilterBuilders._, QueryBuilders._
+      import org.elasticsearch.search._, facet._, terms._, sort._, SortBuilders._, builder._
 
-      //get("term") map { term =>
-        //JsonOk(EntryDAO.findAllByProjectAndIds(project, Search.indexer.search(query = queryString(term)).hits.hits.toList.map { searchResponse =>
-          //new ObjectId(searchResponse.id)
-        //}).map(_.toMap))
-      //} getOrElse JsonOk(List())
-    //} getOrElse JsonNotFound
+      get("term") map { term =>
+        JsonOk(EntryDAO.findAllByProjectAndIds(project, Search.indexer.search(query = queryString(term)).hits.hits.toList.map { searchResponse =>
+          new ObjectId(searchResponse.id)
+        }).map(_.toMap))
+      } getOrElse JsonOk(List())
+    } getOrElse JsonNotFound
   }
 }

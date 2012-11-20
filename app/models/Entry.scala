@@ -52,4 +52,10 @@ case class Entry(
     "name" -> name,
     "description" -> description,
     "progress" -> progress)
+
+  def toSearchMap = Map(
+    "id" -> id.toString,
+    "name" -> name,
+    "description" -> description,
+    "translations" -> translations.map(_.toMap))
 }
