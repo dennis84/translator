@@ -14,6 +14,11 @@ define([
       coll.filter.on("change", function () {
         coll.fetch({ data: coll.filter.toJSON() })
       })
+
+      var translations = new TranslationCollection
+      translations.on("add", function () {
+        coll.fetch()
+      })
     },
 
     edit: function (model) {

@@ -4,6 +4,10 @@ define([
 
   var module = {
     dashboard: function () {
+      var obj = Backbone.Object.extend({
+      })
+      
+      console.log(new obj())
       var view = new DashboardView
       view.render()
     }
