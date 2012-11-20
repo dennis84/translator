@@ -10,6 +10,7 @@ define([
 
     events: {
       "click .create": "create",
+      "click .remove": "remove",
       "click #clear-filter": "clearFilter",
       "keyup .search": "search"
     },
@@ -68,6 +69,18 @@ define([
 
       window.app.removePane(1)
       window.entryController.create()
+    },
+
+    remove: function (e) {
+      e.preventDefault()
+      var view = this
+      this.$(".check input:checked").each(function (i, el) {
+        var entry = $(el).closest("tr")
+        var model = view.collection.get(entry.attr("data-id"))
+        view.collection.remove(model)
+        model.destroy()
+        $(entry).remove()
+      })
     },
 
     clearFilter: function (e) {

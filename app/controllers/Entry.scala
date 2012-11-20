@@ -55,7 +55,17 @@ object EntryController extends BaseController {
     } getOrElse JsonNotFound
   }
 
-  def delete(project: String, id: String) = TODO
+  def delete(project: String, id: String) = SecuredIO { implicit ctx =>
+    (for {
+      entry   <- EntryDAO.findOneById(id)
+      project <- ctx.projects.find(_.id == entry.projectId)
+      user    <- ctx.user
+      if (user.roles(project).contains("ROLE_ADMIN"))
+    } yield {
+      EntryDAO.remove(entry)
+      JsonOk(entry.toMap)
+    }) getOrElse JsonNotFound
+  }
 
   def export(project: String) = SecuredIO { implicit ctx =>
     JsonOk(List())

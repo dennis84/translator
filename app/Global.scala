@@ -37,6 +37,8 @@ object DataFixtures extends Fixtures {
 object SearchFixtures {
 
   def refresh = {
+    Search.reset
+
     EntryDAO.findAll map { entry =>
       Search.indexer.index("translator", "entry", entry.id, Json generate entry.toSearchMap)
     }
