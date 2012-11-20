@@ -6,7 +6,7 @@ define([
   "views/user_add"
 ], function (UserCollection, LoginView, UsersView, UserEditView, UserAddView) {
 
-  var module = {
+  var module = Backbone.Controller.extend({
     login: function () {
       var view = new LoginView({ model: window.user })
       view.render()
@@ -27,7 +27,7 @@ define([
       var view = new UserAddView
       view.render()
     }
-  }
+  })
 
   return module
 })

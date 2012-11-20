@@ -65,17 +65,9 @@ define([
     create: function (e) {
       e.preventDefault()
       var view = this
-        , model = new Entry()
 
-      model.on("filled", function () {
-        window.app.removePane(1)
-        window.entryController.edit(model)
-      })
-      model.fillLanguages()
-      model.on("sync", function (model) {
-        view.collection.add(model)
-        model.off("sync")
-      }, this)
+      window.app.removePane(1)
+      window.entryController.create()
     },
 
     clearFilter: function (e) {

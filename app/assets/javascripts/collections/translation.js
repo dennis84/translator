@@ -42,6 +42,8 @@ define([
             })
 
             collection.trigger("fetched_fixed", collection)
+            collection.off("reset", null, collection)
+            languages.off("reset", null, collection)
           }
 
       this.on("reset", function () {

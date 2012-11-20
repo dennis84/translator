@@ -4,7 +4,7 @@ define([
   "views/language_edit"
 ], function (LanguageCollection, LanguagesView, LanguagesEditView) {
 
-  var module = {
+  var module = Backbone.Controller.extend({
     list: function () {
       var coll = new LanguageCollection
       var view = new LanguagesView({ collection: coll })
@@ -15,7 +15,7 @@ define([
       var view = new LanguagesEditView({ model: model })
       view.render()
     }
-  }
+  })
 
   return module
 })

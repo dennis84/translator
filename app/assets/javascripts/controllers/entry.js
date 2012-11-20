@@ -1,34 +1,51 @@
 define([
+  "models/entry",
   "collections/entry",
   "collections/translation",
   "views/entries",
-  "views/translations"
-], function (EntryCollection, TranslationCollection, EntriesView, TranslationsView) {
+  "views/translations",
+  "views/entry_edit"
+], function (Entry, EntryCollection, TranslationCollection, EntriesView, TranslationsView, EntryEditView) {
 
-  var module = {
+  var module = Backbone.Controller.extend({
+    initialize: function () {
+      this.entries = new EntryCollection
+      this.translations = new TranslationCollection
+    },
+
     list: function () {
-      var coll = new EntryCollection
-      var view = new EntriesView({ collection: coll })
-      coll.fetch()
+      var view = new EntriesView({ collection: this.entries })
+      var controller = this
+      this.entries.fetch()
 
-      coll.filter.on("change", function () {
-        coll.fetch({ data: coll.filter.toJSON() })
+      this.entries.filter.on("change", function () {
+        controller.entries.fetch({ data: controller.entries.filter.toJSON() })
       })
 
-      var translations = new TranslationCollection
-      translations.on("add", function () {
-        coll.fetch()
+      this.translations.on("change", function () {
+        controller.entries.fetch()
       })
     },
 
-    edit: function (model) {
-      var coll = new TranslationCollection
-      coll.entry = model
+    create: function () {
+      var controller = this
+      var model = new Entry
+      var view = new EntryEditView({ model: model })
+      view.render()
 
-      var translations = new TranslationsView({ collection: coll })
-      coll.fetchFixed()
+      model.on("sync", function () {
+        controller.entries.add(model)
+        model.off("sync")
+      }, this)
+    },
+
+    edit: function (model) {
+      this.translations.reset()
+      this.translations.entry = model
+      var view = new TranslationsView({ collection: this.translations })
+      this.translations.fetchFixed()
     }
-  }
+  })
 
   return module
 })

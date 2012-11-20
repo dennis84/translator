@@ -26,14 +26,14 @@ require([
   "controllers/language",
   "controllers/import"
 ], function (User, Project, ProjectCollection, AppRouter, ApplicationView,
-  pageController, userController, projectController, entryController, languageController, importController) {
+  PageController, UserController, ProjectController, EntryController, LanguageController, ImportController) {
 
-  window.pageController = pageController
-  window.userController = userController
-  window.projectController = projectController
-  window.entryController = entryController
-  window.languageController = languageController
-  window.importController = importController
+  window.pageController = new PageController
+  window.userController = new UserController
+  window.projectController = new ProjectController
+  window.entryController = new EntryController
+  window.languageController = new LanguageController
+  window.importController = new ImportController
 
   window.project = new Project
 
