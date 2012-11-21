@@ -35,10 +35,6 @@ case class Entry(
 
   lazy val translations = TranslationDAO.findAllByIds(translationIds)
 
-  lazy val translationsFixed = (translations ++ LanguageDAO.findAllByProjectId(projectId).map(_.code).diff(translations.map(_.code)).map { code =>
-    Translation(code, "", project.adminId, true)
-  }) sortBy (_.code)
-
   lazy val progress = {
     val languages = LanguageDAO.findAllByProjectId(projectId)
 

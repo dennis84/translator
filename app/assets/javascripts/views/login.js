@@ -12,6 +12,7 @@ define([
     render: function () {
       this.$el.html(_.template(loginTemplate, this.model.toJSON()))
       $("body").html(this.el)
+      this.$("input:text:visible:first").focus()
     },
 
     login: function (e) {
