@@ -23,7 +23,7 @@ define([
     ],
 
     initialize: function () {
-      window.projectList.on("reset", this.addProjects, this)
+      window.projects.on("reset", this.addProjects, this)
       window.project.on("change", this.updateProject, this)
     },
 
@@ -34,7 +34,7 @@ define([
 
     addProjects: function () {
       this.$el.find("#nav-list").append("<li class='nav-header'>Projects</li>")
-      window.projectList.each(this.addProject, this)
+      window.projects.each(this.addProject, this)
     },
 
     addProject: function (model, index) {

@@ -12,7 +12,7 @@ define([
 
     render: function () {
       this.$el.html(_.template(userEditTemplate, {}))
-      window.app.addPane(this.el, "user-edit", "spaceless6")
+      return this
     },
 
     save: function (e) {
@@ -22,7 +22,8 @@ define([
         data.roles = [data.roles]
       }
 
-      this.model.save(data)
+      this.model.set(data)
+      this.collection.create(this.model)
     }
   })
 

@@ -2,8 +2,9 @@ define([
   "models/entry",
   "views/entry",
   "views/entry_filter",
+  "views/entry_edit",
   "text!templates/entries.html"
-], function (Entry, EntryView, EntryFilterView, entriesTemplate) {
+], function (Entry, EntryView, EntryFilterView, EntryEditView, entriesTemplate) {
 
   var module = Backbone.View.extend({
     id: "entries",
@@ -65,10 +66,9 @@ define([
 
     create: function (e) {
       e.preventDefault()
-      var view = this
-
+      var entryEdit = new EntryEditView({ model: new Entry, collection: this.collection })
       window.app.removePane(1)
-      window.entryController.create()
+      window.app.addPane(entryEdit.render().el, "entry-edit", "spaceless6")
     },
 
     remove: function (e) {

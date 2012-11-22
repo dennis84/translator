@@ -1,7 +1,8 @@
 define([
+  "models/import",
   "collections/language",
   "text!templates/import.html"
-], function (LanguageCollection, importTemplate) {
+], function (ImportModel, LanguageCollection, importTemplate) {
 
   var module = Backbone.View.extend({
     id: "import",
@@ -11,6 +12,7 @@ define([
     },
 
     initialize: function () {
+      this.model = new ImportModel
       this.languages = new LanguageCollection
       this.languages.on("reset", this.render, this)
       this.languages.fetch()

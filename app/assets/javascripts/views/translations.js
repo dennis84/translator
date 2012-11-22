@@ -19,6 +19,7 @@ define([
 
     render: function () {
       this.$el.html(_.template(translationsTemplate, {}))
+      window.app.removePane(1)
       window.app.addPane(this.el, "translations", "spaceless6")
     },
 

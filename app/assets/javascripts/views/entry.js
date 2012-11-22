@@ -1,6 +1,7 @@
 define([
+  "views/translations",
   "text!templates/entry.html"
-], function (entryTemplate) {
+], function (TranslationsView, entryTemplate) {
 
   var module = Backbone.View.extend({
     tagName: "tr",
@@ -21,8 +22,10 @@ define([
 
     open: function (e) {
       e.preventDefault()
-      window.app.removePane(1)
-      window.entryController.edit(this.model)
+      window.translations.reset()
+      window.translations.entry = this.model
+      var view = new TranslationsView({ collection: window.translations })
+      window.translations.fetchFixed()
     }
   })
 

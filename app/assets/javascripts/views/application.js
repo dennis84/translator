@@ -35,10 +35,6 @@ define([
     addMessage: function (type, message) {
       var message = new Message(type, message)
       var message = message.render().$el.appendTo($("body"))
-
-      //setTimeout(function () {
-        //message.alert("close")
-      //}, 2000)
     }
   })
 

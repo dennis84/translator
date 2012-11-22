@@ -1,8 +1,9 @@
 define([
   "models/language",
   "views/language",
+  "views/language_edit",
   "text!templates/languages.html"
-], function (Language, LanguageView, languagesTemplate) {
+], function (Language, LanguageView, LanguageEditView, languagesTemplate) {
 
   var module = Backbone.View.extend({
     id: "languages",
@@ -30,15 +31,13 @@ define([
 
     create: function (e) {
       e.preventDefault()
-      var view = this
-        , model = new Language
+      var languageEdit = new LanguageEditView({
+        model: new Language,
+        collection: this.collection
+      })
 
       window.app.removePane(1)
-      window.languageController.edit(model)
-      model.on("sync", function (model) {
-        view.collection.add(model)
-        model.off("sync")
-      }, this)
+      window.app.addPane(languageEdit.render().el, "language-create", "spaceless6")
     }
   })
 

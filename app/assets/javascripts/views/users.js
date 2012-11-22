@@ -1,8 +1,10 @@
 define([
   "models/user",
   "views/user",
+  "views/user_edit",
+  "views/user_add",
   "text!templates/users.html"
-], function (User, UserView, usersTemplate) {
+], function (User, UserView, UserEditView, UserAddView, usersTemplate) {
 
   var module = Backbone.View.extend({
     id: "users",
@@ -31,20 +33,24 @@ define([
 
     create: function (e) {
       e.preventDefault()
-      var model = new User
-        , view  = this
+      var userEdit = new UserEditView({
+        model: new User,
+        collection: this.collection
+      })
 
       window.app.removePane(1)
-      window.userController.edit(model)
-      model.on("sync", function () {
-        view.collection.add(model)
-      }, this)
+      window.app.addPane(userEdit.render().el, "user-create", "spaceless6")
     },
 
     addUser: function (e) {
       e.preventDefault()
+      var userAdd = new UserAddView({
+        model: new User,
+        collection: this.collection
+      })
+
       window.app.removePane(1)
-      window.userController.add()
+      window.app.addPane(userAdd.render().el, "user-add", "spaceless6")
     }
   })
 

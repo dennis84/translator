@@ -8,7 +8,7 @@ define([
 
     render: function () {
       this.$el.html(_.template(userAddTemplate, {}))
-      window.app.addPane(this.el, "user-add", "spaceless6")
+      return this
     }
   })
 

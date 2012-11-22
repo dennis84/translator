@@ -13,13 +13,13 @@ define([
 
     render: function () {
       this.$el.html(_.template(entryEditTemplate, this.model.toJSON()))
-      window.app.addPane(this.el, "entry-edit", "spaceless6")
+      return this
     },
 
     save: function (e) {
       e.preventDefault()
       this.model.set(this.$el.find("form").serializeObject())
-      this.model.save()
+      this.collection.create(this.model)
     },
 
     cancel: function (e) {
