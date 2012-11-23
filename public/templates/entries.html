@@ -1,26 +1,28 @@
-<div class="toolbar">
-  <input type="text" class="search" placeholder="Search for ...">
-</div>
-
-<div class="sub-toolbar">
-  <div class="pull-left">
-    <button class="btn btn-small" id="filter" data-title="Filter" data-content="<div class='popover-container'></div>" data-placement="bottom">
-      <i class="icon-cog"></i> Filter
-    </button>
-    <button class="btn btn-small" id="clear-filter">Clear Filter</button>
+<div class="scrollable">
+  <div class="toolbar">
+    <input type="text" class="search" placeholder="Search for ...">
   </div>
 
-  <div class="pull-right btn-toolbar">
-    <div class="btn-group">
-      <a class="btn btn-small dropdown-toggle" data-toggle="dropdown" href="#"> Selection<span class="caret"></span></a>
-      <ul class="dropdown-menu">
-        <li><a class="remove" href="#">Remove</a></li>
-      </ul>
+  <div class="sub-toolbar">
+    <div class="pull-left">
+      <button class="btn btn-small" id="filter" data-title="Filter" data-content="<div class='popover-container'></div>" data-placement="bottom">
+        <i class="icon-cog"></i> Filter
+      </button>
+      <button class="btn btn-small" id="clear-filter">Clear Filter</button>
     </div>
-    <button class="btn btn-small btn-primary create">New Entry</button>
-  </div>
-</div>
 
-<table class="table entry-table">
-  <tbody id="entry-list"></tbody>
-</table>
+    <div class="pull-right btn-toolbar">
+      <div class="btn-group">
+        <a class="btn btn-small dropdown-toggle" data-toggle="dropdown" href="#"> Selection<span class="caret"></span></a>
+        <ul class="dropdown-menu">
+          <li><a class="remove" href="#">Remove</a></li>
+        </ul>
+      </div>
+      <button class="btn btn-small btn-primary create">New Entry</button>
+    </div>
+  </div>
+
+  <table class="table entry-table">
+    <tbody id="entry-list"></tbody>
+  </table>
+</div>
