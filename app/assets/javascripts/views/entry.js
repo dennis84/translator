@@ -12,6 +12,18 @@ define([
 
     initialize: function () {
       this.model.on("change", this.render, this)
+      window.translations.on("sync", this.refresh, this)
+    },
+    
+    refresh: function (model) {
+      if (model.entry.id !== this.model.id) {
+        return
+      }
+
+      this.model.fetch()
+      this.model.on("sync", function () {
+        $("#entry-list [data-id=" + this.model.id + "]").replaceWith(this.render().el)
+      }, this)
     },
 
     render: function () {
@@ -22,8 +34,8 @@ define([
 
     open: function (e) {
       e.preventDefault()
-      window.translations.reset()
       window.translations.entry = this.model
+      window.translations.reset()
       var view = new TranslationsView({ collection: window.translations })
       window.translations.fetchFixed()
     }

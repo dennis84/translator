@@ -13,6 +13,12 @@ object EntryController extends BaseController {
     "description" -> text
   ))
 
+  def read(project: String, id: String) = SecuredIO { implicit ctx =>
+    ctx.projects.find(_.id == project) map { project =>
+      JsonOk(EntryDAO.findOneById(id) map (_.toMap) getOrElse Map())
+    } getOrElse JsonNotFound
+  }
+
   def list(project: String) = SecuredIO { implicit ctx =>
     ctx.projects.find(_.id == project) map { project =>
       val filter = Filter(
