@@ -22,7 +22,7 @@ define([
   var Router = Backbone.Router.extend({
     routes: {
       "":                     "dashboard",
-      "!/profile":            "profile",
+      "profile":       "profile",
       "!/:project":           "project",
       "!/:project/entries":   "entries",
       "!/:project/languages": "languages",
@@ -47,9 +47,11 @@ define([
     if (false === window.project.isNew()) {
       func(window.project)
     } else {
+      var self = this
       window.project.on("change", function (project) {
+        window.project.off("change", null, self)
         func(project)
-      })
+      }, self)
     }
   }
 

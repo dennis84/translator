@@ -12,7 +12,7 @@ define([
     },
 
     initialize: function () {
-      this.model.on("change", this.render, this)
+      //this.model.on("change", this.render, this)
     },
 
     render: function () {

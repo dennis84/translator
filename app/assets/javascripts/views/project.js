@@ -10,6 +10,7 @@ define([
     },
 
     render: function () {
+      console.log("yo")
       this.$el.html(_.template(projectTemplate, this.model.toJSON()))
       window.app.removePanes()
       window.app.addPane(this.el, "project", "spaceless10")
