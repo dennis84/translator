@@ -22,4 +22,8 @@ object DataForm {
   ) verifying ("Username taken", fields => fields match {
     case (u, p, r) => UserDAO.findOneByUsername(u).isEmpty
   }))
+
+  lazy val updateUser = Form(single(
+    "password" -> nonEmptyText
+  ))
 }

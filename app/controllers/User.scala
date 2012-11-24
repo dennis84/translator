@@ -15,6 +15,7 @@ object UserController extends BaseController {
 
   lazy val loginForm = DataForm.login
   lazy val createForm = DataForm.createUser
+  lazy val updateForm = DataForm.updateUser
 
   def authenticate = OpenIO { implicit ctx =>
     loginForm.bindFromRequest.fold(
@@ -29,6 +30,20 @@ object UserController extends BaseController {
 
   def current = SecuredIO { implicit ctx =>
     ctx.user map (user => JsonOk(user.toMap)) getOrElse JsonUnauthorized
+  }
+
+  def updateCurrent = SecuredIO { implicit ctx =>
+    updateForm.bindFromRequest.fold(
+      formWithErrors => JsonBadRequest(Map("error" -> "fail")),
+      formData => {
+        var updated = ctx.user.get.copy(
+          password = formData.sha512
+        )
+
+        UserDAO.save(updated)
+        JsonOk(updated.toMap)
+      }
+    )
   }
 
   def currentByProject(project: String) = SecuredIO { implicit ctx =>

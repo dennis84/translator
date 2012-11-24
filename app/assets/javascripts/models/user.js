@@ -12,6 +12,20 @@ define([], function () {
 
       return "/" + window.project.id + "/users/" + this.id
     },
+    
+    update: function () {
+      var model = this
+        , clone = this.clone()
+
+      clone.url = function () {
+        return "/user"
+      }
+
+      clone.save()
+      clone.on("sync", function () {
+        model.set("password", "")
+      }, this)
+    },
 
     current: function (func) {
       var model = this
