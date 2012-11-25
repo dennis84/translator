@@ -5,12 +5,8 @@ define([
   var module = Backbone.View.extend({
     id: "project",
 
-    initialize: function () {
-      this.model.on("change", this.render, this)
-    },
-
     render: function () {
-      console.log("yo")
+      console.log("yo" + Math.random())
       this.$el.html(_.template(projectTemplate, this.model.toJSON()))
       window.app.removePanes()
       window.app.addPane(this.el, "project", "spaceless10")

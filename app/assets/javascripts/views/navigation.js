@@ -23,36 +23,32 @@ define([
     ],
 
     initialize: function () {
-      window.projects.on("reset", this.addProjects, this)
       window.project.on("change", this.updateProject, this)
     },
 
     render: function () {
       this.$el.html(_.template(navigationTemplate, {}))
+      this.$("#nav-list").append("<li class='nav-header'>Projects</li>")
+      window.projects.each(this.addProject, this)
       $("#application").append(this.el)
     },
 
-    addProjects: function () {
-      this.$el.find("#nav-list").append("<li class='nav-header'>Projects</li>")
-      window.projects.each(this.addProject, this)
-    },
-
     addProject: function (model, index) {
-      this.$el.find("#nav-list").append(
+      this.$("#nav-list").append(
         "<li><a href='#!/" + model.id + "'><i class='icon-sign-blank' style='color: " + this.colors[index] + "'></i> " + model.get("name") + "</a></li>")
     },
 
     updateProject: function (model) {
       var projectTemplate = $(_.template(navigationProjectTemplate, model.toJSON())).addClass("nav-project")
-      this.$el.find(".nav-project").remove()
+      this.$(".nav-project").remove()
       this.$el.append(projectTemplate)
 
       if (true === window.user.equals(window.project.get("admin"))) {
         var adminTemplate = $(_.template(navigationAdminTemplate, model.toJSON())).addClass("nav-admin")
-        this.$el.find(".nav-admin").remove()
+        this.$(".nav-admin").remove()
         this.$el.append(adminTemplate)
       } else {
-        this.$el.find(".nav-admin").remove()
+        this.$(".nav-admin").remove()
       }
     }
   })

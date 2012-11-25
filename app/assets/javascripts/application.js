@@ -22,7 +22,7 @@ define([
   var Router = Backbone.Router.extend({
     routes: {
       "":                     "dashboard",
-      "profile":       "profile",
+      "profile":              "profile",
       "!/:project":           "project",
       "!/:project/entries":   "entries",
       "!/:project/languages": "languages",
@@ -35,24 +35,8 @@ define([
     var model = window.projects.get(id)
     window.user.currentByProject(id)
 
-    if (undefined !== model) {
-      window.project.set(model)
-    }
-
-    window.projects.on("reset", function () {
-      var model = window.projects.get(id)
-      window.project.set(model)
-    })
-
-    if (false === window.project.isNew()) {
-      func(window.project)
-    } else {
-      var self = this
-      window.project.on("change", function (project) {
-        window.project.off("change", null, self)
-        func(project)
-      }, self)
-    }
+    window.project.set(model)
+    func(window.project)
   }
 
   var initialize = function () {
@@ -119,10 +103,13 @@ define([
 
     window.user.current(function (model) {
       if (true === window.authenticated) {
-        window.app = new ApplicationView
-        window.app.render()
+        window.projects.on("reset", function () {
+          console.log("projetcs")
+          window.app = new ApplicationView
+          window.app.render()
+          Backbone.history.start()
+        })
         window.projects.fetch()
-        Backbone.history.start()
       } else {
         var login = new LoginView({ model: window.user })
         login.render()

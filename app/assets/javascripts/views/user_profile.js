@@ -11,10 +11,6 @@ define([
       "click .edit": "edit"
     },
 
-    initialize: function () {
-      //this.model.on("change", this.render, this)
-    },
-
     render: function () {
       this.$el.html(_.template(userProfileTemplate, this.model.toJSON()))
       window.app.removePanes()
