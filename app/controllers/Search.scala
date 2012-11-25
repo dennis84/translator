@@ -11,9 +11,11 @@ object SearchController extends BaseController {
   def entries(project: String) = SecuredIO { implicit ctx =>
     ctx.projects.find(_.id == project) map { project =>
       get("term") map { term =>
-        JsonOk(EntryDAO.findAllByProjectAndIds(project, Search.indexer.search(query = queryString(term)).hits.hits.toList.map { searchResponse =>
+        val ids = Search.indexer.search(query = queryString(term)).hits.hits.toList.map { searchResponse =>
           new ObjectId(searchResponse.id)
-        }).map(_.toMap))
+        }
+
+        JsonOk(EntryDAO.findAllByProjectAndIds(project, ids).map(_.toMap))
       } getOrElse JsonOk(List())
     } getOrElse JsonNotFound
   }
