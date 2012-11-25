@@ -11,18 +11,20 @@ define([
   "views/login",
   "views/dashboard",
   "views/project",
+  "views/project_new",
   "views/entries",
   "views/languages",
   "views/users",
   "views/import"
 ], function (User, Project, Entries, Languages, Projects, Translations, Users,
   ApplicationView, UserProfileView, LoginView, DashboardView, ProjectView,
-  EntriesView, LanguagesView, UsersView, ImportView) {
+  ProjectNewView, EntriesView, LanguagesView, UsersView, ImportView) {
 
   var Router = Backbone.Router.extend({
     routes: {
       "":                     "dashboard",
       "profile":              "profile",
+      "new-project":          "newProject",
       "!/:project":           "project",
       "!/:project/entries":   "entries",
       "!/:project/languages": "languages",
@@ -58,6 +60,11 @@ define([
 
     router.on("route:profile", function () {
       var view = new UserProfileView({ model: window.user })
+      view.render()
+    })
+
+    router.on("route:newProject", function () {
+      var view = new ProjectNewView({ model: new Project, collection: window.projects })
       view.render()
     })
 

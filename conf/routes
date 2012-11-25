@@ -9,6 +9,7 @@ GET     /:project/users             translator.controllers.UserController.list(p
 POST    /:project/users             translator.controllers.UserController.create(project)
 
 GET     /projects                   translator.controllers.ProjectController.list
+POST    /projects                   translator.controllers.ProjectController.create
 
 GET     /:project/entries/:id       translator.controllers.EntryController.read(project, id)
 GET     /:project/entries           translator.controllers.EntryController.list(project)
