@@ -15,7 +15,6 @@ GET     /:project/entries           translator.controllers.EntryController.list(
 POST    /:project/entries           translator.controllers.EntryController.create(project)
 PUT     /:project/entries/:id       translator.controllers.EntryController.update(project, id)
 DELETE  /:project/entries/:id       translator.controllers.EntryController.delete(project, id)
-GET     /:project/entries/search    translator.controllers.EntryController.search(project)
 GET     /:project/entries/export    translator.controllers.EntryController.export(project)
 
 GET     /:entry/translations        translator.controllers.TranslationController.list(entry)
@@ -27,6 +26,8 @@ GET     /:project/languages         translator.controllers.LanguageController.li
 POST    /:project/languages         translator.controllers.LanguageController.create(project)
 PUT     /:project/languages/:id     translator.controllers.LanguageController.update(project, id)
 DELETE  /:project/languages/:id     translator.controllers.LanguageController.delete(project, id)
+
+GET     /:project/search/entries    translator.controllers.SearchController.entries(project)
 
 POST    /:project/import            translator.controllers.ImportController.entries(project)
 

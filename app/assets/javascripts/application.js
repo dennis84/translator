@@ -104,7 +104,6 @@ define([
     window.user.current(function (model) {
       if (true === window.authenticated) {
         window.projects.on("reset", function () {
-          console.log("projetcs")
           window.app = new ApplicationView
           window.app.render()
           Backbone.history.start()
