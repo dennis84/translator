@@ -7,6 +7,7 @@
         <th>&nbsp;</th>
         <th>Number Of Entries</th>
         <th>Done</th>
+        <th>Number Of Words</th>
       </tr>
     </thead>
 
@@ -21,6 +22,7 @@
         </td>
         <td>{{ statistics.nb_entries }}</td>
         <td>{{ percentage }}%</td>
+        <td>{{ statistics.nb_words[lang] }}</td>
       </tr>
       {% }) %}
     </tbody>

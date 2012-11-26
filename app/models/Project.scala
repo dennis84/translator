@@ -12,13 +12,17 @@ case class Project(
   lazy val admin = UserDAO.findOneById(adminId)
   lazy val entries = EntryDAO.findAllByProject(this)
 
-  def progress = {
-    LanguageDAO.findAllByProject(this) map { lang =>
-      lang.code -> entries.filter { entry =>
-        entry.translations.exists { trans => trans.code == lang.code && trans.text != "" }
-      }.length.toFloat / entries.length * 100
-    } toMap
-  }
+  def progress = LanguageDAO.findAllByProject(this) map { lang =>
+    lang.code -> entries.filter { entry =>
+      entry.translations.exists { trans => trans.code == lang.code && trans.text != "" }
+    }.length.toFloat / entries.length * 100
+  } toMap
+
+  def nbWords = LanguageDAO.findAllByProject(this) map { lang =>
+    lang.code -> entries.map { entry =>
+      entry.translations.find(_.code == lang.code) map(_.nbWords) getOrElse 0
+    }.reduce (_ + _)
+  } toMap
 
   def contributors = UserDAO.findAllByProject(this)
 
@@ -28,6 +32,7 @@ case class Project(
     "admin" -> admin.map(_.toMap).getOrElse(Map()),
     "statistics" -> Map(
       "progress" -> progress,
-      "nb_entries" -> entries.length
+      "nb_entries" -> entries.length,
+      "nb_words" -> nbWords
     ))
 }

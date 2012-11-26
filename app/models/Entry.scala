@@ -10,7 +10,9 @@ case class Translation(
   val active: Boolean = false,
   @Key("_id") val id: ObjectId = new ObjectId) {
 
-  def author = UserDAO.findOneById(authorId)
+  lazy val author = UserDAO.findOneById(authorId)
+
+  lazy val nbWords = text split(" ") length
 
   def toMap = Map(
     "id" -> id.toString,
