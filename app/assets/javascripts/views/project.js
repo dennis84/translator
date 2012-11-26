@@ -4,6 +4,7 @@ define([
 
   var module = Backbone.View.extend({
     id: "project",
+    className: "project",
 
     render: function () {
       this.$el.html(_.template(projectTemplate, this.model.toJSON()))
