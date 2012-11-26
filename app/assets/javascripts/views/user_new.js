@@ -1,24 +1,24 @@
 define([
-  "text!templates/login.html"
-], function (loginTemplate) {
+  "text!templates/user_new.html"
+], function (userNewTemplate) {
 
   var module = Backbone.View.extend({
-    id: "login",
+    id: "user-new",
 
     events: {
-      "submit form": "login"
+      "submit form": "register"
     },
 
     render: function () {
-      this.$el.html(_.template(loginTemplate, this.model.toJSON()))
+      this.$el.html(_.template(userNewTemplate, this.model.toJSON()))
       $("body").html(this.el)
       this.$("input:text:visible:first").focus()
     },
 
-    login: function (e) {
+    register: function (e) {
       e.preventDefault()
       this.model.set(this.$el.find("form").serializeObject())
-      this.model.login()
+      console.log("save")
     }
   })
 

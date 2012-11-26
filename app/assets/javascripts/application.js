@@ -8,7 +8,8 @@ define([
   "collections/user",
   "views/application",
   "views/user_profile",
-  "views/login",
+  "views/user_new",
+  "views/start",
   "views/dashboard",
   "views/project",
   "views/project_new",
@@ -17,8 +18,8 @@ define([
   "views/users",
   "views/import"
 ], function (User, Project, Entries, Languages, Projects, Translations, Users,
-  ApplicationView, UserProfileView, LoginView, DashboardView, ProjectView,
-  ProjectNewView, EntriesView, LanguagesView, UsersView, ImportView) {
+  ApplicationView, UserProfileView, UserNewView, StartView, DashboardView,
+  ProjectView, ProjectNewView, EntriesView, LanguagesView, UsersView, ImportView) {
 
   var Router = Backbone.Router.extend({
     routes: {
@@ -117,8 +118,8 @@ define([
         })
         window.projects.fetch()
       } else {
-        var login = new LoginView({ model: window.user })
-        login.render()
+        var start = new StartView({ model: window.user })
+        start.render("sign_in")
       }
     })
 

@@ -2,6 +2,7 @@ package translator.controllers
 
 import play.api.data._
 import play.api.data.Forms._
+import com.roundeights.hasher.Implicits._
 import translator._
 import translator.models._
 
@@ -9,6 +10,13 @@ object ProjectController extends BaseController {
 
   val form = Form(single(
     "name" -> nonEmptyText
+  ))
+
+  val signUpForm = Form(tuple(
+    "name" -> nonEmptyText,
+    "username" -> nonEmptyText,
+    "password" -> nonEmptyText,
+    "password2" -> nonEmptyText
   ))
 
   def list = SecuredIO { implicit ctx =>
@@ -26,6 +34,21 @@ object ProjectController extends BaseController {
 
         ProjectDAO.insert(created)
         JsonOk(created.toMap)
+      }
+    )
+  }
+
+  def signUp = OpenIO { implicit ctx =>
+    signUpForm.bindFromRequest.fold(
+      formWithErrors => JsonBadRequest(Map("error" -> "fail")),
+      formData => {
+        val _user = User(formData._2, formData._3 sha512)
+        val project = Project(formData._1, _user.id, uuid)
+        val user = _user.copy(roles = _user.roles ++ List(Role("ROLE_ADMIN", project.id)))
+
+        UserDAO.insert(user)
+        ProjectDAO.insert(project)
+        JsonOk(List()) withSession ("username" -> formData._2)
       }
     )
   }

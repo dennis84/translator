@@ -8,6 +8,8 @@ DELETE  /logout                     translator.controllers.UserController.logout
 GET     /:project/users             translator.controllers.UserController.list(project)
 POST    /:project/users             translator.controllers.UserController.create(project)
 
+POST    /sign-up                    translator.controllers.ProjectController.signUp
+
 GET     /projects                   translator.controllers.ProjectController.list
 POST    /projects                   translator.controllers.ProjectController.create
 
