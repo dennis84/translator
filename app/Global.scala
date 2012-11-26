@@ -8,8 +8,8 @@ object Global extends GlobalSettings {
 
   override def onStart(app: Application) {
     RegisterJodaTimeConversionHelpers()
-    DataFixtures.refresh
-    SearchFixtures.refresh
+    //DataFixtures.refresh
+    //SearchFixtures.refresh
   }
 }
 

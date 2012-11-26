@@ -8,7 +8,8 @@ define([], function () {
     defaults: {
       id: null,
       name: "",
-      admin: {}
+      admin: {},
+      statistics: {}
     }
   })
 

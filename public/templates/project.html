@@ -1,3 +1,27 @@
 <div class="padding10">
   <h1>{{ name }}</h1>
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Language</th>
+        <th>&nbsp;</th>
+        <th>Number Of Entries</th>
+        <th>Done</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      {% _.each(statistics.progress, function (percentage, lang) { %}
+      <tr>
+        <td>{{ lang }}</td>
+        <td>
+          <div class="progress">
+            <div class="bar" style="width: {{ percentage }}%"></div>
+          </div>
+        </td>
+        <td>{{ statistics.nb_entries }}</td>
+        <td>{{ percentage }}%</td>
+      </tr>
+      {% }) %}
+    </tbody>
 </div>
