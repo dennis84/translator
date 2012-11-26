@@ -24,6 +24,7 @@ define([
 
     initialize: function () {
       window.project.on("change", this.updateProject, this)
+      window.projects.on("add", this.addProject, this)
     },
 
     render: function () {
@@ -33,9 +34,10 @@ define([
       $("#application").append(this.el)
     },
 
-    addProject: function (model, index) {
+    addProject: function (model) {
+      console.log(model)
       this.$("#nav-list").append(
-        "<li><a href='#!/" + model.id + "'><i class='icon-sign-blank' style='color: " + this.colors[index] + "'></i> " + model.get("name") + "</a></li>")
+        "<li><a href='#!/" + model.id + "'><i class='icon-sign-blank' style='color: " + this.colors[Math.floor(Math.random() * 10)] + "'></i> " + model.get("name") + "</a></li>")
     },
 
     updateProject: function (model) {

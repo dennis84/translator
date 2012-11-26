@@ -20,7 +20,7 @@ define([
     save: function (e) {
       e.preventDefault()
       this.model.set(this.$el.find("form").serializeObject())
-      this.collection.create(this.model)
+      this.collection.create(this.model, { wait: true })
     },
 
     cancel: function (e) {

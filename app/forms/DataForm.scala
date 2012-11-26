@@ -39,4 +39,10 @@ object DataForm {
   }) verifying ("Project Name taken", fields => fields match {
     case (n, u, p, p2) => ProjectDAO.findOneByName(n).isEmpty
   }))
+
+  lazy val newProject = Form(single(
+    "name" -> nonEmptyText
+  ) verifying ("Project Name taken", fields => fields match {
+    case name => ProjectDAO.findOneByName(name).isEmpty
+  }))
 }

@@ -9,10 +9,7 @@ import translator.forms._
 
 object ProjectController extends BaseController {
 
-  val form = Form(single(
-    "name" -> nonEmptyText
-  ))
-
+  val form = DataForm.newProject
   val signUpForm = DataForm.signUp
 
   def list = SecuredIO { implicit ctx =>
