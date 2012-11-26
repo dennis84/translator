@@ -5,6 +5,7 @@ import play.api.data.Forms._
 import com.roundeights.hasher.Implicits._
 import translator._
 import translator.models._
+import translator.forms._
 
 object ProjectController extends BaseController {
 
@@ -12,12 +13,7 @@ object ProjectController extends BaseController {
     "name" -> nonEmptyText
   ))
 
-  val signUpForm = Form(tuple(
-    "name" -> nonEmptyText,
-    "username" -> nonEmptyText,
-    "password" -> nonEmptyText,
-    "password2" -> nonEmptyText
-  ))
+  val signUpForm = DataForm.signUp
 
   def list = SecuredIO { implicit ctx =>
     JsonOk(ctx.projects map (_.toMap))

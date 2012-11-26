@@ -16,4 +16,6 @@ object ProjectDAO
   }
 
   def findOneByToken(token: String) = findOne(MongoDBObject("token" -> token))
+
+  def findOneByName(name: String) = findOne(MongoDBObject("name" -> name))
 }
