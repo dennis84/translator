@@ -18,6 +18,12 @@ trait Results extends Controller {
   def JsonOk = Ok(Json generate Map()) as JSON
 
   def JsonBadRequest(map: Map[String, Any]) = BadRequest(Json generate map) as JSON
+  
+  def JsonBadRequest(errors: Seq[play.api.data.FormError]) = BadRequest(Json generate errors.map {
+    case error if (error.message == "") => None
+    case error if (error.key == "")     => Some(Map("name" -> "global", "message" -> error.message))
+    case error                          => Some(Map("name" -> error.key, "message" -> error.message))
+  }.flatten) as JSON
 
   def JsonUnauthorized = Unauthorized
 

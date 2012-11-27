@@ -18,7 +18,7 @@ object ProjectController extends BaseController {
 
   def create = SecuredIO { implicit ctx =>
     form.bindFromRequest.fold(
-      formWithErrors => JsonBadRequest(Map("error" -> "fail")),
+      formWithErrors => JsonBadRequest(formWithErrors.errors),
       formData => {
         val created = Project(formData, ctx.user.get.id, uuid)
         UserDAO.save(ctx.user.get.copy(
