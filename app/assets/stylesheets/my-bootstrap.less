@@ -144,3 +144,51 @@
     border-top-color: #eee;
   }
 }
+
+
+/* =============================================================================
+   Notifications
+   ========================================================================== */
+
+.notifications {
+  position: fixed;
+  min-width: 250px;
+}
+
+.notifications.top-right {
+  right: 10px;
+  top: 25px;
+}
+
+.notifications.top-left {
+  left: 10px;
+  top: 25px;
+}
+
+.notifications.bottom-left {
+  left: 10px;
+  bottom: 25px;
+}
+
+.notifications.bottom-right {
+  right: 10px;
+  bottom: 25px;
+}
+
+.notifications > div {
+  position: relative;
+  z-index: 9999;
+  margin: 5px 0px;
+  background: rgba(0, 0, 0, 0.8);
+  border: 0;
+  .box-shadow(0 1px 3px rgba(0, 0, 0, 0.2);
+  color: #fff;
+  text-shadow: 0 -1px 0 #000;
+}
+
+.notifications > div:hover {
+  background: rgba(0, 0, 0, 0.7);
+  text-shadow: 0 0 5px #fff;
+  color: transparent;
+  .box-shadow(0 0 4px rgba(0, 0, 0, 0.7);
+}

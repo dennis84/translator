@@ -1,7 +1,7 @@
 define([
-  "helpers/message",
-  "views/navigation"
-], function (Message, NavigationView) {
+  "views/navigation",
+  "text!templates/application.html"
+], function (NavigationView, applicationTemplate) {
 
   var module = Backbone.View.extend({
     id: "application",
@@ -12,6 +12,7 @@ define([
     },
 
     render: function () {
+      this.$el.html(_.template(applicationTemplate, {}))
       $("body").html(this.el)
       this.navigation.render()
     },
@@ -33,8 +34,10 @@ define([
     },
 
     addMessage: function (type, message) {
-      var message = new Message(type, message)
-      var message = message.render().$el.appendTo($("body"))
+      $(".top-right").notify({
+        message: { text: message },
+        type: type
+      }).show()
     }
   })
 

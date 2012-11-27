@@ -9,19 +9,6 @@ define([
     id: "navigation",
     className: "navigation spaceless2",
 
-    colors: [
-      "#cc99ff",
-      "#99eeff",
-      "#00ff00",
-      "#ff00cc",
-      "#ffff00",
-      "#0000ff",
-      "#9c6f3a",
-      "#ccaa99",
-      "#00ffcc",
-      "#99aaff"
-    ],
-
     initialize: function () {
       window.project.on("change", this.updateProject, this)
       window.projects.on("add", this.addProject, this)
@@ -35,9 +22,8 @@ define([
     },
 
     addProject: function (model) {
-      console.log(model)
       this.$("#nav-list").append(
-        "<li><a href='#!/" + model.id + "'><i class='icon-sign-blank' style='color: " + this.colors[Math.floor(Math.random() * 10)] + "'></i> " + model.get("name") + "</a></li>")
+        "<li><a href='#!/" + model.id + "'><i class='icon-sign-blank' style='color: " + this.colorById(model.id) + "'></i> " + model.get("name") + "</a></li>")
     },
 
     updateProject: function (model) {
@@ -52,6 +38,21 @@ define([
       } else {
         this.$(".nav-admin").remove()
       }
+    },
+
+    colorById: function (id) {
+      return [
+        "#7EBDB9",
+        "#BDB751",
+        "#BD5E3D",
+        "#9F50BD",
+        "#554BBD",
+        "#6397BD",
+        "#79BD8F",
+        "#68BD47",
+        "#BDB87C",
+        "#BDA0AE"
+      ][id.match(/\d+/g).join("") % 10]
     }
   })
 

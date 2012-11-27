@@ -21,6 +21,7 @@ define([
       e.preventDefault()
       this.model.set(this.$el.find("form").serializeObject())
       this.collection.create(this.model, { wait: true })
+      window.app.addMessage("success", "Project Created")
     },
 
     cancel: function (e) {
