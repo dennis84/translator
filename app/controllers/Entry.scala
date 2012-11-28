@@ -1,7 +1,5 @@
 package translator.controllers
 
-import play.api.data._
-import play.api.data.Forms._
 import translator._
 import translator.models._
 import translator.forms._
@@ -34,7 +32,7 @@ object EntryController extends BaseController {
   def update(project: String, id: String) = SecuredWithProject(project) { implicit ctx =>
     EntryDAO.findOneById(id) map { entry =>
       DataForm.entry.bindFromRequest.fold(
-        formWithErrors => JsonBadRequest(Map("error" -> "fail")),
+        formWithErrors => JsonBadRequest(formWithErrors.errors),
         formData => {
           var updated = entry.copy(
             name = formData._1,

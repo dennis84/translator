@@ -1,11 +1,5 @@
 package translator.controllers
 
-import play.api._
-import play.api.mvc._
-import play.api.data._
-import play.api.data.Forms._
-import play.api.data.format.Formats._
-import validation.{ValidationError, Valid, Invalid, Constraint}
 import com.roundeights.hasher.Implicits._
 import translator._
 import translator.models._

@@ -1,7 +1,5 @@
 package translator.controllers
 
-import play.api.data._
-import play.api.data.Forms._
 import com.roundeights.hasher.Implicits._
 import translator._
 import translator.models._
