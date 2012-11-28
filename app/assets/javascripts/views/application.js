@@ -20,6 +20,7 @@ define([
 
     renderErrors: function (view, response, b, c, d) {
       view.$(".form-error-message").remove()
+      this.$(".form-error").removeClass(".form-error")
 
       _.each(JSON.parse(response.responseText), function (error) {
         new Error(error.name, error.message).render(view.$el)

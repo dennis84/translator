@@ -1,7 +1,8 @@
 define([
+  "helpers/form_error",
   "text!templates/user_login.html",
   "text!templates/user_new.html"
-], function (loginTemplate, userNewTemplate) {
+], function (Error, loginTemplate, userNewTemplate) {
 
   var module = Backbone.View.extend({
     id: "start",
@@ -13,12 +14,28 @@ define([
       "click .show-sign-in": "showSignIn"
     },
 
+    initialize: function () {
+      this.model.on("error", this.renderErrors, this)
+    },
+
     render: function (type) {
       var template = ("sign_in" === type) ? loginTemplate : userNewTemplate
 
       this.$el.html(_.template(template, this.model.toJSON()))
       $("body").html(this.el)
       this.$("input:text:visible:first").focus()
+    },
+
+    renderErrors: function (model, response) {
+      this.$(".form-error-message").remove()
+      this.$(".form-error").removeClass("form-error")
+      var view = this
+
+      _.each(JSON.parse(response.responseText), function (error) {
+        new Error(error.name, error.message).render(view.$el)
+      })
+
+      this.model.off("sync")
     },
 
     signIn: function (e) {
@@ -30,14 +47,7 @@ define([
     signUp: function (e) {
       e.preventDefault()
       var data = this.$el.find("form").serializeObject()
-        , model = this.model
-
-      $.postJSON("/sign-up", data, function (data) {
-        window.authenticated = true
-        model.set("password", "")
-        model.set("password2", "")
-        model.trigger("logged_in", model)
-      })
+      this.model.signUp(data)
     },
 
     showSignUp: function (e) {

@@ -11,7 +11,7 @@ define([], function () {
     if ("global" === this.name) {
       el.find("form").prepend(error)
     } else {
-      el.find("[name=" + this.name + "]").addClass("error").after(error)
+      el.find("[name=" + this.name + "]").addClass("form-error").after(error)
     }
     
   }

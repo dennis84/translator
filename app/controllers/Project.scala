@@ -30,7 +30,7 @@ object ProjectController extends BaseController {
 
   def signUp = Open { implicit ctx =>
     DataForm.signUp.bindFromRequest.fold(
-      formWithErrors => JsonBadRequest(Map("error" -> "fail")),
+      formWithErrors => JsonBadRequest(formWithErrors.errors),
       formData => {
         val _user = User(formData._2, formData._3 sha512)
         val project = Project(formData._1, _user.id, uuid)

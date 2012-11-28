@@ -15,7 +15,7 @@ object UserController extends BaseController {
 
   def authenticate = Open { implicit ctx =>
     DataForm.login.bindFromRequest.fold(
-      formWithErrors => BadRequest("authentication failed"),
+      formWithErrors => JsonBadRequest(formWithErrors.errors),
       formData => JsonOk(List()) withSession ("username" -> formData._1)
     )
   }
