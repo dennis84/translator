@@ -11,7 +11,8 @@ object EntryDAO
 
   def findAll = find(DBObject()) toList
 
-  def findAllByProject(project: Project) = find(MongoDBObject("projectId" -> project.id)) toList
+  def findAllByProject(project: Project) =
+    find(MongoDBObject("projectId" -> project.id)) toList
 
   def findAllByProjectAndFilter(project: Project, filter: Filter) = {
     find(MongoDBObject("projectId" -> project.id)).toList.map { entry =>
@@ -26,13 +27,9 @@ object EntryDAO
     } flatten
   }
 
-  def findOneByNameAndProject(name: String, project: Project) = findOne(MongoDBObject("name" -> name, "projectId" -> project.id))
+  def findOneByNameAndProject(name: String, project: Project) =
+    findOne(MongoDBObject("name" -> name, "projectId" -> project.id))
 
-  def findAllByProjectAndIds(project: Project, ids: List[ObjectId]) = find(MongoDBObject("projectId" -> project.id, "_id" -> MongoDBObject("$in" -> ids))) toList
-}
-
-object TranslationDAO
-  extends SalatDAO[Translation, ObjectId](collection = MongoConnection()("translator")("translations")) {
-
-  def findAllByIds(ids: List[ObjectId]) = find(MongoDBObject("_id" -> MongoDBObject("$in" -> ids))) toList
+  def findAllByProjectAndIds(project: Project, ids: List[ObjectId]) =
+    find(MongoDBObject("projectId" -> project.id, "_id" -> MongoDBObject("$in" -> ids))) toList
 }

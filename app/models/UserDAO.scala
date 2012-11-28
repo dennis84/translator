@@ -11,10 +11,12 @@ object UserDAO
 
   def findAll = find(DBObject()).toList
 
-  def findOneByUsername(username: String) = findOne(MongoDBObject("username" -> username))
+  def findOneByUsername(username: String) =
+    findOne(MongoDBObject("username" -> username))
 
   def findOneByUsernameAndPassword(username: String, password: String): Option[User] =
     findOne(MongoDBObject("username" -> username, "password" -> password))
 
-  def findAllByProject(project: Project) = find(MongoDBObject("roles.projectId" -> project.id)) toList
+  def findAllByProject(project: Project) =
+    find(MongoDBObject("roles.projectId" -> project.id)) toList
 }
