@@ -14,6 +14,7 @@ define([
 
     initialize: function () {
       this.collection.on("fetched_fixed", this.reset, this)
+      this.collection.on("add", this.reset, this)
       this.render()
     },
 
@@ -24,6 +25,7 @@ define([
     },
 
     reset: function () {
+      this.$("#translation-list").html("")
       this.collection.each(this.add, this)
     },
 
@@ -49,9 +51,10 @@ define([
             translation.set(item)
             translation.save()
           } else {
+            var index = collection.indexOf(translation) + 1
             var clone = translation.clone()
             clone.set(item)
-            collection.create(clone)
+            collection.create(clone, { wait: true, at: index })
           }
         }
       })

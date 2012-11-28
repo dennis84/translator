@@ -10,7 +10,8 @@ define([
 
     render: function () {
       var data = _.extend(this.model.toJSON(), {
-        "id": this.model.id || this.model.cid
+        "id": this.model.id || this.model.cid,
+        "admin": window.user.isAdmin()
       })
 
       this.$el.html(_.template(translationTemplate, data))

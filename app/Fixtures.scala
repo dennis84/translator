@@ -32,11 +32,12 @@ trait Fixtures {
   lazy val language8 = Language("de", "German", project2.id)
   lazy val language9 = Language("fr", "French", project2.id)
 
-  lazy val trans1en = Translation("en", "Hello World", user1.id, true)
-  lazy val trans1de = Translation("de", "Hallo Welt", user1.id, true)
-  lazy val trans1fr = Translation("fr", "Bonjour", user1.id, true)
-  lazy val trans1es = Translation("es", "Olá", user1.id, true)
-  lazy val trans1it = Translation("it", "Ciao", user1.id, true)
+  lazy val trans1en  = Translation("en", "Hello World", user1.id, true)
+  lazy val trans1de  = Translation("de", "Hallo Welt", user1.id, true)
+  lazy val trans1de1 = Translation("de", "Moin Welt", user2.id, false)
+  lazy val trans1fr  = Translation("fr", "Bonjour", user1.id, true)
+  lazy val trans1es  = Translation("es", "Olá", user1.id, true)
+  lazy val trans1it  = Translation("it", "Ciao", user1.id, true)
 
   lazy val trans2en = Translation("en", "Bye bye", user1.id, true)
   lazy val trans2de = Translation("de", "Tschüs", user1.id, true)
@@ -52,7 +53,7 @@ trait Fixtures {
   lazy val trans4de = Translation("de", "Beschreibung", user1.id, true)
   lazy val trans4fr = Translation("fr", "", user1.id, true)
 
-  lazy val entry1 = Entry("hello_world", "", project1.id, List(trans1en.id, trans1de.id, trans1fr.id, trans1es.id, trans1it.id))
+  lazy val entry1 = Entry("hello_world", "", project1.id, List(trans1en.id, trans1de.id, trans1fr.id, trans1es.id, trans1it.id, trans1de1.id))
   lazy val entry2 = Entry("bye_bye", "", project1.id, List(trans2en.id, trans2de.id, trans2fr.id, trans2es.id, trans2it.id))
   lazy val entry3 = Entry("title", "", project2.id, List(trans3en.id, trans3de.id, trans3fr.id))
   lazy val entry4 = Entry("description", "", project2.id, List(trans4en.id, trans4de.id, trans4fr.id))

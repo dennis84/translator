@@ -8,8 +8,10 @@
   <blockquote>
     <p>{{ text }}</p>
     <small>by <cite>{{ author }}</cite></small>
+    {% if (true === admin) { %}
     <a href="#" class="accept">accept</a>
     <a href="#" class="reject">reject</a>
+    {% } %}
   </blockquote>
 </div>
 {% } %}
