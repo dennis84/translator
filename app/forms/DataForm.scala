@@ -17,28 +17,22 @@ object DataForm {
   }))
 
   lazy val createUser = Form(tuple(
-    "username"  -> nonEmptyText,
-    "password"  -> nonEmptyText,
-    "roles"     -> list(text)
-  ) verifying ("Username taken", fields => fields match {
-    case (u, p, r) => UserDAO.findOneByUsername(u).isEmpty
-  }))
+    "username" -> nonEmptyText.verifying("Username taken", usernameTaken _),
+    "password" -> nonEmptyText,
+    "roles"    -> list(text)
+  ))
 
   lazy val updateUser = Form(single(
     "password" -> nonEmptyText
   ))
 
   lazy val signUp = Form(tuple(
-    "name" -> nonEmptyText,
-    "username" -> nonEmptyText,
-    "password" -> nonEmptyText,
+    "name"      -> nonEmptyText.verifying("Project Name taken", projectNameTaken _),
+    "username"  -> nonEmptyText.verifying("Username taken", usernameTaken _),
+    "password"  -> nonEmptyText,
     "password2" -> nonEmptyText
-  ) verifying ("Username taken", fields => fields match {
-    case (n, u, p, p2) => UserDAO.findOneByUsername(u).isEmpty
-  }) verifying ("Password mismatch", fields => fields match {
+  ) verifying ("Password mismatch", fields => fields match {
     case (n, u, p, p2) => p == p2
-  }) verifying ("Project Name taken", fields => fields match {
-    case (n, u, p, p2) => ProjectDAO.findOneByName(n).isEmpty
   }))
 
   lazy val newProject = Form(single(
@@ -50,9 +44,9 @@ object DataForm {
     "description" -> text
   ))
 
-  lazy val language = Form(tuple(
-    "code" -> nonEmptyText,
-    "name" -> text
+  def language(implicit ctx: Context[_]) = Form(tuple(
+    "code" -> nonEmptyText.verifying("Language already exists", languageCodeTaken(_, ctx)),
+    "name" -> nonEmptyText
   ))
 
   lazy val translation = Form(tuple(
@@ -60,7 +54,15 @@ object DataForm {
     "text" -> text
   ))
 
-  private def entryNameTaken(name: String, ctx: Context[_]) = EntryDAO.findOneByNameAndProject(name, ctx.project.get).isEmpty
+  private def usernameTaken(username: String) =
+    UserDAO.findOneByUsername(username).isEmpty
 
-  private def projectNameTaken(name: String) = ProjectDAO.findOneByName(name).isEmpty
+  private def projectNameTaken(name: String) =
+    ProjectDAO.findOneByName(name).isEmpty
+
+  private def entryNameTaken(name: String, ctx: Context[_]) =
+    EntryDAO.findOneByNameAndProject(name, ctx.project.get).isEmpty
+
+  private def languageCodeTaken(code: String, ctx: Context[_]) =
+    LanguageDAO.findOneByCodeAndProject(code, ctx.project.get).isEmpty
 }

@@ -14,7 +14,7 @@ object LanguageController extends BaseController {
 
   def create(project: String) = SecuredWithProject(project) { implicit ctx =>
     DataForm.language.bindFromRequest.fold(
-      formWithErrors => JsonBadRequest(Map("error" -> "fail")),
+      formWithErrors => JsonBadRequest(formWithErrors.errors),
       formData => {
         var created = Language(formData._1, formData._2, ctx.project.get.id)
         LanguageDAO.insert(created)
@@ -26,7 +26,7 @@ object LanguageController extends BaseController {
   def update(project: String, id: String) = SecuredWithProject(project) { implicit ctx =>
     LanguageDAO.findOneById(id) map { language =>
       DataForm.language.bindFromRequest.fold(
-        formWithErrors => JsonBadRequest(Map("error" -> "fail")),
+        formWithErrors => JsonBadRequest(formWithErrors.errors),
         formData => {
           val updated = language.copy(code = formData._1, name = formData._2)
           LanguageDAO.save(updated)

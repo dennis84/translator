@@ -56,7 +56,7 @@ object UserController extends BaseController {
 
   def create(project: String) = SecuredWithProject(project) { implicit ctx =>
     DataForm.createUser.bindFromRequest.fold(
-      formWithErrors => JsonBadRequest(Map("error" -> "fail")),
+      formWithErrors => JsonBadRequest(formWithErrors.errors),
       formData => {
         val created = User(
           formData._1,

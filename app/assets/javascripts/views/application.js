@@ -1,7 +1,8 @@
 define([
+  "helpers/form_error",
   "views/navigation",
   "text!templates/application.html"
-], function (NavigationView, applicationTemplate) {
+], function (Error, NavigationView, applicationTemplate) {
 
   var module = Backbone.View.extend({
     id: "application",
@@ -15,6 +16,16 @@ define([
       this.$el.html(_.template(applicationTemplate, {}))
       $("body").html(this.el)
       this.navigation.render()
+    },
+
+    renderErrors: function (view, response, b, c, d) {
+      view.$(".form-error-message").remove()
+
+      _.each(JSON.parse(response.responseText), function (error) {
+        new Error(error.name, error.message).render(view.$el)
+      })
+
+      view.model.off("sync")
     },
 
     addPane: function (html, name, classes) {
