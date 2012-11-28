@@ -17,22 +17,22 @@ object UserController extends BaseController {
   lazy val createForm = DataForm.createUser
   lazy val updateForm = DataForm.updateUser
 
-  def authenticate = OpenIO { implicit ctx =>
+  def authenticate = Open { implicit ctx =>
     loginForm.bindFromRequest.fold(
       formWithErrors => BadRequest("authentication failed"),
       formData => JsonOk(List()) withSession ("username" -> formData._1)
     )
   }
 
-  def logout = OpenIO { implicit ctx =>
+  def logout = Open { implicit ctx =>
     JsonOk(List()) withNewSession
   }
 
-  def current = SecuredIO { implicit ctx =>
+  def current = Secured { implicit ctx =>
     ctx.user map (user => JsonOk(user.toMap)) getOrElse JsonUnauthorized
   }
 
-  def updateCurrent = SecuredIO { implicit ctx =>
+  def updateCurrent = Secured { implicit ctx =>
     updateForm.bindFromRequest.fold(
       formWithErrors => JsonBadRequest(Map("error" -> "fail")),
       formData => {
@@ -46,36 +46,30 @@ object UserController extends BaseController {
     )
   }
 
-  def currentByProject(project: String) = SecuredIO { implicit ctx =>
-    ctx.projects.find(_.id == project) map { project =>
-      ctx.user map { user =>
-        JsonOk(user.toMap ++ Map("roles" -> user.roles(project)))
-      } getOrElse JsonUnauthorized
-    } getOrElse JsonNotFound
+  def currentByProject(project: String) = SecuredWithProject(project) { implicit ctx =>
+    ctx.user map { user =>
+      JsonOk(user.toMap ++ Map("roles" -> user.roles(ctx.project.get)))
+    } getOrElse JsonUnauthorized
   }
 
-  def list(project: String) = SecuredIO { implicit ctx =>
-    ctx.projects.find(_.id == project) map { project =>
-      JsonOk(project.contributors.map { user =>
-        user.toMap ++ Map("roles" -> user.roles(project))
-      })
-    } getOrElse JsonNotFound
+  def list(project: String) = SecuredWithProject(project) { implicit ctx =>
+    JsonOk(ctx.project.get.contributors.map { user =>
+      user.toMap ++ Map("roles" -> user.roles(ctx.project.get))
+    })
   }
 
-  def create(project: String) = SecuredIO { implicit ctx =>
-    ctx.projects.find(_.id == project) map { project =>
-      createForm.bindFromRequest.fold(
-        formWithErrors => JsonBadRequest(Map("error" -> "fail")),
-        formData => {
-          val created = User(
-            formData._1,
-            formData._2,
-            formData._3.map(Role(_, project.id))
-          )
-          UserDAO.insert(created)
-          JsonOk(created.toMap)
-        }
-      )
-    } getOrElse JsonNotFound
+  def create(project: String) = SecuredWithProject(project) { implicit ctx =>
+    createForm.bindFromRequest.fold(
+      formWithErrors => JsonBadRequest(Map("error" -> "fail")),
+      formData => {
+        val created = User(
+          formData._1,
+          formData._2,
+          formData._3.map(Role(_, ctx.project.get.id))
+        )
+        UserDAO.insert(created)
+        JsonOk(created.toMap)
+      }
+    )
   }
 }

@@ -1,4 +1,6 @@
-define([], function () {
+define([
+  "helpers/form_error"
+], function (Error) {
 
   var module = Backbone.Model.extend({
     url: function () {
@@ -11,6 +13,12 @@ define([], function () {
       }
 
       return "/" + window.project.id + "/entries/" + this.id
+    },
+
+    validate: function (attrs) {
+      if ("" === attrs.name) {
+        return new Error("name", "This field must not be empty")
+      }
     },
 
     defaults: {

@@ -13,7 +13,7 @@ object TranslationController extends BaseController {
     "text" -> text
   ))
 
-  def list(entryId: String) = SecuredIO { implicit ctx =>
+  def list(entryId: String) = Secured { implicit ctx =>
     (for {
       entry   <- EntryDAO.findOneById(entryId)
       project <- ctx.projects.find(_.id == entry.projectId)
@@ -22,7 +22,7 @@ object TranslationController extends BaseController {
     }) getOrElse JsonNotFound
   }
 
-  def create(entryId: String) = SecuredIO { implicit ctx =>
+  def create(entryId: String) = Secured { implicit ctx =>
     (for {
       entry   <- EntryDAO.findOneById(entryId)
       project <- ctx.projects.find(_.id == entry.projectId)
@@ -41,7 +41,7 @@ object TranslationController extends BaseController {
     }) getOrElse JsonNotFound
   }
 
-  def update(entryId: String, id: String) = SecuredIO { implicit ctx =>
+  def update(entryId: String, id: String) = Secured { implicit ctx =>
     (for {
       entry   <- EntryDAO.findOneById(entryId)
       project <- ctx.projects.find(_.id == entry.projectId)
@@ -60,7 +60,7 @@ object TranslationController extends BaseController {
     }) getOrElse JsonNotFound
   }
 
-  def delete(entryId: String, id: String) = SecuredIO { implicit ctx =>
+  def delete(entryId: String, id: String) = Secured { implicit ctx =>
     (for {
       entry   <- EntryDAO.findOneById(entryId)
       project <- ctx.projects.find(_.id == entry.projectId)

@@ -14,7 +14,7 @@ object ImportController extends BaseController {
     "language" -> nonEmptyText
   ))
 
-  def entries(project: String) = SecuredIO { implicit ctx =>
+  def entries(project: String) = Secured { implicit ctx =>
     JsonOk(List())
     //ctx.projects.find(_.id == project) map { project =>
       //form.bindFromRequest.fold(

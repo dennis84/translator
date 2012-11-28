@@ -12,11 +12,11 @@ object ProjectController extends BaseController {
   val form = DataForm.newProject
   val signUpForm = DataForm.signUp
 
-  def list = SecuredIO { implicit ctx =>
+  def list = Secured { implicit ctx =>
     JsonOk(ctx.projects map (_.toMap))
   }
 
-  def create = SecuredIO { implicit ctx =>
+  def create = Secured { implicit ctx =>
     form.bindFromRequest.fold(
       formWithErrors => JsonBadRequest(formWithErrors.errors),
       formData => {
@@ -31,7 +31,7 @@ object ProjectController extends BaseController {
     )
   }
 
-  def signUp = OpenIO { implicit ctx =>
+  def signUp = Open { implicit ctx =>
     signUpForm.bindFromRequest.fold(
       formWithErrors => JsonBadRequest(Map("error" -> "fail")),
       formData => {

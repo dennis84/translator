@@ -5,6 +5,7 @@ import play.api.data.Forms._
 import play.api.data.validation.Constraints._
 import com.roundeights.hasher.Implicits._
 import translator.models._
+import translator.controllers._
 
 object DataForm {
 
@@ -40,10 +41,16 @@ object DataForm {
     case (n, u, p, p2) => ProjectDAO.findOneByName(n).isEmpty
   }))
 
-
   lazy val newProject = Form(single(
     "name" -> nonEmptyText.verifying("Project Name taken", projectNameTaken _)
   ))
+
+  def entry(implicit ctx: Context[_]) = Form(tuple(
+    "name"        -> nonEmptyText.verifying("Entry with same name exists", entryNameTaken(_, ctx)),
+    "description" -> text
+  ))
+
+  private def entryNameTaken(name: String, ctx: Context[_]) = EntryDAO.findOneByNameAndProject(name, ctx.project.get).isEmpty
 
   private def projectNameTaken(name: String) = ProjectDAO.findOneByName(name).isEmpty
 }

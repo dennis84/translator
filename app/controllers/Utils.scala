@@ -32,16 +32,24 @@ trait Results extends Controller {
 
 trait Actions extends Controller with Results with RequestGetter {
 
-  def OpenIO(f: Context[AnyContent] => Result): Action[AnyContent] = OpenIO(BodyParsers.parse.anyContent)(f)
+  def Open(f: Context[AnyContent] => Result): Action[AnyContent] = Open(BodyParsers.parse.anyContent)(f)
 
-  def OpenIO[A](p: BodyParser[A])(f: Context[A] => Result): Action[A] = Action(p) { implicit req =>
+  def Open[A](p: BodyParser[A])(f: Context[A] => Result): Action[A] = Action(p) { implicit req =>
     val user = req.session.get("username").flatMap(u => UserDAO.findOneByUsername(u))
     f(Context[A](req, user))
   }
 
-  def SecuredIO(f: Context[AnyContent] => Result): Action[AnyContent] = SecuredIO(BodyParsers.parse.anyContent)(f)
+  def SecuredWithProject(id: String)(f: Context[AnyContent] => Result): Action[AnyContent] = SecuredWithProject(id, BodyParsers.parse.anyContent)(f)
+
+  def SecuredWithProject[A](id: String, p: BodyParser[A])(f: Context[A] => Result): Action[A] = Secured(p) { implicit ctx =>
+    ctx.projects.find(_.id == id) map { project =>
+      f(ctx.copy(project = Some(project)))
+    } getOrElse JsonNotFound
+  }
   
-  def SecuredIO[A](p: BodyParser[A])(f: Context[A] => Result): Action[A] = OpenIO(p) { implicit ctx =>
+  def Secured(f: Context[AnyContent] => Result): Action[AnyContent] = Secured(BodyParsers.parse.anyContent)(f)
+  
+  def Secured[A](p: BodyParser[A])(f: Context[A] => Result): Action[A] = Open(p) { implicit ctx =>
     (for {
       token <- get("token")
       project <- ProjectDAO.findOneByToken(token)
