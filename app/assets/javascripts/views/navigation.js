@@ -23,7 +23,7 @@ define([
 
     addProject: function (model) {
       this.$("#nav-list").append(
-        "<li><a href='#!/" + model.id + "'><i class='icon-sign-blank' style='color: " + this.colorById(model.id) + "'></i> " + model.get("name") + "</a></li>")
+        "<li><a href='#!/" + model.id + "'><i class='icon-sign-blank' style='color: " + this.pickColor(model) + "'></i> " + model.get("name") + "</a></li>")
     },
 
     updateProject: function (model) {
@@ -40,7 +40,7 @@ define([
       }
     },
 
-    colorById: function (id) {
+    pickColor: function (model) {
       return [
         "#7EBDB9",
         "#BDB751",
@@ -52,7 +52,7 @@ define([
         "#68BD47",
         "#BDB87C",
         "#BDA0AE"
-      ][id.match(/\d+/g).join("") % 10]
+      ][window.projects.indexOf(model)]
     }
   })
 
