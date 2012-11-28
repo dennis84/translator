@@ -4,20 +4,16 @@ import play.api.data._
 import play.api.data.Forms._
 import translator._
 import translator.models._
+import translator.forms._
 
 object LanguageController extends BaseController {
-
-  lazy val form = Form(tuple(
-    "code" -> nonEmptyText,
-    "name" -> text
-  ))
 
   def list(project: String) = SecuredWithProject(project) { implicit ctx =>
     JsonOk(LanguageDAO.findAllByProject(ctx.project.get) map (_.toMap))
   }
 
   def create(project: String) = SecuredWithProject(project) { implicit ctx =>
-    form.bindFromRequest.fold(
+    DataForm.language.bindFromRequest.fold(
       formWithErrors => JsonBadRequest(Map("error" -> "fail")),
       formData => {
         var created = Language(formData._1, formData._2, ctx.project.get.id)
@@ -29,7 +25,7 @@ object LanguageController extends BaseController {
 
   def update(project: String, id: String) = SecuredWithProject(project) { implicit ctx =>
     LanguageDAO.findOneById(id) map { language =>
-      form.bindFromRequest.fold(
+      DataForm.language.bindFromRequest.fold(
         formWithErrors => JsonBadRequest(Map("error" -> "fail")),
         formData => {
           val updated = language.copy(code = formData._1, name = formData._2)

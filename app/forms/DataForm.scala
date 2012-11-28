@@ -50,6 +50,16 @@ object DataForm {
     "description" -> text
   ))
 
+  lazy val language = Form(tuple(
+    "code" -> nonEmptyText,
+    "name" -> text
+  ))
+
+  lazy val translation = Form(tuple(
+    "code" -> nonEmptyText,
+    "text" -> text
+  ))
+
   private def entryNameTaken(name: String, ctx: Context[_]) = EntryDAO.findOneByNameAndProject(name, ctx.project.get).isEmpty
 
   private def projectNameTaken(name: String) = ProjectDAO.findOneByName(name).isEmpty

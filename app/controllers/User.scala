@@ -13,12 +13,8 @@ import translator.forms._
 
 object UserController extends BaseController {
 
-  lazy val loginForm = DataForm.login
-  lazy val createForm = DataForm.createUser
-  lazy val updateForm = DataForm.updateUser
-
   def authenticate = Open { implicit ctx =>
-    loginForm.bindFromRequest.fold(
+    DataForm.login.bindFromRequest.fold(
       formWithErrors => BadRequest("authentication failed"),
       formData => JsonOk(List()) withSession ("username" -> formData._1)
     )
@@ -33,7 +29,7 @@ object UserController extends BaseController {
   }
 
   def updateCurrent = Secured { implicit ctx =>
-    updateForm.bindFromRequest.fold(
+    DataForm.updateUser.bindFromRequest.fold(
       formWithErrors => JsonBadRequest(Map("error" -> "fail")),
       formData => {
         var updated = ctx.user.get.copy(
@@ -59,7 +55,7 @@ object UserController extends BaseController {
   }
 
   def create(project: String) = SecuredWithProject(project) { implicit ctx =>
-    createForm.bindFromRequest.fold(
+    DataForm.createUser.bindFromRequest.fold(
       formWithErrors => JsonBadRequest(Map("error" -> "fail")),
       formData => {
         val created = User(

@@ -5,13 +5,9 @@ import play.api.data.Forms._
 import com.mongodb.casbah.Imports._
 import translator._
 import translator.models._
+import translator.forms._
 
 object TranslationController extends BaseController {
-
-  lazy val form = Form(tuple(
-    "code" -> nonEmptyText,
-    "text" -> text
-  ))
 
   def list(entryId: String) = Secured { implicit ctx =>
     (for {
@@ -28,7 +24,7 @@ object TranslationController extends BaseController {
       project <- ctx.projects.find(_.id == entry.projectId)
       user    <- ctx.user
     } yield {
-      form.bindFromRequest.fold(
+      DataForm.translation.bindFromRequest.fold(
         formWithErrors => JsonBadRequest(Map("error" -> "fail")),
         formData => {
           val active  = if (user.roles(project).contains("ROLE_ADMIN")) true else false
@@ -49,7 +45,7 @@ object TranslationController extends BaseController {
       user    <- ctx.user
       if (user.roles(project).contains("ROLE_ADMIN"))
     } yield {
-      form.bindFromRequest.fold(
+      DataForm.translation.bindFromRequest.fold(
         formWithErrors => JsonBadRequest(Map("error" -> "fail")),
         formData => {
           var updated = trans.copy(text = formData._2)

@@ -9,15 +9,12 @@ import translator.forms._
 
 object ProjectController extends BaseController {
 
-  val form = DataForm.newProject
-  val signUpForm = DataForm.signUp
-
   def list = Secured { implicit ctx =>
     JsonOk(ctx.projects map (_.toMap))
   }
 
   def create = Secured { implicit ctx =>
-    form.bindFromRequest.fold(
+    DataForm.newProject.bindFromRequest.fold(
       formWithErrors => JsonBadRequest(formWithErrors.errors),
       formData => {
         val created = Project(formData, ctx.user.get.id, uuid)
@@ -32,7 +29,7 @@ object ProjectController extends BaseController {
   }
 
   def signUp = Open { implicit ctx =>
-    signUpForm.bindFromRequest.fold(
+    DataForm.signUp.bindFromRequest.fold(
       formWithErrors => JsonBadRequest(Map("error" -> "fail")),
       formData => {
         val _user = User(formData._2, formData._3 sha512)
