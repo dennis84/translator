@@ -17,7 +17,8 @@ define([], function () {
       "id": null,
       "name": "",
       "description": "",
-      "progress": ""
+      "progress": "",
+      "nb_activatable": 0
     }
   })
 

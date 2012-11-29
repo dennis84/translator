@@ -18,6 +18,8 @@ case class Entry(
 
   lazy val translations = TranslationDAO.findAllByIds(translationIds)
 
+  lazy val activatableTranslations = translations filter (_.active == false)
+
   lazy val progress = {
     val languages = LanguageDAO.findAllByProjectId(projectId)
 
@@ -30,7 +32,8 @@ case class Entry(
     "id" -> id.toString,
     "name" -> name,
     "description" -> description,
-    "progress" -> progress)
+    "progress" -> progress,
+    "nb_activatable" -> activatableTranslations.length)
 
   def toSearchMap = Map(
     "id" -> id.toString,
