@@ -54,6 +54,23 @@ object TranslationController extends BaseController {
     }) getOrElse JsonNotFound
   }
 
+  def activate(entryId: String, id: String) = Secured { implicit ctx =>
+    (for {
+      entry   <- EntryDAO.findOneById(entryId)
+      project <- ctx.projects.find(_.id == entry.projectId)
+      trans   <- TranslationDAO.findOneById(id)
+      user    <- ctx.user
+      if (user.roles(project).contains("ROLE_ADMIN"))
+    } yield {
+      val updated = trans.copy(active = true)
+      entry.translations find { t =>
+        t.code == trans.code && t.active == true
+      } map (t => TranslationDAO.remove(t))
+      TranslationDAO.save(updated)
+      JsonOk(updated.toMap)
+    }) getOrElse JsonNotFound
+  }
+
   def delete(entryId: String, id: String) = Secured { implicit ctx =>
     (for {
       entry   <- EntryDAO.findOneById(entryId)

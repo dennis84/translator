@@ -13,8 +13,13 @@ define([
     },
 
     initialize: function () {
+      var view = this
       this.collection.on("fetched_fixed", this.reset, this)
       this.collection.on("add", this.reset, this)
+      this.collection.on("change:active", function () {
+        view.collection.reset()
+        view.collection.fetchFixed()
+      }, this)
       this.render()
     },
 

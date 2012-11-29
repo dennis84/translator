@@ -20,7 +20,7 @@ define([
 
     accept: function (e) {
       e.preventDefault()
-      console.log("accept")
+      this.model.activate()
     },
 
     reject: function (e) {

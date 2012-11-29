@@ -13,6 +13,13 @@ define([], function () {
       return "/" + this.entry.id + "/translations/" + this.id
     },
 
+    activate: function () {
+      var model = this
+      $.postJSON(this.url() + "/activate", {}, function (data) {
+        model.set(data)
+      })
+    },
+
     clone: function() {
       var clone = new this.constructor(this.attributes)
       clone.entry = this.entry

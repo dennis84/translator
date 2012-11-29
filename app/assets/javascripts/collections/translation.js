@@ -14,6 +14,14 @@ define([
       this.on("add", this.extendModel, this)
     },
 
+    url: function () {
+      if (_.isUndefined(this.entry)) {
+        throw new Error("There must be an entry set.")
+      }
+
+      return "/" + this.entry.id + "/translations"
+    },
+
     extendModel: function (model) {
       model.entry = this.entry
     },
@@ -28,17 +36,22 @@ define([
               return
             }
 
-            var langCodes = _.map(languages.models, function (lang) {
-                  return lang.get("code")
-                })
-              , transCodes = _.map(collection.models, function (trans) {
-                  return trans.get("code")
+            _.each(languages.models, function (lang, index) {
+                var r = collection.find(function (trans) {
+                  return trans.get("code") === lang.get("code") && trans.get("active") === true
                 })
 
-            _.map(_.difference(langCodes, transCodes), function (code, index) {
-              var trans = new Translation({ "code": code, "active": true })
-              trans.cid = "fixed-" + index
-              collection.add(trans)
+                if (_.isUndefined(r)) {
+                  var inactive = collection.find(function (trans) {
+                    return trans.get("code") === lang.get("code") && trans.get("active") === false
+                  })
+
+                  var index = _.isUndefined(inactive) ? collection.length : collection.indexOf(inactive)
+
+                  var trans = new Translation({ "code": lang.get("code"), "active": true })
+                  trans.cid = "fixed-" + index
+                  collection.add(trans, { at: index })
+                }
             })
 
             collection.trigger("fetched_fixed", collection)
@@ -58,14 +71,6 @@ define([
 
       this.fetch()
       languages.fetch()
-    },
-
-    url: function () {
-      if (undefined === this.entry) {
-        throw new Error("There must be an entry set.")
-      }
-
-      return "/" + this.entry.id + "/translations"
     }
   })
 
