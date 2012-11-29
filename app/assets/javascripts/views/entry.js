@@ -13,6 +13,7 @@ define([
     initialize: function () {
       this.model.on("change", this.render, this)
       window.translations.on("sync", this.refresh, this)
+      window.translations.on("change:active", this.refresh, this)
     },
     
     refresh: function (model) {

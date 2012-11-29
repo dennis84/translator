@@ -22,7 +22,7 @@ case class Entry(
     val languages = LanguageDAO.findAllByProjectId(projectId)
 
     languages.filter { lang =>
-      translations exists { trans => trans.code == lang.code && trans.text != "" }
+      translations exists { trans => trans.code == lang.code && trans.text != "" && trans.active == true }
     }.length.toFloat / languages.length * 100
   }
 
