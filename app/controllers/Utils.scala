@@ -3,6 +3,7 @@ package translator.controllers
 import play.api._
 import play.api.mvc._
 import play.api.http._
+import play.api.i18n.Messages
 import com.codahale.jerkson.Json
 import translator._
 import translator.models._
@@ -21,8 +22,8 @@ trait Results extends Controller {
   
   def JsonBadRequest(errors: Seq[play.api.data.FormError]) = BadRequest(Json generate errors.map {
     case error if (error.message == "") => None
-    case error if (error.key == "")     => Some(Map("name" -> "global", "message" -> error.message))
-    case error                          => Some(Map("name" -> error.key, "message" -> error.message))
+    case error if (error.key == "")     => Some(Map("name" -> "global", "message" -> Messages(error.message)))
+    case error                          => Some(Map("name" -> error.key, "message" -> Messages(error.message)))
   }.flatten) as JSON
 
   def JsonUnauthorized = Unauthorized

@@ -12,12 +12,12 @@ object DataForm {
   lazy val login = Form(tuple(
     "username" -> nonEmptyText,
     "password" -> nonEmptyText
-  ) verifying ("Invalid user name or password", fields => fields match {
+  ) verifying ("error.authentication", fields => fields match {
     case (u, p) => UserDAO.findOneByUsernameAndPassword(u, p.sha512).isDefined
   }))
 
   lazy val createUser = Form(tuple(
-    "username" -> nonEmptyText.verifying("Username taken", usernameTaken _),
+    "username" -> nonEmptyText.verifying("error.username_taken", usernameTaken _),
     "password" -> nonEmptyText,
     "roles"    -> list(text)
   ))
@@ -27,25 +27,25 @@ object DataForm {
   ))
 
   lazy val signUp = Form(tuple(
-    "name"      -> nonEmptyText.verifying("Project Name taken", projectNameTaken _),
-    "username"  -> nonEmptyText.verifying("Username taken", usernameTaken _),
+    "name"      -> nonEmptyText.verifying("error.project_name_taken", projectNameTaken _),
+    "username"  -> nonEmptyText.verifying("error.username_taken", usernameTaken _),
     "password"  -> nonEmptyText,
     "password2" -> nonEmptyText
-  ) verifying ("Password mismatch", fields => fields match {
+  ) verifying ("error.password_mismatch", fields => fields match {
     case (n, u, p, p2) => p == p2
   }))
 
   lazy val newProject = Form(single(
-    "name" -> nonEmptyText.verifying("Project Name taken", projectNameTaken _)
+    "name" -> nonEmptyText.verifying("error.project_name_taken", projectNameTaken _)
   ))
 
   def entry(implicit ctx: Context[_]) = Form(tuple(
-    "name"        -> nonEmptyText.verifying("Entry with same name exists", entryNameTaken(_, ctx)),
+    "name"        -> nonEmptyText.verifying("error.entry_name_taken", entryNameTaken(_, ctx)),
     "description" -> text
   ))
 
   def language(implicit ctx: Context[_]) = Form(tuple(
-    "code" -> nonEmptyText.verifying("Language already exists", languageCodeTaken(_, ctx)),
+    "code" -> nonEmptyText.verifying("error.language_code_taken", languageCodeTaken(_, ctx)),
     "name" -> nonEmptyText
   ))
 

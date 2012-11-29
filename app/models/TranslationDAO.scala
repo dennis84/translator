@@ -10,5 +10,7 @@ object TranslationDAO
   extends SalatDAO[Translation, ObjectId](collection = MongoConnection()("translator")("translations")) {
 
   def findAllByIds(ids: List[ObjectId]) =
-    find(MongoDBObject("_id" -> MongoDBObject("$in" -> ids))).toList.groupBy(_.code).map(_._2).reduce(_ ++ _)
+    find(MongoDBObject("_id" -> MongoDBObject("$in" -> ids)))
+      .sort(orderBy = MongoDBObject("code" -> 1))
+      .toList
 }
