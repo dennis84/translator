@@ -56,11 +56,4 @@ object EntryController extends BaseController {
       JsonOk(entry.toMap)
     }) getOrElse JsonNotFound
   }
-
-  def export(project: String) = SecuredWithProject(project) { implicit ctx =>
-    JsonOk(List())
-    //JsonOk(EntryDAO.findAllByProject(ctx.project.get).map { entry =>
-      //entry.name -> entry.translations.find(_.code == getOr("language", "en")).map(_.text).getOrElse("")
-    //}.toMap)
-  }
 }

@@ -18,7 +18,8 @@ GET     /:project/entries           translator.controllers.EntryController.list(
 POST    /:project/entries           translator.controllers.EntryController.create(project)
 PUT     /:project/entries/:id       translator.controllers.EntryController.update(project, id)
 DELETE  /:project/entries/:id       translator.controllers.EntryController.delete(project, id)
-GET     /:project/entries/export    translator.controllers.EntryController.export(project)
+
+GET     /:project/export/entries    translator.controllers.ExportController.entries(project)
 
 GET     /:entry/translations        translator.controllers.TranslationController.list(entry)
 POST    /:entry/translations        translator.controllers.TranslationController.create(entry)
