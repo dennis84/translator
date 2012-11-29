@@ -36,7 +36,6 @@ define([
     open: function (e) {
       e.preventDefault()
       window.translations.entry = this.model
-      window.translations.reset()
       var view = new TranslationsView({ collection: window.translations })
       window.translations.fetchFixed()
     }

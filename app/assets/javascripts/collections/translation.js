@@ -9,9 +9,13 @@ define([
     initialize: function () {
       this.on("reset", function (collection) {
         collection.each(this.extendModel, this)
-      }, this)
+      })
 
-      this.on("add", this.extendModel, this)
+      this.on("add", this.extendModel)
+    },
+
+    extendModel: function (model) {
+      model.entry = this.entry
     },
 
     url: function () {
@@ -20,10 +24,6 @@ define([
       }
 
       return "/" + this.entry.id + "/translations"
-    },
-
-    extendModel: function (model) {
-      model.entry = this.entry
     },
 
     fetchFixed: function () {
