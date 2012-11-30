@@ -18,7 +18,6 @@ define([
     register: function (e) {
       e.preventDefault()
       this.model.set(this.$el.find("form").serializeObject())
-      console.log("save")
     }
   })
 

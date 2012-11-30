@@ -105,7 +105,6 @@ define([
     router.on("route:importer", function (projectId) {
       withProject(projectId, function (project) {
         var view = new ImportView
-        view.render()
       })
     })
 

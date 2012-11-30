@@ -14,7 +14,6 @@ define([], function () {
         , file = fileList[0]
 
       reader.onloadend = function (a, b, c) {
-        console.log(a, b, c)
         _.extend(fields, {
           "content": reader.result,
           "type": file.name.substring(file.name.lastIndexOf(".") + 1)

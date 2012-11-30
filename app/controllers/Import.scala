@@ -14,27 +14,28 @@ object ImportController extends BaseController {
     "language" -> nonEmptyText
   ))
 
-  def entries(project: String) = Secured { implicit ctx =>
-    JsonOk(List())
-    //ctx.projects.find(_.id == project) map { project =>
-      //form.bindFromRequest.fold(
-        //formWithErrors => JsonBadRequest(Map("error" -> "form error")),
-        //formData => {
-          //Parser.parse(formData._1, formData._2) map { row =>
-            //EntryDAO.findOneByNameAndProject(row._1, project) map { entry =>
-              //if (!entry.translations.exists(_.code == formData._3)) {
-                //val updated = entry.copy(translations = entry.translations ++ List(Translation(formData._3, row._2, ctx.user.get.id, true)))
-                //EntryDAO.save(updated)
-              //}
-            //} getOrElse {
-              //val created = Entry(row._1, "", project.id, List(Translation(formData._3, row._2, ctx.user.get.id, true)))
-              //EntryDAO.insert(created)
-            //}
-          //}
+  def entries(project: String) = SecuredWithProject(project) { implicit ctx =>
+    form.bindFromRequest.fold(
+      formWithErrors => JsonBadRequest(formWithErrors.errors),
+      formData => {
+        Parser.parse(formData._1, formData._2) map { row =>
+          EntryDAO.findOneByNameAndProject(row._1, ctx.project.get) map { entry =>
+            if (!entry.translations.exists(_.code == formData._3)) {
+              val translation = Translation(formData._3, row._2, ctx.user.get.id, true)
+              val updated = entry.copy(translationIds = entry.translationIds ++ List(translation.id))
+              TranslationDAO.insert(translation)
+              EntryDAO.save(updated)
+            }
+          } getOrElse {
+            val translation = Translation(formData._3, row._2, ctx.user.get.id, true)
+            var newEntry = Entry(row._1, "", ctx.project.get.id, List(translation.id))
+            TranslationDAO.insert(translation)
+            EntryDAO.insert(newEntry)
+          }
+        }
 
-          //JsonOk(List())
-        //}
-      //)
-    //} getOrElse JsonNotFound
+        JsonOk(List())
+      }
+    )
   }
 }
