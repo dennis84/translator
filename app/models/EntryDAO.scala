@@ -15,16 +15,22 @@ object EntryDAO
     find(MongoDBObject("projectId" -> project.id)) toList
 
   def findAllByProjectAndFilter(project: Project, filter: Filter) = {
-    find(MongoDBObject("projectId" -> project.id)).toList.map { entry =>
-      if ("true" == filter.untranslated) {
-        entry.translations.exists(trans => filter.untranslatedLanguages.exists(_ == trans.code) && trans.text == "") match {
-          case true => Some(entry)
-          case false => None
-        }
-      } else {
-        Some(entry)
+    var entries = find(MongoDBObject("projectId" -> project.id)) toList
+
+    if ("true" == filter.untranslated) {
+      entries = entries filter { entry =>
+        // translations fixed or return true if no translation by code exists.
+        entry.translations.exists(t => t.text == "" && filter.untranslatedLanguages.exists(_ == t.code))
       }
-    } flatten
+    }
+
+    if ("true" == filter.activatable) {
+      entries = entries filter { entry =>
+        entry.activatableTranslations.length > 0
+      }
+    }
+
+    entries
   }
 
   def findOneByNameAndProject(name: String, project: Project) =

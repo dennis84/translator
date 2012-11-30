@@ -7,7 +7,8 @@ define([], function () {
 
     defaults: {
       untranslated: false,
-      untranslated_languages: []
+      untranslated_languages: [],
+      activatable: false
     }
   })
 

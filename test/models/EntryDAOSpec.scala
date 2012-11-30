@@ -9,8 +9,8 @@ class EntryDAOSpec extends Specification with Fixtures {
 
   "Find entries" should {
     "by project and filter" in new EntryContext {
-      val r = EntryDAO.findAllByProjectAndFilter(project1, Filter("true", Seq("pt")))
-      r.foreach(println(_))
+      val r = EntryDAO.findAllByProjectAndFilter(project1, Filter("true", Seq("pt"), "true"))
+      println(r)
       1 must_== 1
     }
   }

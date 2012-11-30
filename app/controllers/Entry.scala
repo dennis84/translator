@@ -13,7 +13,8 @@ object EntryController extends BaseController {
   def list(project: String) = SecuredWithProject(project) { implicit ctx =>
     val filter = Filter(
       getOr("untranslated", "false"),
-      getAllOr("untranslated_languages", Seq.empty[String]))
+      getAllOr("untranslated_languages", Seq.empty[String]),
+      getOr("activatable", "false"))
 
     JsonOk(EntryDAO.findAllByProjectAndFilter(ctx.project.get, filter) map (_.toMap))
   }

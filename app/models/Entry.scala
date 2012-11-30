@@ -5,7 +5,8 @@ import com.mongodb.casbah.Imports._
 
 case class Filter(
   val untranslated: String,
-  val untranslatedLanguages: Seq[String])
+  val untranslatedLanguages: Seq[String],
+  val activatable: String)
 
 case class Entry(
   val name: String,
