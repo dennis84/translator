@@ -12,12 +12,10 @@ case class Entry(
   val name: String,
   val description: String,
   val projectId: ObjectId,
-  val translationIds: List[ObjectId] = Nil,
+  val translations: List[Translation] = Nil,
   @Key("_id") val id: ObjectId = new ObjectId) {
 
   lazy val project = ProjectDAO.findOneById(projectId)
-
-  lazy val translations = TranslationDAO.findAllByIds(translationIds)
 
   lazy val activatableTranslations = translations filter (_.active == false)
 
@@ -28,6 +26,15 @@ case class Entry(
       translations exists { trans => trans.code == lang.code && trans.text != "" && trans.active == true }
     }.length.toFloat / languages.length * 100
   }
+
+  def translation(id: String) = translations find (_.id == id)
+
+  def +(trans: Translation) = copy(translations = translations :+ trans)
+
+  def update(trans: Translation) = copy(translations = translations map {
+    case t if(t.id == trans.id) => trans
+    case t => t
+  })
 
   def toMap = Map(
     "id" -> id.toString,

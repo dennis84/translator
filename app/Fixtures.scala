@@ -54,8 +54,8 @@ trait Fixtures {
   lazy val trans4de = Translation("de", "Beschreibung", user1.id, true)
   lazy val trans4fr = Translation("fr", "", user1.id, true)
 
-  lazy val entry1 = Entry("hello_world", "", project1.id, List(trans1en.id, trans1de.id, trans1fr.id, trans1es.id, trans1it.id, trans1de1.id, trans1pt1.id))
-  lazy val entry2 = Entry("bye_bye", "", project1.id, List(trans2en.id, trans2de.id, trans2fr.id, trans2es.id, trans2it.id))
-  lazy val entry3 = Entry("title", "", project2.id, List(trans3en.id, trans3de.id, trans3fr.id))
-  lazy val entry4 = Entry("description", "", project2.id, List(trans4en.id, trans4de.id, trans4fr.id))
+  lazy val entry1 = Entry("hello_world", "", project1.id, List(trans1en, trans1de, trans1fr, trans1es, trans1it, trans1de1, trans1pt1))
+  lazy val entry2 = Entry("bye_bye", "", project1.id, List(trans2en, trans2de, trans2fr, trans2es, trans2it))
+  lazy val entry3 = Entry("title", "", project2.id, List(trans3en, trans3de, trans3fr))
+  lazy val entry4 = Entry("description", "", project2.id, List(trans4en, trans4de, trans4fr))
 }

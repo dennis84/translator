@@ -32,6 +32,12 @@ object EntryDAO
 
     entries
   }
+  
+  override def findOneById(id: ObjectId) =
+    find(MongoDBObject("_id" -> id))
+      .sort(orderBy = MongoDBObject("translations.code" -> 1))
+      .toList
+      .headOption
 
   def findOneByNameAndProject(name: String, project: Project) =
     findOne(MongoDBObject("name" -> name, "projectId" -> project.id))
