@@ -14,8 +14,8 @@ object ImportController extends BaseController {
     "language" -> nonEmptyText
   ))
 
-  def entries(project: String) = SecuredWithProject(project) { implicit ctx =>
-    JsonOk(List())
+  //def entries(project: String) = SecuredWithProject(project) { implicit ctx =>
+    //JsonOk(List())
     //form.bindFromRequest.fold(
       //formWithErrors => JsonBadRequest(formWithErrors.errors),
       //formData => {
@@ -38,5 +38,5 @@ object ImportController extends BaseController {
         //JsonOk(List())
       //}
     //)
-  }
+//  }
 }

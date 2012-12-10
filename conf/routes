@@ -13,27 +13,27 @@ POST    /sign-up                    translator.controllers.ProjectController.sig
 GET     /projects                   translator.controllers.ProjectController.list
 POST    /projects                   translator.controllers.ProjectController.create
 
-GET     /:project/entries/:id       translator.controllers.EntryController.read(project, id)
-GET     /:project/entries           translator.controllers.EntryController.list(project)
-POST    /:project/entries           translator.controllers.EntryController.create(project)
-PUT     /:project/entries/:id       translator.controllers.EntryController.update(project, id)
-DELETE  /:project/entries/:id       translator.controllers.EntryController.delete(project, id)
+#GET     /:project/entries/:id       translator.controllers.EntryController.read(project, id)
+#GET     /:project/entries           translator.controllers.EntryController.list(project)
+#POST    /:project/entries           translator.controllers.EntryController.create(project)
+#PUT     /:project/entries/:id       translator.controllers.EntryController.update(project, id)
+#DELETE  /:project/entries/:id       translator.controllers.EntryController.delete(project, id)
 
-GET     /:project/export/entries    translator.controllers.ExportController.entries(project)
+#GET     /:project/export/entries    translator.controllers.ExportController.entries(project)
 
-GET     /:entry/translations        translator.controllers.TranslationController.list(entry)
-POST    /:entry/translations        translator.controllers.TranslationController.create(entry)
-PUT     /:entry/translations/:id    translator.controllers.TranslationController.update(entry, id)
-DELETE  /:entry/translations/:id    translator.controllers.TranslationController.delete(entry, id)
-POST    /:entry/translations/:id/activate translator.controllers.TranslationController.activate(entry, id)
+#GET     /:entry/translations        translator.controllers.TranslationController.list(entry)
+#POST    /:entry/translations        translator.controllers.TranslationController.create(entry)
+#PUT     /:entry/translations/:id    translator.controllers.TranslationController.update(entry, id)
+#DELETE  /:entry/translations/:id    translator.controllers.TranslationController.delete(entry, id)
+#POST    /:entry/translations/:id/activate translator.controllers.TranslationController.activate(entry, id)
 
 GET     /:project/languages         translator.controllers.LanguageController.list(project)
 POST    /:project/languages         translator.controllers.LanguageController.create(project)
 PUT     /:project/languages/:id     translator.controllers.LanguageController.update(project, id)
 DELETE  /:project/languages/:id     translator.controllers.LanguageController.delete(project, id)
 
-GET     /:project/search/entries    translator.controllers.SearchController.entries(project)
+#GET     /:project/search/entries    translator.controllers.SearchController.entries(project)
 
-POST    /:project/import            translator.controllers.ImportController.entries(project)
+#POST    /:project/import            translator.controllers.ImportController.entries(project)
 
 GET     /assets/*file               controllers.Assets.at(path="/public", file)

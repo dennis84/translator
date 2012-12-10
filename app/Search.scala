@@ -14,12 +14,10 @@ object Search {
     indexer.deleteIndex(Seq("translator"))
     indexer.createIndex("translator", settings = Map())
     indexer.waitTillActive()
-    indexer.putMapping("translator", "entry", Json generate Map("entry" -> Map(
+    indexer.putMapping("translator", "translation", Json generate Map("translation" -> Map(
       "properties" -> Map(
         "name" -> Map("type" -> "string"),
-        "translations" -> Map(
-          "properties" -> Map(
-            "text" -> Map("type" -> "string"))))
+        "text" -> Map("type" -> "string"))
     )))
 
     indexer.refresh()
