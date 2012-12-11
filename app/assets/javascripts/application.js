@@ -1,7 +1,6 @@
 define([
   "models/user",
   "models/project",
-  "collections/entry",
   "collections/language",
   "collections/project",
   "collections/translation",
@@ -13,24 +12,24 @@ define([
   "views/dashboard",
   "views/project",
   "views/project_new",
-  "views/entries",
+  "views/translations",
   "views/languages",
   "views/users",
   "views/import"
-], function (User, Project, Entries, Languages, Projects, Translations, Users,
+], function (User, Project, Languages, Projects, Translations, Users,
   ApplicationView, UserProfileView, UserNewView, StartView, DashboardView,
-  ProjectView, ProjectNewView, EntriesView, LanguagesView, UsersView, ImportView) {
+  ProjectView, ProjectNewView, TranslationsView, LanguagesView, UsersView, ImportView) {
 
   var Router = Backbone.Router.extend({
     routes: {
-      "":                     "dashboard",
-      "profile":              "profile",
-      "new-project":          "newProject",
-      "!/:project":           "project",
-      "!/:project/entries":   "entries",
-      "!/:project/languages": "languages",
-      "!/:project/import":    "importer",
-      "!/:project/users":     "users"
+      "":                        "dashboard",
+      "profile":                 "profile",
+      "new-project":             "newProject",
+      "!/:project":              "project",
+      "!/:project/translations": "translations",
+      "!/:project/languages":    "languages",
+      "!/:project/import":       "importer",
+      "!/:project/users":        "users"
     }
   })
 
@@ -45,7 +44,6 @@ define([
   var initialize = function () {
     window.router = new Router
 
-    window.entries      = new Entries
     window.languages    = new Languages
     window.projects     = new Projects
     window.translations = new Translations
@@ -76,15 +74,15 @@ define([
       })
     })
 
-    router.on("route:entries", function (projectId) {
+    router.on("route:translations", function (projectId) {
       withProject(projectId, function (project) {
-        var view = new EntriesView({ collection: window.entries })
+        var view = new TranslationsView({ collection: window.translations })
 
-        window.entries.filter.on("change", function () {
-          window.entries.fetch({ data: window.entries.filter.toJSON() })
-        })
+        //window.translations.filter.on("change", function () {
+          //window.translations.fetch({ data: window.entries.filter.toJSON() })
+        //})
 
-        window.entries.fetch()
+        window.translations.fetch()
       })
     })
 

@@ -1,73 +1,32 @@
 define([
+  "models/translation",
   "views/translation",
   "text!templates/translations.html"
-], function (TranslationView, translationsTemplate) {
+], function (Translation, TranslationView, translationsTemplate) {
 
   var module = Backbone.View.extend({
     id: "translations",
-    className: "translations",
-
-    events: {
-      "click .save": "save",
-      "click .cancel": "cancel"
-    },
 
     initialize: function () {
-      var view = this
-      this.collection.on("fetched_fixed", this.reset, this)
-      this.collection.on("add", this.reset, this)
-      this.collection.on("change:active", function () {
-        view.collection.reset()
-        view.collection.fetchFixed()
-      }, this)
+      this.collection.on("reset", this.reset, this)
+      this.collection.on("add", this.add, this)
       this.render()
     },
 
     render: function () {
       this.$el.html(_.template(translationsTemplate, {}))
-      window.app.removePane(1)
-      window.app.addPane(this.el, "translations", "spaceless6")
+      window.app.removePanes()
+      window.app.addPane(this.el, "translations", "spaceless4")
     },
 
-    reset: function () {
-      this.$("#translation-list").html("")
+    reset: function (e) {
+      this.$el.find("#translation-list").html("")
       this.collection.each(this.add, this)
     },
 
     add: function (model) {
       var view = new TranslationView({ model: model })
       this.$("#translation-list").append(view.render().el)
-    },
-
-    save: function (e) {
-      e.preventDefault()
-      var view = this
-        , collection = this.collection
-        , data = this.$el.find("form").serializeObject()
-
-      _.each(data.translations, function (item, id) {
-        var translation = collection.get(id)
-        if (undefined === translation) {
-          translation = collection.getByCid(id)
-        }
-
-        if (true === translation.hasChanged(item)) {
-          if (window.user.isAdmin()) {
-            translation.set(item)
-            translation.save()
-          } else {
-            var index = collection.indexOf(translation) + 1
-            var clone = translation.clone()
-            clone.set(item)
-            collection.create(clone, { wait: true, at: index })
-          }
-        }
-      })
-    },
-
-    cancel: function (e) {
-      e.preventDefault()
-      this.$el.remove()
     }
   })
 

@@ -1,32 +1,30 @@
 define([
+  "collections/translation",
+  "views/translations_edit",
   "text!templates/translation.html"
-], function (translationTemplate) {
+], function (Translations, TranslationsEditView, translationTemplate) {
 
   var module = Backbone.View.extend({
+    tagName: "tr",
+
     events: {
-      "click .accept": "accept",
-      "click .reject": "reject"
+      "click td:not(.check)": "open"
     },
 
+    initialize: function () {
+      this.model.on("change", this.render, this)
+    },
+ 
     render: function () {
-      var data = _.extend(this.model.toJSON(), {
-        "id": this.model.id || this.model.cid,
-        "admin": window.user.isAdmin()
-      })
-
-      this.$el.html(_.template(translationTemplate, data))
+      this.$el.html(_.template(translationTemplate, this.model.toJSON()))
       return this
     },
 
-    accept: function (e) {
+    open: function (e) {
       e.preventDefault()
-      this.model.activate()
-    },
-
-    reject: function (e) {
-      e.preventDefault()
-      this.model.destroy()
-      this.$el.remove()
+      var coll = new Translations
+      var view = new TranslationsEditView({ collection: coll })
+      coll.fetchByName(this.model.get("name"))
     }
   })
 

@@ -1,9 +1,28 @@
-<form class="scrollable">
-  <div class="padding10" id="translation-list">
+<div class="scrollable">
+  <div class="toolbar">
+    <input type="text" class="search" placeholder="Search for ...">
   </div>
 
-  <div class="form-actions">
-    <button type="submit" class="btn btn-primary save"><i class="icon-save"></i> Save changes</button>
-    <button class="btn cancel">Cancel</button>
+  <div class="sub-toolbar">
+    <div class="pull-left">
+      <button class="btn btn-small" id="filter" data-title="Filter" data-content="<div class='popover-container'></div>" data-placement="bottom">
+        <i class="icon-cog"></i> Filter
+      </button>
+      <button class="btn btn-small" id="clear-filter">Clear Filter</button>
+    </div>
+
+    <div class="pull-right btn-toolbar">
+      <div class="btn-group">
+        <a class="btn btn-small dropdown-toggle" data-toggle="dropdown" href="#"> Selection<span class="caret"></span></a>
+        <ul class="dropdown-menu">
+          <li><a class="remove" href="#">Remove</a></li>
+        </ul>
+      </div>
+      <button class="btn btn-small btn-primary create">New Translation</button>
+    </div>
   </div>
-</form>
+
+  <table class="table translation-table">
+    <tbody id="translation-list"></tbody>
+  </table>
+</div>

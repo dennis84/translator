@@ -2,10 +2,6 @@ define([], function () {
 
   var module = Backbone.Model.extend({
     url: function () {
-      if (undefined === this.entry) {
-        throw new Error("There must be an entry set.")
-      }
-
       if (true === this.isNew()) {
         return "/" + this.entry.id + "/translations"
       }
@@ -20,23 +16,20 @@ define([], function () {
       })
     },
 
-    clone: function() {
-      var clone = new this.constructor(this.attributes)
-      clone.entry = this.entry
-      clone.id = null
-
-      return clone
-    },
-
     hasChanged: function (diff) {
       return false === _.isEqual({
         text: this.get("text")
       }, diff)
     },
 
+    isNew: function () {
+      return "" == this.id
+    },
+
     defaults: {
-      id: null,
+      id: "",
       code: "",
+      name: "",
       text: "",
       author: "",
       active: false

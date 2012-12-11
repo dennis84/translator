@@ -7,6 +7,14 @@ import translator.forms._
 
 object TranslationController extends BaseController {
 
+  def list(project: String) = SecuredWithProject(project) { implicit ctx =>
+    JsonOk(TranslationDAO.findAllByProjectAndCode(ctx.project.get, "en") map(_.toMap))
+  }
+
+  def listByName(project: String, name: String) = SecuredWithProject(project) { implicit ctx =>
+    JsonOk(TranslationDAO.findAllByProjectAndName(ctx.project.get, name) map (_.toMap))
+  }
+
   //def list(entryId: String) = Secured { implicit ctx =>
     //(for {
       //entry   <- EntryDAO.findOneById(entryId)
