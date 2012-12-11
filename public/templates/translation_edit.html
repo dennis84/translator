@@ -1,4 +1,4 @@
-{% if (active) { %}
+{% if ("active" === status || "empty" === status) { %}
 <div class="translation">
   <label>{{ code }}</label>
   <textarea name="translations[{{ id }}].text" rows="1" type="text" placeholder="Enter your translation suggestion">{{ text }}</textarea>

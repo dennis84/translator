@@ -19,7 +19,7 @@ object TranslationDAO
 
   def findAllByProjectAndName(project: Project, name: String) = {
     val trans = find(MongoDBObject("projectId" -> project.id, "name" -> name)) toList
-    val diff  = LanguageDAO.findAllByProject(project).map(_.code).diff(trans.map(_.code))
+    val diff  = LanguageDAO.findAllByProject(project).map(_.code).diff(trans.filter(_.status == "active").map(_.code))
 
     trans match {
       case Nil   => List.empty[Translation]

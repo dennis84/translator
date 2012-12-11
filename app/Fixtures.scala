@@ -32,26 +32,26 @@ trait Fixtures {
   lazy val language8 = Language("de", "German", project2.id)
   lazy val language9 = Language("fr", "French", project2.id)
 
-  lazy val trans1en  = Translation("en", "hello_world", "Hello World", project1.id, user1.id, true, id)
-  lazy val trans1de  = Translation("de", "hello_world", "Hallo Welt", project1.id, user1.id, true, id)
-  lazy val trans1de1 = Translation("de", "hello_world", "Moin Welt", project1.id, user2.id, false, id)
-  lazy val trans1fr  = Translation("fr", "hello_world", "Bonjour", project1.id, user1.id, true, id)
-  lazy val trans1es  = Translation("es", "hello_world", "Olá", project1.id, user1.id, true, id)
-  lazy val trans1it  = Translation("it", "hello_world", "Ciao", project1.id, user1.id, true, id)
-  lazy val trans1pt1 = Translation("pt", "hello_world", "Ciao", project1.id, user2.id, false, id)
+  lazy val trans1en  = Translation("en", "hello_world", "Hello World", project1.id, user1.id, Status.Active, id)
+  lazy val trans1de  = Translation("de", "hello_world", "Hallo Welt", project1.id, user1.id, Status.Active, id)
+  lazy val trans1de1 = Translation("de", "hello_world", "Moin Welt", project1.id, user2.id, Status.Inactive, id)
+  lazy val trans1fr  = Translation("fr", "hello_world", "Bonjour", project1.id, user1.id, Status.Active, id)
+  lazy val trans1es  = Translation("es", "hello_world", "Olá", project1.id, user1.id, Status.Active, id)
+  lazy val trans1it  = Translation("it", "hello_world", "Ciao", project1.id, user1.id, Status.Active, id)
+  lazy val trans1pt1 = Translation("pt", "hello_world", "Ciao", project1.id, user2.id, Status.Inactive, id)
 
-  lazy val trans2en = Translation("en", "bye_bye", "Bye bye", project1.id, user1.id, true, id)
-  lazy val trans2de = Translation("de", "bye_bye", "Tschüs", project1.id, user1.id, true, id)
-  lazy val trans2fr = Translation("fr", "bye_bye", "Ourevoir", project1.id, user1.id, true, id)
-  lazy val trans2es = Translation("es", "bye_bye", "", project1.id, user1.id, true, id)
+  lazy val trans2en = Translation("en", "bye_bye", "Bye bye", project1.id, user1.id, Status.Active, id)
+  lazy val trans2de = Translation("de", "bye_bye", "Tschüs", project1.id, user1.id, Status.Active, id)
+  lazy val trans2fr = Translation("fr", "bye_bye", "Ourevoir", project1.id, user1.id, Status.Active, id)
+  lazy val trans2es = Translation("es", "bye_bye", "", project1.id, user1.id, Status.Active, id)
 
-  lazy val trans3en = Translation("en", "title", "Title", project2.id, user1.id, true, id)
-  lazy val trans3de = Translation("de", "title", "Titel", project2.id, user1.id, true, id)
-  lazy val trans3fr = Translation("fr", "title", "", project2.id, user1.id, true, id)
+  lazy val trans3en = Translation("en", "title", "Title", project2.id, user1.id, Status.Active, id)
+  lazy val trans3de = Translation("de", "title", "Titel", project2.id, user1.id, Status.Active, id)
+  lazy val trans3fr = Translation("fr", "title", "", project2.id, user1.id, Status.Active, id)
 
-  lazy val trans4en = Translation("en", "description", "Description", project2.id, user1.id, true, id)
-  lazy val trans4de = Translation("de", "description", "Beschreibung", project2.id, user1.id, true, id)
-  lazy val trans4fr = Translation("fr", "description", "", project2.id, user1.id, true, id)
+  lazy val trans4en = Translation("en", "description", "Description", project2.id, user1.id, Status.Active, id)
+  lazy val trans4de = Translation("de", "description", "Beschreibung", project2.id, user1.id, Status.Active, id)
+  lazy val trans4fr = Translation("fr", "description", "", project2.id, user1.id, Status.Active, id)
 
   private def id = new ObjectId().toString
 }

@@ -9,7 +9,7 @@ case class Translation(
   val text: String,
   val projectId: ObjectId,
   val authorId: ObjectId,
-  val active: Boolean,
+  val status: Status,
   @Key("_id") val id: String) {
 
   lazy val author = UserDAO.findOneById(authorId)
@@ -22,7 +22,7 @@ case class Translation(
     "name" -> name,
     "text" -> text,
     "author" -> author.map(_.username).getOrElse("unknown"),
-    "active" -> active,
+    "status" -> status.toString,
     "nb_activatable" -> 0,
     "progress" -> 0
   )
@@ -30,5 +30,5 @@ case class Translation(
 
 object EmptyTranslation {
 
-  def apply(code: String, t: Translation) = Translation(code, t.name, "", t.projectId, t.authorId, true, "")
+  def apply(code: String, t: Translation) = Translation(code, t.name, "", t.projectId, t.authorId, Status.Empty, new ObjectId().toString)
 }
