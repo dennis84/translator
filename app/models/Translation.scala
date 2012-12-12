@@ -27,6 +27,10 @@ case class Translation(
     }.length.toFloat / languages.length * 100
   } getOrElse 0
 
+  lazy val activatableTranslations = project map { project =>
+    TranslationDAO.findAllByProjectAndName(project, name) filter (_.status == Status.Inactive)
+  } getOrElse List.empty[Translation]
+
   def toMap = Map(
     "id" -> id.toString,
     "code" -> code,
@@ -34,7 +38,7 @@ case class Translation(
     "text" -> text,
     "author" -> author.map(_.username).getOrElse("unknown"),
     "status" -> status.toString,
-    "nb_activatable" -> 0,
+    "nb_activatable" -> activatableTranslations.length,
     "progress" -> progress
   )
 }
