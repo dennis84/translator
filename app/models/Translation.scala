@@ -12,9 +12,20 @@ case class Translation(
   val status: Status,
   @Key("_id") val id: ObjectId = new ObjectId) {
 
+  lazy val project = ProjectDAO.findOneById(projectId)
+
   lazy val author = UserDAO.findOneById(authorId)
 
   lazy val nbWords = text split(" ") length
+
+  lazy val progress = project map { project =>
+    val languages = LanguageDAO.findAllByProject(project)
+    val translations = TranslationDAO.findAllByProjectAndName(project, name)
+
+    languages.filter { lang =>
+      translations exists { trans => trans.code == lang.code && trans.text != "" && trans.status == Status.Active }
+    }.length.toFloat / languages.length * 100
+  } getOrElse 0
 
   def toMap = Map(
     "id" -> id.toString,
@@ -24,7 +35,7 @@ case class Translation(
     "author" -> author.map(_.username).getOrElse("unknown"),
     "status" -> status.toString,
     "nb_activatable" -> 0,
-    "progress" -> 0
+    "progress" -> progress
   )
 }
 
