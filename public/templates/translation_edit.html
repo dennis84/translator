@@ -1,10 +1,10 @@
 {% if ("active" === status || "empty" === status) { %}
-<div class="translation">
+<div class="translation-edit-item">
   <label>{{ code }}</label>
   <textarea name="translations[{{ id }}].text" rows="1" type="text" placeholder="Enter your translation suggestion">{{ text }}</textarea>
 </div>
 {% } else { %}
-<div class="translation-request">
+<div class="translation-request-item">
   <blockquote>
     <p>{{ text }}</p>
     <small>by <cite>{{ author }}</cite></small>

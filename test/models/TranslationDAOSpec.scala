@@ -8,18 +8,22 @@ import translator.models._
 class TranslationDAOSpec extends Specification with Fixtures {
 
   "Find all" should {
-    "sorted by ids" in new TranslationContext {
-      //val r = TranslationDAO.findAllByIds(List(trans1en.id, trans1de.id, trans1fr.id, trans1de1.id))
-      println(entry1.translations)
+    "sorted" in new TranslationContext {
+      var r = TranslationDAO.findAllByProjectAndName(project1, "hello_world")
+      r.foreach(println(_))
       1 must_== 1
     }
   }
 
   trait TranslationContext extends Scope {
-    EntryDAO.collection.drop
     TranslationDAO.collection.drop
+    LanguageDAO.collection.drop
 
-    EntryDAO.insert(entry1)
-    TranslationDAO.insert(trans1en, trans1de, trans1fr, trans1de1)
+    TranslationDAO.insert(
+      trans1en, trans1de, trans1fr, trans1es, trans1it, trans1de1, trans1pt1,
+      trans2en, trans2de, trans2fr, trans2es,
+      trans3en, trans3de, trans3fr,
+      trans4en, trans4de, trans4fr)
+    LanguageDAO.insert(language1, language2, language3, language4, language5, language6, language7, language8, language9)
   }
 }

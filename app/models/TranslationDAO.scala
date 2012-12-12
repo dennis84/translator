@@ -19,13 +19,20 @@ object TranslationDAO
 
   def findAllByProjectAndName(project: Project, name: String) = {
     val trans = find(MongoDBObject("projectId" -> project.id, "name" -> name)) toList
-    val diff  = LanguageDAO.findAllByProject(project).map(_.code).diff(trans.filter(_.status == "active").map(_.code))
+    val langs = LanguageDAO.findAllByProject(project).map(_.code)
+    val diff  = langs.diff(trans.filter(_.status == Status.Active).map(_.code))
 
     trans match {
       case Nil   => List.empty[Translation]
-      case trans => (trans ++ diff.map { code =>
-        EmptyTranslation(code, trans.head)
-      }) sortBy (_.code)
+      case trans => {
+        val unsorted = (trans ++ diff.map { code =>
+          EmptyTranslation(code, trans.head)
+        }) sortBy (_.status.id)
+
+        langs map { l =>
+          unsorted.filter(_.code == l)
+        } flatten
+      }
     }
   }
 }
