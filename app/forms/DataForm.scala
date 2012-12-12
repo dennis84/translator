@@ -49,10 +49,11 @@ object DataForm {
     "name" -> nonEmptyText
   ))
 
-  //lazy val translation = Form(tuple(
-    //"code" -> nonEmptyText,
-    //"text" -> text
-  //))
+  lazy val translation = Form(tuple(
+    "code" -> nonEmptyText,
+    "name" -> nonEmptyText,
+    "text" -> text
+  ))
 
   private def usernameTaken(username: String) =
     UserDAO.findOneByUsername(username).isEmpty

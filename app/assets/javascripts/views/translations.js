@@ -7,6 +7,10 @@ define([
   var module = Backbone.View.extend({
     id: "translations",
 
+    events: {
+      "keyup .search": "search"
+    },
+
     initialize: function () {
       this.collection.on("reset", this.reset, this)
       this.collection.on("add", this.add, this)
@@ -27,6 +31,16 @@ define([
     add: function (model) {
       var view = new TranslationView({ model: model })
       this.$("#translation-list").append(view.render().el)
+    },
+
+    search: function (e) {
+      e.preventDefault()
+      var term = $(e.currentTarget).val()
+      if (term.length > 0) {
+        this.collection.search(term)
+      } else {
+        this.collection.fetch()
+      }
     }
   })
 

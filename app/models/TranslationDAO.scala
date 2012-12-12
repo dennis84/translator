@@ -35,4 +35,10 @@ object TranslationDAO
       }
     }
   }
+
+  def findAllByProjectAndIds(project: Project, ids: List[ObjectId]) =
+    find(MongoDBObject("projectId" -> project.id, "_id" -> MongoDBObject("$in" -> ids))) toList
+
+  def findOneBy(project: Project, name: String, code: String) =
+    findOne(MongoDBObject("projectId" -> project.id, "name" -> name, "code" -> code))
 }

@@ -3,10 +3,10 @@ define([], function () {
   var module = Backbone.Model.extend({
     url: function () {
       if (true === this.isNew()) {
-        return "/" + this.entry.id + "/translations"
+        return "/" + window.project.id + "/translations"
       }
 
-      return "/" + this.entry.id + "/translations/" + this.id
+      return "/" + window.project.id + "/translations/" + this.id
     },
 
     activate: function () {
@@ -23,7 +23,7 @@ define([], function () {
     },
 
     isNew: function () {
-      return "" == this.id
+      return "empty" === this.get("status")
     },
 
     defaults: {

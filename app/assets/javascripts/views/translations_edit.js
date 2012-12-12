@@ -36,7 +36,23 @@ define([
 
     save: function (e) {
       e.preventDefault()
-      console.log(this.$el.find("form").serializeObject())
+      var data = this.$el.find("form").serializeObject()
+        , collection = this.collection
+
+      _.each(data.translations, function (item, id) {
+        var translation = collection.get(id)
+        if (true === translation.hasChanged(item)) {
+          if (window.user.isAdmin()) {
+            translation.set(item)
+            translation.save()
+          } else {
+            var index = collection.indexOf(translation) + 1
+            var clone = translation.clone()
+            clone.set(item)
+            collection.create(clone, { wait: true, at: index })
+          }
+        }
+      })
     },
 
     cancel: function (e) {
