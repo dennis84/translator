@@ -1,17 +1,17 @@
-GET     /                           translator.controllers.PageController.home
+GET     /                                   translator.controllers.PageController.home
 
-GET     /user                       translator.controllers.UserController.current
-PUT     /user                       translator.controllers.UserController.updateCurrent
-GET     /:project/user              translator.controllers.UserController.currentByProject(project)
-POST    /authenticate               translator.controllers.UserController.authenticate
-DELETE  /logout                     translator.controllers.UserController.logout
-GET     /:project/users             translator.controllers.UserController.list(project)
-POST    /:project/users             translator.controllers.UserController.create(project)
+GET     /user                               translator.controllers.UserController.current
+PUT     /user                               translator.controllers.UserController.updateCurrent
+GET     /:project/user                      translator.controllers.UserController.currentByProject(project)
+POST    /authenticate                       translator.controllers.UserController.authenticate
+DELETE  /logout                             translator.controllers.UserController.logout
+GET     /:project/users                     translator.controllers.UserController.list(project)
+POST    /:project/users                     translator.controllers.UserController.create(project)
 
-POST    /sign-up                    translator.controllers.ProjectController.signUp
+POST    /sign-up                            translator.controllers.ProjectController.signUp
 
-GET     /projects                   translator.controllers.ProjectController.list
-POST    /projects                   translator.controllers.ProjectController.create
+GET     /projects                           translator.controllers.ProjectController.list
+POST    /projects                           translator.controllers.ProjectController.create
 
 GET     /:project/translations              translator.controllers.TranslationController.list(project)
 GET     /:project/translations/:name        translator.controllers.TranslationController.listByName(project, name)
@@ -28,6 +28,6 @@ POST    /:project/languages                 translator.controllers.LanguageContr
 PUT     /:project/languages/:id             translator.controllers.LanguageController.update(project, id)
 DELETE  /:project/languages/:id             translator.controllers.LanguageController.delete(project, id)
 
-#POST    /:project/import            translator.controllers.ImportController.entries(project)
+POST    /:project/import                    translator.controllers.ImportController.translations(project)
 
-GET     /assets/*file               controllers.Assets.at(path="/public", file)
+GET     /assets/*file                       controllers.Assets.at(path="/public", file)

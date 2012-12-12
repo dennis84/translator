@@ -14,29 +14,19 @@ object ImportController extends BaseController {
     "language" -> nonEmptyText
   ))
 
-  //def entries(project: String) = SecuredWithProject(project) { implicit ctx =>
-    //JsonOk(List())
-    //form.bindFromRequest.fold(
-      //formWithErrors => JsonBadRequest(formWithErrors.errors),
-      //formData => {
-        //Parser.parse(formData._1, formData._2) map { row =>
-          //EntryDAO.findOneByNameAndProject(row._1, ctx.project.get) map { entry =>
-            //if (!entry.translations.exists(_.code == formData._3)) {
-              //val translation = Translation(formData._3, row._2, ctx.user.get.id, true)
-              //val updated = entry.copy(translationIds = entry.translationIds ++ List(translation.id))
-              //TranslationDAO.insert(translation)
-              //EntryDAO.save(updated)
-            //}
-          //} getOrElse {
-            //val translation = Translation(formData._3, row._2, ctx.user.get.id, true)
-            //var newEntry = Entry(row._1, "", ctx.project.get.id, List(translation.id))
-            //TranslationDAO.insert(translation)
-            //EntryDAO.insert(newEntry)
-          //}
-        //}
+  def translations(project: String) = SecuredWithProject(project) { implicit ctx =>
+    form.bindFromRequest.fold(
+      formWithErrors => JsonBadRequest(formWithErrors.errors),
+      formData => {
+        Parser.parse(formData._1, formData._2) map { row =>
+          if (!TranslationDAO.findOneBy(ctx.project.get, row._1, formData._3).isDefined) {
+            val created = Translation(formData._3, row._1, row._2, ctx.project.get.id, ctx.user.get.id, translator.models.Status.Active)
+            TranslationDAO.insert(created)
+          }
+        }
 
-        //JsonOk(List())
-      //}
-    //)
-//  }
+        JsonOk(List())
+      }
+    )
+  }
 }
