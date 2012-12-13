@@ -16,7 +16,7 @@ case class Translation(
 
   lazy val author = UserDAO.findOneById(authorId)
 
-  lazy val nbWords = text split(" ") length
+  lazy val nbWords = text.split(" ").filterNot(_ == "").length
 
   lazy val progress = project map { project =>
     val languages = LanguageDAO.findAllByProject(project)

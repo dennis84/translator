@@ -11,14 +11,22 @@ object TranslationDAO
 
   def findAll = find(DBObject()) toList
 
-  def findAllByProject(project: Project) =
-    find(MongoDBObject("projectId" -> project.id)) toList
+  def findAllByProject(project: Project) = fixTranslations(
+    find(MongoDBObject("projectId" -> project.id)).toList, project)
 
   def findAllByProjectAndCode(project: Project, code: String) =
     find(MongoDBObject("projectId" -> project.id, "code" -> code)) toList
 
-  def findAllByProjectAndName(project: Project, name: String) = {
-    val trans = find(MongoDBObject("projectId" -> project.id, "name" -> name)) toList
+  def findAllByProjectAndName(project: Project, name: String) = fixTranslations(
+    find(MongoDBObject("projectId" -> project.id, "name" -> name)).toList, project)
+
+  def findAllByProjectAndIds(project: Project, ids: List[ObjectId]) =
+    find(MongoDBObject("projectId" -> project.id, "_id" -> MongoDBObject("$in" -> ids))) toList
+
+  def findOneBy(project: Project, name: String, code: String) =
+    findOne(MongoDBObject("projectId" -> project.id, "name" -> name, "code" -> code))
+
+  private def fixTranslations(trans: List[Translation], project: Project) = {
     val langs = LanguageDAO.findAllByProject(project).map(_.code)
     val diff  = langs.diff(trans.filter(_.status == Status.Active).map(_.code))
 
@@ -35,10 +43,4 @@ object TranslationDAO
       }
     }
   }
-
-  def findAllByProjectAndIds(project: Project, ids: List[ObjectId]) =
-    find(MongoDBObject("projectId" -> project.id, "_id" -> MongoDBObject("$in" -> ids))) toList
-
-  def findOneBy(project: Project, name: String, code: String) =
-    findOne(MongoDBObject("projectId" -> project.id, "name" -> name, "code" -> code))
 }

@@ -20,9 +20,9 @@ case class Project(
   } toMap
 
   def nbWords = LanguageDAO.findAllByProject(this).map { lang =>
-    lang.code -> translations.filter { trans =>
-      trans.code == lang.code && (trans.status == Status.Active || trans.status == Status.Empty
-    }.map(_.nbWords)//.reduceLeft(_ + _)
+    lang.code -> (translations.filter { trans =>
+      trans.code == lang.code && (trans.status == Status.Active || trans.status == Status.Empty)
+    }.map(_.nbWords).reduceLeft(_ + _))
   } toMap
 
   def contributors = UserDAO.findAllByProject(this)
