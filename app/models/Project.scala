@@ -10,19 +10,20 @@ case class Project(
   @Key("_id") val id: ObjectId = new ObjectId) {
 
   lazy val admin = UserDAO.findOneById(adminId)
-  //lazy val entries = EntryDAO.findAllByProject(this)
 
-  //def progress = LanguageDAO.findAllByProject(this) map { lang =>
-    //lang.code -> entries.filter { entry =>
-      //entry.translations.exists { trans => trans.code == lang.code && trans.text != "" }
-    //}.length.toFloat / entries.length * 100
-  //} toMap
+  lazy val translations = TranslationDAO.findAllByProject(this)
 
-  //def nbWords = LanguageDAO.findAllByProject(this) map { lang =>
-    //lang.code -> entries.map { entry =>
-      //entry.translations.find(_.code == lang.code) map(_.nbWords) getOrElse 0
-    //}.reduce (_ + _)
-  //} toMap
+  lazy val progress = LanguageDAO.findAllByProject(this) map { lang =>
+    lang.code -> (translations.filter { trans =>
+      trans.code == lang.code && trans.text != "" && trans.status == Status.Active
+    }.length.toFloat) / translations.map(_.name).distinct.length * 100
+  } toMap
+
+  def nbWords = LanguageDAO.findAllByProject(this).map { lang =>
+    lang.code -> translations.filter { trans =>
+      trans.code == lang.code && (trans.status == Status.Active || trans.status == Status.Empty
+    }.map(_.nbWords)//.reduceLeft(_ + _)
+  } toMap
 
   def contributors = UserDAO.findAllByProject(this)
 
@@ -31,8 +32,8 @@ case class Project(
     "name" -> name,
     "admin" -> admin.map(_.toMap).getOrElse(Map()),
     "statistics" -> Map(
-      //"progress" -> progress,
-      //"nb_entries" -> entries.length,
-      //"nb_words" -> nbWords
+      "progress" -> progress,
+      "nb_entries" -> translations.map(_.name).distinct.length,
+      "nb_words" -> nbWords
     ))
 }
