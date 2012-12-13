@@ -78,7 +78,12 @@ object TranslationController extends BaseController {
       translation <- TranslationDAO.findOneById(id)
       if (user.roles(project).contains("ROLE_ADMIN"))
     } yield {
-      TranslationDAO.remove(translation)
+      if (translation.status == translator.models.Status.Active) {
+        TranslationDAO.removeAllByProjectAndName(project, translation.name)
+      } else {
+        TranslationDAO.remove(translation)
+      }
+
       JsonOk(translation.toMap)
     }) getOrElse JsonNotFound
   }

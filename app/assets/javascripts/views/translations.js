@@ -8,7 +8,8 @@ define([
     id: "translations",
 
     events: {
-      "keyup .search": "search"
+      "keyup .search": "search",
+      "click .remove": "remove"
     },
 
     initialize: function () {
@@ -41,6 +42,18 @@ define([
       } else {
         this.collection.fetch()
       }
+    },
+
+    remove: function (e) {
+      e.preventDefault()
+      var view = this
+      this.$(".check input:checked").each(function (i, el) {
+        var translation = $(el).closest("tr")
+        var model = view.collection.get(translation.attr("data-id"))
+        view.collection.remove(model)
+        model.destroy()
+        $(translation).remove()
+      })
     }
   })
 

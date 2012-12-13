@@ -26,6 +26,9 @@ object TranslationDAO
   def findOneBy(project: Project, name: String, code: String) =
     findOne(MongoDBObject("projectId" -> project.id, "name" -> name, "code" -> code))
 
+  def removeAllByProjectAndName(project: Project, name: String) =
+    find(MongoDBObject("projectId" -> project.id, "name" -> name)).toList foreach (remove(_))
+
   private def fixTranslations(trans: List[Translation], project: Project) = {
     val langs = LanguageDAO.findAllByProject(project).map(_.code)
     val diff  = langs.diff(trans.filter(_.status == Status.Active).map(_.code))
