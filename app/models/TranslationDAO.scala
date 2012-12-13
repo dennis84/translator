@@ -17,6 +17,28 @@ object TranslationDAO
   def findAllByProjectAndCode(project: Project, code: String) =
     find(MongoDBObject("projectId" -> project.id, "code" -> code)) toList
 
+  def findAllByProjectAndFilter(project: Project, filter: Filter, code: String) = {
+    var translations = findAllByProject(project)
+
+    if ("true" == filter.untranslated) {
+      val untranslatedNames = translations.filter { trans =>
+        trans.text == "" && filter.untranslatedLanguages.exists(_ == trans.code) && trans.status == Status.Active
+      } map (_.name)
+
+      translations = untranslatedNames.map { name =>
+        translations.find(name == _.name && code == code)
+      } flatten
+    }
+
+    if ("true" == filter.activatable) {
+      translations = translations filter { trans =>
+        trans.activatableTranslations.length > 0
+      }
+    }
+
+    translations filter (_.code == code)
+  }
+
   def findAllByProjectAndName(project: Project, name: String) = fixTranslations(
     find(MongoDBObject("projectId" -> project.id, "name" -> name)).toList, project)
 

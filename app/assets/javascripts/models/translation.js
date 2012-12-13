@@ -32,7 +32,7 @@ define([], function () {
       name: "",
       text: "",
       author: "",
-      status: ""
+      status: "empty"
     }
   })
 

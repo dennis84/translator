@@ -9,10 +9,15 @@ object TranslationController extends BaseController {
 
   def list(project: String) = SecuredWithProject(project) { implicit ctx =>
     (for {
-      lang <- LanguageDAO.findFirstByProject(ctx.project.get).headOption
       project <- ctx.project
+      lang <- LanguageDAO.findFirstByProject(project).headOption
     } yield {
-      JsonOk(TranslationDAO.findAllByProjectAndCode(project, lang.code) map(_.toMap))
+      val filter = Filter(
+        getOr("untranslated", "false"),
+        getAllOr("untranslated_languages", Seq.empty[String]),
+        getOr("activatable", "false"))
+
+      JsonOk(TranslationDAO.findAllByProjectAndFilter(project, filter, lang.code) map (_.toMap))
     }) getOrElse JsonBadRequest(List())
   }
 
@@ -23,13 +28,15 @@ object TranslationController extends BaseController {
   def create(project: String) = SecuredWithProject(project) { implicit ctx =>
     (for {
       project <- ctx.project
+      lang <- LanguageDAO.findFirstByProject(project).headOption
       user    <- ctx.user
     } yield {
       DataForm.translation.bindFromRequest.fold(
         formWithErrors => JsonBadRequest(Map("error" -> "fail")),
         formData => {
+          val code = if (formData._1 == "") lang.code else formData._1
           val status  = if (user.roles(project).contains("ROLE_ADMIN")) translator.models.Status.Active else translator.models.Status.Inactive
-          val created = Translation(formData._1, formData._2, formData._3, project.id, user.id, status)
+          val created = Translation(code, formData._2, formData._3, project.id, user.id, status)
           TranslationDAO.insert(created)
           JsonOk(created.toMap)
         }

@@ -50,7 +50,7 @@ object DataForm {
   ))
 
   lazy val translation = Form(tuple(
-    "code" -> nonEmptyText,
+    "code" -> text,
     "name" -> nonEmptyText,
     "text" -> text
   ))

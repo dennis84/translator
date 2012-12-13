@@ -1,10 +1,15 @@
 define([
   "models/translation",
+  "models/translation_filter",
   "collections/language"
-], function (Translation, LanguageCollection) {
+], function (Translation, TranslationFilter, LanguageCollection) {
 
   var module = Backbone.Collection.extend({
     model: Translation,
+
+    initialize: function () {
+      this.filter = new TranslationFilter
+    },
 
     url: function () {
       if (window.project.isNew()) {

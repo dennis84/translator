@@ -78,9 +78,9 @@ define([
       withProject(projectId, function (project) {
         var view = new TranslationsView({ collection: window.translations })
 
-        //window.translations.filter.on("change", function () {
-          //window.translations.fetch({ data: window.entries.filter.toJSON() })
-        //})
+        window.translations.filter.on("change", function () {
+          window.translations.fetch({ data: window.translations.filter.toJSON() })
+        })
 
         window.translations.fetch()
       })

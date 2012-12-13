@@ -1,15 +1,19 @@
 define([
   "models/translation",
   "views/translation",
+  "views/translation_new",
+  "views/translation_filter",
   "text!templates/translations.html"
-], function (Translation, TranslationView, translationsTemplate) {
+], function (Translation, TranslationView, TranslationNewView, TranslationFilterView, translationsTemplate) {
 
   var module = Backbone.View.extend({
     id: "translations",
 
     events: {
+      "click .create": "create",
+      "click .remove": "remove",
       "keyup .search": "search",
-      "click .remove": "remove"
+      "click #clear-filter": "clearFilter"
     },
 
     initialize: function () {
@@ -20,6 +24,26 @@ define([
 
     render: function () {
       this.$el.html(_.template(translationsTemplate, {}))
+      var view = this
+
+      $("#filter", this.$el).popover({
+        "html": true,
+        "trigger": "manual"
+      }).on("click", function (e) {
+        var button = this
+          , filter = new TranslationFilterView({ model: view.collection.filter })
+
+        filter.on("close", function (view) {
+          $(button).popover("destroy")
+        })
+
+        $(button).popover("toggle")
+        filter.on("ready", function () {
+          $(".popover-container").html(filter.render().el)
+          $("select").chosen()
+        })
+      })
+
       window.app.removePanes()
       window.app.addPane(this.el, "translations", "spaceless4")
     },
@@ -27,6 +51,12 @@ define([
     reset: function (e) {
       this.$el.find("#translation-list").html("")
       this.collection.each(this.add, this)
+
+      if (this.collection.filter.isEmpty()) {
+        this.$el.find("#clear-filter").hide()
+      } else {
+        this.$el.find("#clear-filter").show()
+      }
     },
 
     add: function (model) {
@@ -34,14 +64,11 @@ define([
       this.$("#translation-list").append(view.render().el)
     },
 
-    search: function (e) {
+    create: function (e) {
       e.preventDefault()
-      var term = $(e.currentTarget).val()
-      if (term.length > 0) {
-        this.collection.search(term)
-      } else {
-        this.collection.fetch()
-      }
+      var view = new TranslationNewView({ model: new Translation, collection: this.collection })
+      window.app.removePane(1)
+      window.app.addPane(view.render().el, "translation-new", "spaceless6")
     },
 
     remove: function (e) {
@@ -54,6 +81,20 @@ define([
         model.destroy()
         $(translation).remove()
       })
+    },
+
+    search: function (e) {
+      e.preventDefault()
+      var term = $(e.currentTarget).val()
+      if (term.length > 0) {
+        this.collection.search(term)
+      } else {
+        this.collection.fetch()
+      }
+    },
+
+    clearFilter: function (e) {
+      this.collection.filter.set(this.collection.filter.defaults)
     }
   })
 

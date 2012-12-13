@@ -1,8 +1,8 @@
 define([
   "helpers/form",
   "collections/language",
-  "text!templates/entry_filter.html"
-], function (formHelper, LanguageCollection, entryFilterTemplate) {
+  "text!templates/translation_filter.html"
+], function (formHelper, LanguageCollection, translationFilterTemplate) {
 
   var module = Backbone.View.extend({
     events: {
@@ -31,7 +31,7 @@ define([
         "languages": languages
       })
 
-      this.$el.html(_.template(entryFilterTemplate, data ))
+      this.$el.html(_.template(translationFilterTemplate, data))
       return this
     },
 

@@ -3,6 +3,11 @@ package translator.models
 import com.novus.salat.annotations._
 import com.mongodb.casbah.Imports._
 
+case class Filter(
+  val untranslated: String,
+  val untranslatedLanguages: Seq[String],
+  val activatable: String)
+
 case class Translation(
   val code: String,
   val name: String,
