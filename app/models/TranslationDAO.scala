@@ -32,7 +32,7 @@ object TranslationDAO
 
     if ("true" == filter.activatable) {
       translations = translations filter { trans =>
-        trans.activatableTranslations.length > 0
+        TranslationAPI.activatable(project, trans.name).length > 0
       }
     }
 

@@ -38,7 +38,9 @@ object SearchFixtures {
     Search.reset
 
     TranslationDAO.findAll map { trans =>
-      Search.indexer.index("translator", "translation", trans.id, Json generate trans.toMap)
+      Search.indexer.index("translator", "translation", trans.id, Json generate Map(
+        "name" -> trans.name,
+        "text" -> trans.text))
     }
 
     Search.indexer.refresh()

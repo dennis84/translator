@@ -14,7 +14,7 @@ object SearchController extends BaseController {
         new ObjectId(searchResponse.id)
       }
 
-      JsonOk(TranslationDAO.findAllByProjectAndIds(ctx.project.get, ids).map(_.toMap))
+      JsonOk(TranslationAPI.listByIds(ctx.project.get, ids))
     } getOrElse JsonOk(List())
   }
 }

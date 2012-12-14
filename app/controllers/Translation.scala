@@ -8,21 +8,16 @@ import translator.forms._
 object TranslationController extends BaseController {
 
   def list(project: String) = SecuredWithProject(project) { implicit ctx =>
-    (for {
-      project <- ctx.project
-      lang <- LanguageDAO.findFirstByProject(project).headOption
-    } yield {
-      val filter = Filter(
-        getOr("untranslated", "false"),
-        getAllOr("untranslated_languages", Seq.empty[String]),
-        getOr("activatable", "false"))
+    val filter = Filter(
+      getOr("untranslated", "false"),
+      getAllOr("untranslated_languages", Seq.empty[String]),
+      getOr("activatable", "false"))
 
-      JsonOk(TranslationDAO.findAllByProjectAndFilter(project, filter, lang.code) map (_.toMap))
-    }) getOrElse JsonBadRequest(List())
+    JsonOk(TranslationAPI.listByFilter(filter))
   }
 
   def listByName(project: String, name: String) = SecuredWithProject(project) { implicit ctx =>
-    JsonOk(TranslationDAO.findAllByProjectAndName(ctx.project.get, name) map (_.toMap))
+    JsonOk(TranslationAPI.listByName(ctx.project.get, name))
   }
 
   def create(project: String) = SecuredWithProject(project) { implicit ctx =>
@@ -38,7 +33,8 @@ object TranslationController extends BaseController {
           val status  = if (user.roles(project).contains("ROLE_ADMIN")) translator.models.Status.Active else translator.models.Status.Inactive
           val created = Translation(code, formData._2, formData._3, project.id, user.id, status)
           TranslationDAO.insert(created)
-          JsonOk(created.toMap)
+          //JsonOk(created.toMap)
+          JsonOk(List())
         }
       )
     }) getOrElse JsonNotFound
@@ -56,7 +52,8 @@ object TranslationController extends BaseController {
         formData => {
           val updated = translation.copy(text = formData._3)
           TranslationDAO.save(updated)
-          JsonOk(updated.toMap)
+          //JsonOk(updated.toMap)
+          JsonOk(List())
         }
       )
     }) getOrElse JsonNotFound
@@ -74,7 +71,8 @@ object TranslationController extends BaseController {
       val updated = translation.copy(status = translator.models.Status.Active)
       TranslationDAO.save(updated)
       TranslationDAO.remove(old)
-      JsonOk(updated.toMap)
+      //JsonOk(updated.toMap)
+      JsonOk(List())
     }) getOrElse JsonNotFound
   }
 
@@ -91,7 +89,8 @@ object TranslationController extends BaseController {
         TranslationDAO.remove(translation)
       }
 
-      JsonOk(translation.toMap)
+      //JsonOk(translation.toMap)
+      JsonOk(List())
     }) getOrElse JsonNotFound
   }
 }

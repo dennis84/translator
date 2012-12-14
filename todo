@@ -1,10 +1,10 @@
-! Must Have
-? Must Have?
-* Must Not Have
+! Must have
+? Must have?
+* Must not have
+$ Code mistakes
 ~ Optional
 
 ----
 
 ! messages (error, success)
-! count untranslated words
-! translations accept, reject
+$ Remove persistence from models. Add api classes to handle this logic

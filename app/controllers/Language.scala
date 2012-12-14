@@ -7,7 +7,7 @@ import translator.forms._
 object LanguageController extends BaseController {
 
   def list(project: String) = SecuredWithProject(project) { implicit ctx =>
-    JsonOk(LanguageDAO.findAllByProject(ctx.project.get) map (_.toMap))
+    JsonOk(LanguageAPI.list(ctx.project.get))
   }
 
   def create(project: String) = SecuredWithProject(project) { implicit ctx =>
