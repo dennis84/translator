@@ -14,15 +14,13 @@ object ImportController extends BaseController {
     "language" -> nonEmptyText
   ))
 
-  def translations(project: String) = SecuredWithProject(project) { (_user, _project, projects, _req) =>
-    implicit val (user, project, req) = (_user, _project, _req)
-
+  def translations(project: String) = SecuredWithProject(project) { implicit ctx =>
     form.bindFromRequest.fold(
       formWithErrors => JsonBadRequest(formWithErrors.errors),
       formData => {
         Parser.parse(formData._1, formData._2) map { row =>
-          if (!TranslationDAO.findOneBy(project, row._1, formData._3).isDefined) {
-            val created = Translation(formData._3, row._1, row._2, project.id, user.id, translator.models.Status.Active)
+          if (!TranslationDAO.findOneBy(ctx.project, row._1, formData._3).isDefined) {
+            val created = Translation(formData._3, row._1, row._2, ctx.project.id, ctx.user.id, translator.models.Status.Active)
             TranslationDAO.insert(created)
           }
         }

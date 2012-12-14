@@ -39,13 +39,8 @@ object DataForm {
     "name" -> nonEmptyText.verifying("error.project_name_taken", projectNameTaken _)
   ))
 
-  //def entry(implicit ctx: Context[_]) = Form(tuple(
-    //"name"        -> nonEmptyText.verifying("error.entry_name_taken", entryNameTaken(_, ctx)),
-    //"description" -> text
-  //))
-
-  def language(implicit project: Project) = Form(tuple(
-    "code" -> nonEmptyText.verifying("error.language_code_taken", languageCodeTaken(_, project)),
+  def language(implicit ctx: ProjectContext[_]) = Form(tuple(
+    "code" -> nonEmptyText.verifying("error.language_code_taken", languageCodeTaken(_, ctx.project)),
     "name" -> nonEmptyText
   ))
 

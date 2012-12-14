@@ -18,17 +18,15 @@ object UserController extends BaseController {
     JsonOk(List()) withNewSession
   }
 
-  def current = Secured { (user, projects, req) =>
-    JsonOk(user.toMap)
+  def current = Secured { implicit ctx =>
+    JsonOk(ctx.user.toMap)
   }
 
-  def updateCurrent = Secured { (user, projects, _req) =>
-    implicit val req = _req
-
+  def updateCurrent = Secured { implicit ctx =>
     DataForm.updateUser.bindFromRequest.fold(
       formWithErrors => JsonBadRequest(Map("error" -> "fail")),
       formData => {
-        var updated = user.copy(
+        var updated = ctx.user.copy(
           password = formData.sha512
         )
 
@@ -38,26 +36,24 @@ object UserController extends BaseController {
     )
   }
 
-  def currentByProject(project: String) = SecuredWithProject(project) { (user, project, projects, req) =>
-    JsonOk(user.toMap ++ Map("roles" -> user.roles(project)))
+  def currentByProject(project: String) = SecuredWithProject(project) { implicit ctx =>
+    JsonOk(ctx.user.toMap ++ Map("roles" -> ctx.user.roles(ctx.project)))
   }
 
-  def list(project: String) = SecuredWithProject(project) { (user, project, projects, req) =>
-    JsonOk(project.contributors.map { user =>
-      user.toMap ++ Map("roles" -> user.roles(project))
+  def list(project: String) = SecuredWithProject(project) { implicit ctx =>
+    JsonOk(ctx.project.contributors.map { user =>
+      user.toMap ++ Map("roles" -> user.roles(ctx.project))
     })
   }
 
-  def create(project: String) = SecuredWithProject(project) { (user, project, projects, _req) =>
-    implicit val req = _req
-
+  def create(project: String) = SecuredWithProject(project) { implicit ctx =>
     DataForm.createUser.bindFromRequest.fold(
       formWithErrors => JsonBadRequest(formWithErrors.errors),
       formData => {
         val created = User(
           formData._1,
           formData._2,
-          formData._3.map(Role(_, project.id))
+          formData._3.map(Role(_, ctx.project.id))
         )
         UserDAO.insert(created)
         JsonOk(created.toMap)

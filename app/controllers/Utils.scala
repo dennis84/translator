@@ -33,35 +33,37 @@ trait Results extends Controller {
 
 trait Actions extends Controller with Results with RequestGetter {
 
-  def Open(f: Request[AnyContent] => Result): Action[AnyContent] = Open(BodyParsers.parse.anyContent)(f)
+  def Open(f: Request[AnyContent] => Result): Action[AnyContent] =
+    Open(BodyParsers.parse.anyContent)(f)
 
-  def Open[A](p: BodyParser[A])(f: Request[A] => Result): Action[A] = Action(p) { implicit req =>
-    f(req)
-  }
+  def Open[A](p: BodyParser[A])(f: Request[A] => Result): Action[A] =
+    Action(p) { implicit req =>
+      f(req)
+    }
 
-  def SecuredWithProject(id: String)(f: (User, Project, List[Project], Request[AnyContent]) => Result): Action[AnyContent] =
+  def SecuredWithProject(id: String)(f: ProjectContext[AnyContent] => Result): Action[AnyContent] =
     SecuredWithProject(id, BodyParsers.parse.anyContent)(f)
 
-  def SecuredWithProject[A](id: String, p: BodyParser[A])(f: (User, Project, List[Project], Request[A]) => Result): Action[A] =
-    Secured(p) { (user, projects, req) =>
-      projects.find(_.id == id) map { project =>
-        f(user, project, projects, req)
+  def SecuredWithProject[A](id: String, p: BodyParser[A])(f: ProjectContext[A] => Result): Action[A] =
+    Secured(p) { implicit ctx =>
+      ctx.projects.find(_.id == id) map { project =>
+        f(ProjectContext(ctx.req, ctx.user, project, ctx.projects))
       } getOrElse JsonNotFound
     }
 
-  def Secured(f: (User, List[Project], Request[AnyContent]) => Result): Action[AnyContent] =
+  def Secured(f: Context[AnyContent] => Result): Action[AnyContent] =
     Secured(BodyParsers.parse.anyContent)(f)
 
-  def Secured[A](p: BodyParser[A])(f: (User, List[Project], Request[A]) => Result): Action[A] = Open(p) { implicit req =>
+  def Secured[A](p: BodyParser[A])(f: Context[A] => Result): Action[A] = Open(p) { implicit req =>
     (for {
       token <- get("token")
       project <- ProjectDAO.findOneByToken(token)
       user <- project.admin
     } yield {
-      f(user, List(project), req)
+      f(Context(req, user, List(project)))
     }) getOrElse {
       req.session.get("username").flatMap(u => UserDAO.findOneByUsername(u)) map { user =>
-        f(user, ProjectDAO.findAllByUser(user), req)
+        f(Context(req, user, ProjectDAO.findAllByUser(user)))
       } getOrElse JsonNotFound
     }
   }

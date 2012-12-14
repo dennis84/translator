@@ -7,33 +7,29 @@ import translator.forms._
 
 object TranslationController extends BaseController {
 
-  def list(project: String) = SecuredWithProject(project) { (user, project, projects, _req) =>
-    implicit val req = _req
-
-    LanguageDAO.findFirstByProject(project).headOption map { lang =>
+  def list(project: String) = SecuredWithProject(project) { implicit ctx =>
+    LanguageDAO.findFirstByProject(ctx.project).headOption map { lang =>
       val filter = Filter(
         getOr("untranslated", "false"),
         getAllOr("untranslated_languages", Seq.empty[String]),
         getOr("activatable", "false"))
 
-      JsonOk(TranslationDAO.findAllByProjectAndFilter(project, filter, lang.code) map (_.toMap))
+      JsonOk(TranslationDAO.findAllByProjectAndFilter(ctx.project, filter, lang.code) map (_.toMap))
     } getOrElse JsonBadRequest(List())
   }
 
-  def listByName(project: String, name: String) = SecuredWithProject(project) { (user, project, projects, req) =>
-    JsonOk(TranslationDAO.findAllByProjectAndName(project, name) map (_.toMap))
+  def listByName(project: String, name: String) = SecuredWithProject(project) { implicit ctx =>
+    JsonOk(TranslationDAO.findAllByProjectAndName(ctx.project, name) map (_.toMap))
   }
 
-  def create(project: String) = SecuredWithProject(project) { (user, project, projects, _req) =>
-    implicit val req = _req
-
-    LanguageDAO.findFirstByProject(project).headOption map { lang =>
+  def create(project: String) = SecuredWithProject(project) { implicit ctx =>
+    LanguageDAO.findFirstByProject(ctx.project).headOption map { lang =>
       DataForm.translation.bindFromRequest.fold(
         formWithErrors => JsonBadRequest(Map("error" -> "fail")),
         formData => {
           val code = if (formData._1 == "") lang.code else formData._1
-          val status  = if (user.roles(project).contains("ROLE_ADMIN")) translator.models.Status.Active else translator.models.Status.Inactive
-          val created = Translation(code, formData._2, formData._3, project.id, user.id, status)
+          val status  = if (ctx.user.roles(ctx.project).contains("ROLE_ADMIN")) translator.models.Status.Active else translator.models.Status.Inactive
+          val created = Translation(code, formData._2, formData._3, ctx.project.id, ctx.user.id, status)
           TranslationDAO.insert(created)
           JsonOk(created.toMap)
         }
@@ -41,12 +37,10 @@ object TranslationController extends BaseController {
     } getOrElse JsonNotFound
   }
 
-  def update(project: String, id: String) = SecuredWithProject(project) { (user, project, projects, _req) =>
-    implicit val req = _req
-
+  def update(project: String, id: String) = SecuredWithProject(project) { implicit ctx =>
     (for {
       translation <- TranslationDAO.findOneById(id)
-      if (user.roles(project).contains("ROLE_ADMIN"))
+      if (ctx.user.roles(ctx.project).contains("ROLE_ADMIN"))
     } yield {
       DataForm.translation.bindFromRequest.fold(
         formWithErrors => JsonBadRequest(Map("error" -> "fail")),
@@ -59,11 +53,11 @@ object TranslationController extends BaseController {
     }) getOrElse JsonNotFound
   }
 
-  def activate(project: String, id: String) = SecuredWithProject(project) { (user, project, projects, req) =>
+  def activate(project: String, id: String) = SecuredWithProject(project) { implicit ctx =>
     (for {
       translation <- TranslationDAO.findOneById(id)
-      old <- TranslationDAO.findOneBy(project, translation.name, translation.code)
-      if (user.roles(project).contains("ROLE_ADMIN"))
+      old <- TranslationDAO.findOneBy(ctx.project, translation.name, translation.code)
+      if (ctx.user.roles(ctx.project).contains("ROLE_ADMIN"))
     } yield {
       val updated = translation.copy(status = translator.models.Status.Active)
       TranslationDAO.save(updated)
@@ -72,13 +66,13 @@ object TranslationController extends BaseController {
     }) getOrElse JsonNotFound
   }
 
-  def delete(project: String, id: String) = SecuredWithProject(project) { (user, project, projects, req) =>
+  def delete(project: String, id: String) = SecuredWithProject(project) { implicit ctx =>
     (for {
       translation <- TranslationDAO.findOneById(id)
-      if (user.roles(project).contains("ROLE_ADMIN"))
+      if (ctx.user.roles(ctx.project).contains("ROLE_ADMIN"))
     } yield {
       if (translation.status == translator.models.Status.Active) {
-        TranslationDAO.removeAllByProjectAndName(project, translation.name)
+        TranslationDAO.removeAllByProjectAndName(ctx.project, translation.name)
       } else {
         TranslationDAO.remove(translation)
       }
