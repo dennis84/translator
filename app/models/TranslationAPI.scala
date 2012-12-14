@@ -1,13 +1,11 @@
 package translator.models
 
 import com.mongodb.casbah.Imports._
-import translator.controllers.Context
+import translator.controllers.{ Context, ProjectContext }
 
 object TranslationAPI {
 
-  def listByFilter(filter: Filter)(implicit ctx: Context[_]) = {
-    val project = ctx.project.get
-
+  def listByFilter(project: Project, filter: Filter) = {
     LanguageDAO.findFirstByProject(project).headOption map { lang =>
       TranslationDAO.findAllByProjectAndFilter(project, filter, lang.code) map (generateMap(_, project))
     } getOrElse Nil
