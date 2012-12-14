@@ -18,13 +18,15 @@ trait Results extends Controller {
 
   def JsonOk = Ok(Json generate Map()) as JSON
 
-  def JsonBadRequest(map: Map[String, Any]) = BadRequest(Json generate map) as JSON
+  def JsonBadRequest(map: Map[String, Any]) =
+    BadRequest(Json generate map) as JSON
   
-  def JsonBadRequest(errors: Seq[play.api.data.FormError]) = BadRequest(Json generate errors.map {
-    case error if (error.message == "") => None
-    case error if (error.key == "")     => Some(Map("name" -> "global", "message" -> Messages(error.message)))
-    case error                          => Some(Map("name" -> error.key, "message" -> Messages(error.message)))
-  }.flatten) as JSON
+  def JsonBadRequest(errors: Seq[play.api.data.FormError]) =
+    BadRequest(Json generate errors.map {
+      case error if (error.message == "") => None
+      case error if (error.key == "")     => Some(Map("name" -> "global", "message" -> Messages(error.message)))
+      case error                          => Some(Map("name" -> error.key, "message" -> Messages(error.message)))
+    }.flatten) as JSON
 
   def JsonUnauthorized = Unauthorized
 
@@ -54,30 +56,36 @@ trait Actions extends Controller with Results with RequestGetter {
   def Secured(f: Context[AnyContent] => Result): Action[AnyContent] =
     Secured(BodyParsers.parse.anyContent)(f)
 
-  def Secured[A](p: BodyParser[A])(f: Context[A] => Result): Action[A] = Open(p) { implicit req =>
-    (for {
-      token <- get("token")
-      project <- ProjectDAO.findOneByToken(token)
-      user <- project.admin
-    } yield {
-      f(Context(req, user, List(project)))
-    }) getOrElse {
-      req.session.get("username").flatMap(u => UserDAO.findOneByUsername(u)) map { user =>
-        f(Context(req, user, ProjectDAO.findAllByUser(user)))
-      } getOrElse JsonNotFound
+  def Secured[A](p: BodyParser[A])(f: Context[A] => Result): Action[A] =
+    Open(p) { implicit req =>
+      (for {
+        token <- get("token")
+        project <- ProjectDAO.findOneByToken(token)
+        user <- project.admin
+      } yield {
+        f(Context(req, user, List(project)))
+      }) getOrElse {
+        req.session.get("username").flatMap(u => UserDAO.findOneByUsername(u)) map { user =>
+          f(Context(req, user, ProjectDAO.findAllByUser(user)))
+        } getOrElse JsonNotFound
+      }
     }
-  }
 }
 
 trait RequestGetter {
 
-  protected def get(name: String)(implicit req: Request[_]): Option[String] = get(name, req)
+  protected def get(name: String)(implicit req: Request[_]): Option[String] =
+    get(name, req)
 
-  protected def get(name: String, req: RequestHeader): Option[String] = req.queryString get name flatMap (_.headOption) filter (""!=)
+  protected def get(name: String, req: RequestHeader): Option[String] =
+    req.queryString get name flatMap (_.headOption) filter (""!=)
 
-  protected def getOr(name: String, default: String)(implicit req: Request[_]) = get(name, req) getOrElse default
+  protected def getOr(name: String, default: String)(implicit req: Request[_]) =
+    get(name, req) getOrElse default
 
-  protected def getAll(name: String, req: RequestHeader) = req.queryString get name
+  protected def getAll(name: String, req: RequestHeader) =
+    req.queryString get name
 
-  protected def getAllOr(name: String, default: Seq[String])(implicit req: Request[_]) = getAll(name, req) getOrElse (default)
+  protected def getAllOr(name: String, default: Seq[String])(implicit req: Request[_]) =
+    getAll(name, req) getOrElse (default)
 }

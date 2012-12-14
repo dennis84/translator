@@ -56,9 +56,6 @@ object DataForm {
   private def projectNameTaken(name: String) =
     ProjectDAO.findOneByName(name).isEmpty
 
-  //private def entryNameTaken(name: String, ctx: Context[_]) =
-    //EntryDAO.findOneByNameAndProject(name, ctx.project.get).isEmpty
-
   private def languageCodeTaken(code: String, project: Project) =
     LanguageDAO.findOneByCodeAndProject(code, project).isEmpty
 }
