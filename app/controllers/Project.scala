@@ -7,17 +7,18 @@ import translator.forms._
 
 object ProjectController extends BaseController {
 
-  def list = Secured { implicit ctx =>
-    JsonOk(ctx.projects map (_.toMap))
+  def list = Secured { (user, projects, req) =>
+    JsonOk(projects map (_.toMap))
   }
 
-  def create = Secured { implicit ctx =>
+  def create = Secured { (user, projects, _req) =>
+    implicit val req = _req
     DataForm.newProject.bindFromRequest.fold(
       formWithErrors => JsonBadRequest(formWithErrors.errors),
       formData => {
-        val created = Project(formData, ctx.user.get.id, uuid)
-        UserDAO.save(ctx.user.get.copy(
-          roles = ctx.user.get.roles ++ List(Role("ROLE_ADMIN", created.id))
+        val created = Project(formData, user.id, uuid)
+        UserDAO.save(user.copy(
+          roles = user.roles ++ List(Role("ROLE_ADMIN", created.id))
         ))
 
         ProjectDAO.insert(created)

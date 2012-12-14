@@ -6,8 +6,10 @@ import translator.forms._
 
 object ExportController extends BaseController {
 
-  def translations(project: String) = SecuredWithProject(project) { implicit ctx =>
-    JsonOk(TranslationDAO.findAllByProject(ctx.project.get).filter(_.code == getOr("language", "en")).map { trans =>
+  def translations(project: String) = SecuredWithProject(project) { (_user, _project, _projects, _req) =>
+    implicit val (user, project, req) = (_user, _project, _req)
+
+    JsonOk(TranslationDAO.findAllByProject(project).filter(_.code == getOr("language", "en")).map { trans =>
       trans.name -> trans.text
     }.toMap)
   }

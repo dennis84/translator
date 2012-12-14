@@ -8,13 +8,14 @@ import translator.models._
 
 object SearchController extends BaseController {
 
-  def translations(project: String) = SecuredWithProject(project) { implicit ctx =>
+  def translations(project: String) = SecuredWithProject(project) { (user, project, projects, _req) =>
+    implicit val req = _req
     get("term") map { term =>
       val ids = Search.indexer.search(query = queryString(term)).hits.hits.toList.map { searchResponse =>
         new ObjectId(searchResponse.id)
       }
 
-      JsonOk(TranslationDAO.findAllByProjectAndIds(ctx.project.get, ids).map(_.toMap))
+      JsonOk(TranslationDAO.findAllByProjectAndIds(project, ids).map(_.toMap))
     } getOrElse JsonOk(List())
   }
 }

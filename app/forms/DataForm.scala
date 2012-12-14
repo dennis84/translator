@@ -44,8 +44,8 @@ object DataForm {
     //"description" -> text
   //))
 
-  def language(implicit ctx: Context[_]) = Form(tuple(
-    "code" -> nonEmptyText.verifying("error.language_code_taken", languageCodeTaken(_, ctx)),
+  def language(implicit project: Project) = Form(tuple(
+    "code" -> nonEmptyText.verifying("error.language_code_taken", languageCodeTaken(_, project)),
     "name" -> nonEmptyText
   ))
 
@@ -64,6 +64,6 @@ object DataForm {
   //private def entryNameTaken(name: String, ctx: Context[_]) =
     //EntryDAO.findOneByNameAndProject(name, ctx.project.get).isEmpty
 
-  private def languageCodeTaken(code: String, ctx: Context[_]) =
-    LanguageDAO.findOneByCodeAndProject(code, ctx.project.get).isEmpty
+  private def languageCodeTaken(code: String, project: Project) =
+    LanguageDAO.findOneByCodeAndProject(code, project).isEmpty
 }
