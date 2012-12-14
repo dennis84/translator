@@ -7,14 +7,14 @@ import translator.forms._
 object LanguageController extends BaseController {
 
   def list(project: String) = SecuredWithProject(project) { implicit ctx =>
-    JsonOk(LanguageAPI.list(ctx.project.get))
+    JsonOk(LanguageAPI.list(ctx.project))
   }
 
   def create(project: String) = SecuredWithProject(project) { implicit ctx =>
     DataForm.language.bindFromRequest.fold(
       formWithErrors => JsonBadRequest(formWithErrors.errors),
       formData => {
-        var created = Language(formData._1, formData._2, ctx.project.get.id)
+        var created = Language(formData._1, formData._2, ctx.project.id)
         LanguageDAO.insert(created)
         JsonOk(created.toMap)
       }

@@ -15,9 +15,9 @@ object ProjectController extends BaseController {
     DataForm.newProject.bindFromRequest.fold(
       formWithErrors => JsonBadRequest(formWithErrors.errors),
       formData => {
-        val created = Project(formData, ctx.user.get.id, uuid)
-        UserDAO.save(ctx.user.get.copy(
-          roles = ctx.user.get.roles ++ List(Role("ROLE_ADMIN", created.id))
+        val created = Project(formData, ctx.user.id, uuid)
+        UserDAO.save(ctx.user.copy(
+          roles = ctx.user.roles ++ List(Role("ROLE_ADMIN", created.id))
         ))
 
         ProjectDAO.insert(created)
@@ -26,7 +26,7 @@ object ProjectController extends BaseController {
     )
   }
 
-  def signUp = Open { implicit ctx =>
+  def signUp = Open { implicit req =>
     DataForm.signUp.bindFromRequest.fold(
       formWithErrors => JsonBadRequest(formWithErrors.errors),
       formData => {

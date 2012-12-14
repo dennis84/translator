@@ -8,6 +8,11 @@ object Application extends BaseController
 
 case class Context[A](
   val req:Request[A],
-  val user: Option[User] = None,
-  val project: Option[Project] = None,
-  val projects: List[Project] = Nil) extends WrappedRequest[A](req)
+  val user: User,
+  val projects: List[Project]) extends WrappedRequest[A](req)
+
+case class ProjectContext[A](
+  val req:Request[A],
+  val user: User,
+  val project: Project,
+  val projects: List[Project]) extends WrappedRequest[A](req)

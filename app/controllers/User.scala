@@ -7,7 +7,7 @@ import translator.forms._
 
 object UserController extends BaseController {
 
-  def authenticate = Open { implicit ctx =>
+  def authenticate = Open { implicit req =>
     DataForm.login.bindFromRequest.fold(
       formWithErrors => JsonBadRequest(formWithErrors.errors),
       formData => JsonOk(List()) withSession ("username" -> formData._1)
@@ -19,14 +19,14 @@ object UserController extends BaseController {
   }
 
   def current = Secured { implicit ctx =>
-    ctx.user map (user => JsonOk(user.toMap)) getOrElse JsonUnauthorized
+    JsonOk(ctx.user.toMap)
   }
 
   def updateCurrent = Secured { implicit ctx =>
     DataForm.updateUser.bindFromRequest.fold(
       formWithErrors => JsonBadRequest(Map("error" -> "fail")),
       formData => {
-        var updated = ctx.user.get.copy(
+        var updated = ctx.user.copy(
           password = formData.sha512
         )
 
@@ -37,14 +37,12 @@ object UserController extends BaseController {
   }
 
   def currentByProject(project: String) = SecuredWithProject(project) { implicit ctx =>
-    ctx.user map { user =>
-      JsonOk(user.toMap ++ Map("roles" -> user.roles(ctx.project.get)))
-    } getOrElse JsonUnauthorized
+    JsonOk(ctx.user.toMap ++ Map("roles" -> ctx.user.roles(ctx.project)))
   }
 
   def list(project: String) = SecuredWithProject(project) { implicit ctx =>
-    JsonOk(ctx.project.get.contributors.map { user =>
-      user.toMap ++ Map("roles" -> user.roles(ctx.project.get))
+    JsonOk(ctx.project.contributors.map { user =>
+      user.toMap ++ Map("roles" -> user.roles(ctx.project))
     })
   }
 
@@ -55,7 +53,7 @@ object UserController extends BaseController {
         val created = User(
           formData._1,
           formData._2,
-          formData._3.map(Role(_, ctx.project.get.id))
+          formData._3.map(Role(_, ctx.project.id))
         )
         UserDAO.insert(created)
         JsonOk(created.toMap)
