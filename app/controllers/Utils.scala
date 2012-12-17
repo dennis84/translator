@@ -44,13 +44,21 @@ trait Actions extends Controller with Results with RequestGetter {
     }
 
   def SecuredWithProject(id: String)(f: ProjectContext[AnyContent] => Result): Action[AnyContent] =
-    SecuredWithProject(id, BodyParsers.parse.anyContent)(f)
+    SecuredWithProject(id, List("ROLE_ADMIN", "ROLE_AUTHOR"), BodyParsers.parse.anyContent)(f)
 
-  def SecuredWithProject[A](id: String, p: BodyParser[A])(f: ProjectContext[A] => Result): Action[A] =
+  def SecuredWithProject(id: String, roles: List[String])(f: ProjectContext[AnyContent] => Result): Action[AnyContent] =
+    SecuredWithProject(id, roles, BodyParsers.parse.anyContent)(f)
+
+  def SecuredWithProject[A](id: String, roles: List[String], p: BodyParser[A])(f: ProjectContext[A] => Result): Action[A] =
     Secured(p) { implicit ctx =>
-      ctx.projects.find(_.id == id) map { project =>
-        f(ProjectContext(ctx.req, ctx.user, project, ctx.projects))
-      } getOrElse JsonNotFound
+      (for {
+        p <- ctx.projects.find(_.id == id)
+        if (roles.exists { r =>
+          ctx.user.roles(p).contains(r)
+        })
+      } yield {
+        f(ProjectContext(ctx.req, ctx.user, p, ctx.projects))
+      }) getOrElse JsonNotFound
     }
 
   def Secured(f: Context[AnyContent] => Result): Action[AnyContent] =

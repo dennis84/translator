@@ -51,10 +51,28 @@ object TranslationAPI {
     }.length.toFloat / languages.length * 100
   }
 
-  def getChangeable(project: Project, id: String) = for {
+  /** Sets the translation by id to active and removes the previous translation.
+   */
+  def switch(user: User, project: Project, id: ObjectId) = for {
     actual <- TranslationDAO.findOneById(id)
-    old <- TranslationDAO.findOneByProjectNameAndCode(project, actual.name, actual.code)
-  } yield (actual, old)
+    old    <- TranslationDAO.findOneByProjectNameAndCode(project, actual.name, actual.code)
+  } yield {
+    val updated = actual.copy(status = translator.models.Status.Active)
+    TranslationDAO.save(updated)
+    TranslationDAO.remove(old)
+    updated
+  }
+
+  /** Deletes one ore all translations with the same name if the user is an
+   *  author or an admin.
+   */
+  def delete(project: Project, id: ObjectId) = TranslationDAO.findOneById(id) match {
+    case Some(trans) if (trans.status == Status.Active) =>
+      TranslationDAO.removeAllByProjectAndName(project, trans.name)
+    case Some(trans) if (trans.status == Status.Inactive) =>
+      TranslationDAO.remove(trans)
+    case None => None
+  }
 
   private def fixTranslations(trans: List[Translation], project: Project) = {
     val langs = LanguageDAO.findAllByProject(project).map(_.code)

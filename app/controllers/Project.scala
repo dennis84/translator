@@ -15,12 +15,7 @@ object ProjectController extends BaseController {
     DataForm.newProject.bindFromRequest.fold(
       formWithErrors => JsonBadRequest(formWithErrors.errors),
       formData => {
-        val created = Project(formData, ctx.user.id, uuid)
-        UserDAO.save(ctx.user.copy(
-          roles = ctx.user.roles ++ List(Role("ROLE_ADMIN", created.id))
-        ))
-
-        ProjectDAO.insert(created)
+        ProjectAPI.create(formData, ctx.user)
         JsonOk(List())
       }
     )
@@ -30,16 +25,9 @@ object ProjectController extends BaseController {
     DataForm.signUp.bindFromRequest.fold(
       formWithErrors => JsonBadRequest(formWithErrors.errors),
       formData => {
-        val _user = User(formData._2, formData._3 sha512)
-        val project = Project(formData._1, _user.id, uuid)
-        val user = _user.copy(roles = _user.roles ++ List(Role("ROLE_ADMIN", project.id)))
-
-        UserDAO.insert(user)
-        ProjectDAO.insert(project)
+        ProjectAPI.signup(formData._1, formData._2, formData._3)
         JsonOk(List()) withSession ("username" -> formData._2)
       }
     )
   }
-
-  private def uuid = java.util.UUID.randomUUID.toString
 }

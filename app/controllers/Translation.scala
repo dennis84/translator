@@ -53,32 +53,17 @@ object TranslationController extends BaseController {
     }) getOrElse JsonNotFound
   }
 
-  def activate(project: String, id: String) = SecuredWithProject(project) { implicit ctx =>
-    (for {
-      (actual, old) <- TranslationAPI.getChangeable(ctx.project, id)
-      if (ctx.user.roles(ctx.project).contains("ROLE_ADMIN"))
-    } yield {
-      val updated = actual.copy(status = translator.models.Status.Active)
-      TranslationDAO.save(updated)
-      TranslationDAO.remove(old)
-      //JsonOk(updated.toMap)
-      JsonOk(List())
-    }) getOrElse JsonNotFound
+  def activate(project: String, id: String) = SecuredWithProject(project, List("ROLE_ADMIN")) { implicit ctx =>
+    TranslationAPI.switch(ctx.user, ctx.project, id) match {
+      case Some(trans) => JsonOk(List())
+      case None => JsonBadRequest(Map("error" -> "fail"))
+    }
   }
 
-  def delete(project: String, id: String) = SecuredWithProject(project) { implicit ctx =>
-    (for {
-      translation <- TranslationDAO.findOneById(id)
-      if (ctx.user.roles(ctx.project).contains("ROLE_ADMIN"))
-    } yield {
-      if (translation.status == translator.models.Status.Active) {
-        TranslationDAO.removeAllByProjectAndName(ctx.project, translation.name)
-      } else {
-        TranslationDAO.remove(translation)
-      }
-
-      //JsonOk(translation.toMap)
-      JsonOk(List())
-    }) getOrElse JsonNotFound
+  def delete(project: String, id: String) = SecuredWithProject(project, List("ROLE_ADMIN")) { implicit ctx =>
+    TranslationAPI.delete(ctx.project, id) match {
+      case Some(trans) => JsonOk(List())
+      case None => JsonBadRequest(Map("error" -> "fails"))
+    }
   }
 }
