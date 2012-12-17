@@ -41,7 +41,7 @@ object UserController extends BaseController {
   }
 
   def list(project: String) = SecuredWithProject(project) { implicit ctx =>
-    JsonOk(ctx.project.contributors.map { user =>
+    JsonOk(ProjectAPI.contributors(ctx.project).map { user =>
       user.toMap ++ Map("roles" -> user.roles(ctx.project))
     })
   }

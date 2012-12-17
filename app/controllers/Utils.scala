@@ -61,7 +61,7 @@ trait Actions extends Controller with Results with RequestGetter {
       (for {
         token <- get("token")
         project <- ProjectDAO.findOneByToken(token)
-        user <- project.admin
+        user <- ProjectAPI.admin(project)
       } yield {
         f(Context(req, user, List(project)))
       }) getOrElse {

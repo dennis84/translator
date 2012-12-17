@@ -55,11 +55,10 @@ object TranslationController extends BaseController {
 
   def activate(project: String, id: String) = SecuredWithProject(project) { implicit ctx =>
     (for {
-      translation <- TranslationDAO.findOneById(id)
-      old <- TranslationDAO.findOneBy(ctx.project, translation.name, translation.code)
+      (actual, old) <- TranslationAPI.getChangeable(ctx.project, id)
       if (ctx.user.roles(ctx.project).contains("ROLE_ADMIN"))
     } yield {
-      val updated = translation.copy(status = translator.models.Status.Active)
+      val updated = actual.copy(status = translator.models.Status.Active)
       TranslationDAO.save(updated)
       TranslationDAO.remove(old)
       //JsonOk(updated.toMap)

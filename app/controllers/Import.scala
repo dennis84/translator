@@ -19,7 +19,7 @@ object ImportController extends BaseController {
       formWithErrors => JsonBadRequest(formWithErrors.errors),
       formData => {
         Parser.parse(formData._1, formData._2) map { row =>
-          if (!TranslationDAO.findOneBy(ctx.project, row._1, formData._3).isDefined) {
+          if (!TranslationDAO.findOneByProjectNameAndCode(ctx.project, row._1, formData._3).isDefined) {
             val created = Translation(formData._3, row._1, row._2, ctx.project.id, ctx.user.id, translator.models.Status.Active)
             TranslationDAO.insert(created)
           }

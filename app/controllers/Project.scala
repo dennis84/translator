@@ -8,7 +8,7 @@ import translator.forms._
 object ProjectController extends BaseController {
 
   def list = Secured { implicit ctx =>
-    JsonOk(ctx.projects map (_.toMap))
+    JsonOk(ProjectAPI.list(ctx.projects))
   }
 
   def create = Secured { implicit ctx =>
@@ -21,7 +21,7 @@ object ProjectController extends BaseController {
         ))
 
         ProjectDAO.insert(created)
-        JsonOk(created.toMap)
+        JsonOk(List())
       }
     )
   }
