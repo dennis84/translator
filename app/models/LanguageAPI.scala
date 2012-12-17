@@ -7,4 +7,9 @@ object LanguageAPI {
 
   def first(project: Project) =
     LanguageDAO.findFirstByProject(project) headOption
+
+  def code(project: Project, code: String) = (code match {
+    case "" => LanguageAPI.first(project)
+    case _  => LanguageDAO.findOneByProjectAndCode(project, code)
+  }) map(_.code) getOrElse "en"
 }

@@ -9,16 +9,13 @@ object TranslationAPI {
 
   /** Returns all translations by language as key value format.
    */
-  def export(project: Project, c: Option[String]) = {
-    val code = (c match {
-      case Some(code) => LanguageDAO.findOneByProjectAndCode(project, code)
-      case None => LanguageAPI.first(project)
-    }) map(_.code) getOrElse "en"
-
-    TranslationDAO.findActivatedByProjectAndCode(project, code) map { trans =>
+  def export(project: Project, c: String) =
+    TranslationDAO.findActivatedByProjectAndCode(
+      project,
+      LanguageAPI.code(project, c)
+    ) map { trans =>
       trans.name -> trans.text
     }
-  }
 
   /** Retuns the filtered entries, this are the main translations for the
    *  overview.
@@ -63,6 +60,17 @@ object TranslationAPI {
     TranslationDAO.findAllByProjectAndIds(project, ids) map (generateMap(_, project))
   }
 
+  /** Creates a new translation.
+   */
+  def create(c: String, name: String, text: String, project: Project, user: User) =
+    Translation(
+      LanguageAPI.code(project, c),
+      name,
+      text,
+      project.id,
+      user.id,
+      status(project, user))
+
   /** Sets the translation by id to active and removes the previous translation.
    */
   def switch(user: User, project: Project, id: ObjectId) = for {
@@ -91,6 +99,12 @@ object TranslationAPI {
    */
   def all(project: Project) = fixTranslations(
     TranslationDAO.findAllByProject(project), project)
+
+  private def status(project: Project, user: User) =
+    user.roles(project) contains ("ROLE_ADMIN") match {
+      case true => Status.Active
+      case false => Status.Inactive
+    }
 
   private def activatable(project: Project, name: String) =
     TranslationDAO.findAllByProjectAndName(project, name) filter (_.status == Status.Inactive)
