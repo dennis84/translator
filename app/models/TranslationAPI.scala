@@ -63,14 +63,18 @@ object TranslationAPI {
 
   /** Creates a new translation.
    */
-  def create(c: String, name: String, text: String, project: Project, user: User) =
-    Translation(
+  def create(c: String, name: String, text: String, project: Project, user: User) = {
+    val trans = Translation(
       LanguageAPI.code(project, c),
       name,
       text,
       project.id,
       user.id,
       status(project, user))
+    
+    TranslationDAO.insert(trans)
+    trans
+  }
 
   /** Updates the text of a translation.
    */
@@ -114,7 +118,6 @@ object TranslationAPI {
         case Some(trans) => TranslationImport(trans, Status.Skipped)
         case None => {
           val trans = create(code, name, text, project, user)
-          TranslationDAO.insert(trans)
           TranslationImport(trans, Status.Imported)
         }
       }
