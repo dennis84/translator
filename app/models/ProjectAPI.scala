@@ -8,6 +8,10 @@ object ProjectAPI {
 
   def list(projects: List[Project]) = projects map (generateMap(_))
 
+  def listMine(user: User) = user.roles map { role =>
+    ProjectDAO.findOneById(role.projectId)
+  } flatten
+
   def admin(project: Project) = UserDAO.findOneById(project.adminId)
 
   def progress(project: Project) = LanguageDAO.findAllByProject(project) map { lang =>

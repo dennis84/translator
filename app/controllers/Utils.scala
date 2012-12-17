@@ -66,7 +66,7 @@ trait Actions extends Controller with Results with RequestGetter {
         f(Context(req, user, List(project)))
       }) getOrElse {
         req.session.get("username").flatMap(u => UserDAO.findOneByUsername(u)) map { user =>
-          f(Context(req, user, ProjectDAO.findAllByUser(user)))
+          f(Context(req, user, ProjectAPI.listMine(user)))
         } getOrElse JsonNotFound
       }
     }

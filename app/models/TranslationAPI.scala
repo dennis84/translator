@@ -51,12 +51,10 @@ object TranslationAPI {
     }.length.toFloat / languages.length * 100
   }
 
-  def getChangeable(project: Project, id: String) = {
-    (for {
-      actual <- TranslationDAO.findOneById(id)
-      old <- TranslationDAO.findOneByProjectNameAndCode(project, actual.name, actual.code)
-    } yield (actual, old))
-  }
+  def getChangeable(project: Project, id: String) = for {
+    actual <- TranslationDAO.findOneById(id)
+    old <- TranslationDAO.findOneByProjectNameAndCode(project, actual.name, actual.code)
+  } yield (actual, old)
 
   private def fixTranslations(trans: List[Translation], project: Project) = {
     val langs = LanguageDAO.findAllByProject(project).map(_.code)
