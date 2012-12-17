@@ -71,6 +71,14 @@ object TranslationAPI {
       user.id,
       status(project, user))
 
+  /** Updates the text of a translation.
+   */
+  def update(before: Translation, text: String) = {
+    val updated = before.copy(text = text)
+    TranslationDAO.save(updated)
+    updated
+  }
+
   /** Sets the translation by id to active and removes the previous translation.
    */
   def switch(user: User, project: Project, id: ObjectId) = for {
@@ -101,7 +109,7 @@ object TranslationAPI {
     TranslationDAO.findAllByProject(project), project)
 
   private def status(project: Project, user: User) =
-    user.roles(project) contains ("ROLE_ADMIN") match {
+    user.roles(project) contains (Role.ADMIN) match {
       case true => Status.Active
       case false => Status.Inactive
     }
@@ -123,8 +131,8 @@ object TranslationAPI {
     val diff  = langs.diff(trans.filter(_.status == Status.Active).map(_.code))
 
     trans match {
-      case Nil   => List.empty[Translation]
-      case trans => {
+      case Nil => List.empty[Translation]
+      case _   => {
         val unsorted = (trans ++ diff.map { code =>
           EmptyTranslation(code, trans.head)
         }) sortBy (_.status.id)

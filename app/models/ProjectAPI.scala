@@ -38,7 +38,7 @@ object ProjectAPI {
   def create(name: String, user: User) = {
     val project = Project(name, user.id, uuid)
     UserDAO.save(user.copy(
-      roles = user.roles :+ Role("ROLE_ADMIN", project.id)))
+      roles = user.roles :+ Role.Admin(project.id)))
     ProjectDAO.insert(project)
     project
   }

@@ -23,3 +23,12 @@ case class User(
 case class Role(
   val role: String,
   val projectId: ObjectId)
+
+object Role {
+
+  val ADMIN  = "ROLE_ADMIN"
+  val AUTHOR = "ROLE_AUTHOR"
+
+  def Admin(id: ObjectId) = Role(ADMIN, id)
+  def Author(id: ObjectId) = Role(AUTHOR, id)
+}

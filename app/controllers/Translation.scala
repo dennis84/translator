@@ -30,31 +30,26 @@ object TranslationController extends BaseController {
     )
   }
 
-  def update(project: String, id: String) = SecuredWithProject(project) { implicit ctx =>
-    (for {
-      translation <- TranslationDAO.findOneById(id)
-      if (ctx.user.roles(ctx.project).contains("ROLE_ADMIN"))
-    } yield {
+  def update(project: String, id: String) = SecuredWithProject(project, Role.ADMIN) { implicit ctx =>
+    TranslationDAO.findOneById(id) map { trans =>
       DataForm.translation.bindFromRequest.fold(
         formWithErrors => JsonBadRequest(Map("error" -> "fail")),
         formData => {
-          val updated = translation.copy(text = formData._3)
-          TranslationDAO.save(updated)
-          //JsonOk(updated.toMap)
+          TranslationAPI.update(trans, formData._3)
           JsonOk(List())
         }
       )
-    }) getOrElse JsonNotFound
+    } getOrElse JsonNotFound
   }
 
-  def activate(project: String, id: String) = SecuredWithProject(project, List("ROLE_ADMIN")) { implicit ctx =>
+  def activate(project: String, id: String) = SecuredWithProject(project, Role.ADMIN) { implicit ctx =>
     TranslationAPI.switch(ctx.user, ctx.project, id) match {
       case Some(trans) => JsonOk(List())
       case None => JsonBadRequest(Map("error" -> "fail"))
     }
   }
 
-  def delete(project: String, id: String) = SecuredWithProject(project, List("ROLE_ADMIN")) { implicit ctx =>
+  def delete(project: String, id: String) = SecuredWithProject(project, Role.ADMIN) { implicit ctx =>
     TranslationAPI.delete(ctx.project, id) match {
       case Some(trans) => JsonOk(List())
       case None => JsonBadRequest(Map("error" -> "fails"))

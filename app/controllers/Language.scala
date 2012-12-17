@@ -6,11 +6,11 @@ import translator.forms._
 
 object LanguageController extends BaseController {
 
-  def list(project: String) = SecuredWithProject(project) { implicit ctx =>
+  def list(project: String) = SecuredWithProject(project, Role.ADMIN) { implicit ctx =>
     JsonOk(LanguageAPI.list(ctx.project))
   }
 
-  def create(project: String) = SecuredWithProject(project) { implicit ctx =>
+  def create(project: String) = SecuredWithProject(project, Role.ADMIN) { implicit ctx =>
     DataForm.language.bindFromRequest.fold(
       formWithErrors => JsonBadRequest(formWithErrors.errors),
       formData => {
@@ -21,7 +21,7 @@ object LanguageController extends BaseController {
     )
   }
 
-  def update(project: String, id: String) = SecuredWithProject(project) { implicit ctx =>
+  def update(project: String, id: String) = SecuredWithProject(project, Role.ADMIN) { implicit ctx =>
     LanguageDAO.findOneById(id) map { language =>
       DataForm.language.bindFromRequest.fold(
         formWithErrors => JsonBadRequest(formWithErrors.errors),

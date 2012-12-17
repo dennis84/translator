@@ -14,7 +14,7 @@ object ImportController extends BaseController {
     "language" -> nonEmptyText
   ))
 
-  def translations(project: String) = SecuredWithProject(project) { implicit ctx =>
+  def translations(project: String) = SecuredWithProject(project, Role.ADMIN) { implicit ctx =>
     form.bindFromRequest.fold(
       formWithErrors => JsonBadRequest(formWithErrors.errors),
       formData => {

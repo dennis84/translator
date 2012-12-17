@@ -46,8 +46,8 @@ trait Actions extends Controller with Results with RequestGetter {
   def SecuredWithProject(id: String)(f: ProjectContext[AnyContent] => Result): Action[AnyContent] =
     SecuredWithProject(id, List("ROLE_ADMIN", "ROLE_AUTHOR"), BodyParsers.parse.anyContent)(f)
 
-  def SecuredWithProject(id: String, roles: List[String])(f: ProjectContext[AnyContent] => Result): Action[AnyContent] =
-    SecuredWithProject(id, roles, BodyParsers.parse.anyContent)(f)
+  def SecuredWithProject(id: String, roles: String*)(f: ProjectContext[AnyContent] => Result): Action[AnyContent] =
+    SecuredWithProject(id, roles.toList, BodyParsers.parse.anyContent)(f)
 
   def SecuredWithProject[A](id: String, roles: List[String], p: BodyParser[A])(f: ProjectContext[A] => Result): Action[A] =
     Secured(p) { implicit ctx =>
