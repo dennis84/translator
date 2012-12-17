@@ -2,9 +2,7 @@ package translator.controllers
 
 import play.api.data._
 import play.api.data.Forms._
-import play.api.libs.json.Json
 import translator.models._
-import translator.utils.Parser
 
 object ImportController extends BaseController {
 
