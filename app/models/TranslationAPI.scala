@@ -1,15 +1,29 @@
 package translator.models
 
+import org.elasticsearch.index.query._, FilterBuilders._, QueryBuilders._
+import org.elasticsearch.search._, facet._, terms._, sort._, SortBuilders._, builder._
 import com.mongodb.casbah.Imports._
 import translator._
-import translator.controllers.{ Context, ProjectContext }
 
 object TranslationAPI {
 
-  def list(project: Project) = fixTranslations(
-    TranslationDAO.findAllByProject(project), project)
+  /** Returns all translations by language as key value format.
+   */
+  def export(project: Project, c: Option[String]) = {
+    val code = (c match {
+      case Some(code) => LanguageDAO.findOneByProjectAndCode(project, code)
+      case None => LanguageAPI.first(project)
+    }) map(_.code) getOrElse "en"
 
-  def listByFilter(project: Project, filter: Filter) = {
+    TranslationDAO.findActivatedByProjectAndCode(project, code) map { trans =>
+      trans.name -> trans.text
+    }
+  }
+
+  /** Retuns the filtered entries, this are the main translations for the
+   *  overview.
+   */
+  def entries(project: Project, filter: Filter) = {
     LanguageAPI.first(project) map { lang =>
       var translations = fixTranslations(TranslationDAO.findAllByProject(project), project)
 
@@ -33,22 +47,20 @@ object TranslationAPI {
     } getOrElse Nil
   }
 
-  def listByIds(project: Project, ids: List[ObjectId]) =
-    TranslationDAO.findAllByProjectAndIds(project, ids) map (generateMap(_, project))
-
-  def listByName(project: Project, name: String) = fixTranslations(
+  /** Returns all translations by name.
+   */
+  def list(project: Project, name: String) = fixTranslations(
     TranslationDAO.findAllByProjectAndName(project, name), project) map (generateMap(_, project))
 
-  def activatable(project: Project, name: String) =
-    TranslationDAO.findAllByProjectAndName(project, name) filter (_.status == Status.Inactive)
+  /** Searches for translations by any term and returns a list of mapped
+   *  translations.
+   */
+  def search(project: Project, term: String) = {
+    val ids = Search.indexer.search(query = queryString(term)).hits.hits.toList.map { searchResponse =>
+      new ObjectId(searchResponse.id)
+    }
 
-  def progress(project: Project, name: String) = {
-    val languages = LanguageDAO.findAllByProject(project)
-    val translations = TranslationDAO.findAllByProjectAndName(project, name)
-
-    languages.filter { lang =>
-      translations exists { trans => trans.code == lang.code && trans.text != "" && trans.status == Status.Active }
-    }.length.toFloat / languages.length * 100
+    TranslationDAO.findAllByProjectAndIds(project, ids) map (generateMap(_, project))
   }
 
   /** Sets the translation by id to active and removes the previous translation.
@@ -72,6 +84,24 @@ object TranslationAPI {
     case Some(trans) if (trans.status == Status.Inactive) =>
       TranslationDAO.remove(trans)
     case None => None
+  }
+
+  /** Returns all translations by project.
+   *  @TODO Make this method private
+   */
+  def all(project: Project) = fixTranslations(
+    TranslationDAO.findAllByProject(project), project)
+
+  private def activatable(project: Project, name: String) =
+    TranslationDAO.findAllByProjectAndName(project, name) filter (_.status == Status.Inactive)
+
+  private def progress(project: Project, name: String) = {
+    val languages = LanguageDAO.findAllByProject(project)
+    val translations = TranslationDAO.findAllByProjectAndName(project, name)
+
+    languages.filter { lang =>
+      translations exists { trans => trans.code == lang.code && trans.text != "" && trans.status == Status.Active }
+    }.length.toFloat / languages.length * 100
   }
 
   private def fixTranslations(trans: List[Translation], project: Project) = {

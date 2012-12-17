@@ -20,6 +20,9 @@ object TranslationDAO
   def findAllByProjectAndName(project: Project, name: String) =
     find(MongoDBObject("projectId" -> project.id, "name" -> name)).toList
 
+  def findActivatedByProjectAndCode(project: Project, code: String) =
+    find(MongoDBObject("projectId" -> project.id, "code" -> code, "status.code" -> Status.Active.id)) toList
+
   def findAllByProjectAndIds(project: Project, ids: List[ObjectId]) =
     find(MongoDBObject("projectId" -> project.id, "_id" -> MongoDBObject("$in" -> ids))) toList
 

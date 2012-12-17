@@ -10,11 +10,7 @@ object SearchController extends BaseController {
 
   def translations(project: String) = SecuredWithProject(project) { implicit ctx =>
     get("term") map { term =>
-      val ids = Search.indexer.search(query = queryString(term)).hits.hits.toList.map { searchResponse =>
-        new ObjectId(searchResponse.id)
-      }
-
-      JsonOk(TranslationAPI.listByIds(ctx.project, ids))
+      JsonOk(TranslationAPI.search(ctx.project, term))
     } getOrElse JsonOk(List())
   }
 }

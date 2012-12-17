@@ -15,7 +15,7 @@ object LanguageDAO
   def findAllByProjectId(projectId: ObjectId) =
     find(MongoDBObject("projectId" -> projectId)) toList
 
-  def findOneByCodeAndProject(code: String, project: Project) =
+  def findOneByProjectAndCode(project: Project, code: String) =
     findOne(MongoDBObject("code" -> code, "projectId" -> project.id))
 
   def findFirstByProject(project: Project) =
