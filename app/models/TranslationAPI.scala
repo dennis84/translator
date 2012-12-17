@@ -86,7 +86,7 @@ object TranslationAPI {
     actual <- TranslationDAO.findOneById(id)
     old    <- TranslationDAO.findOneByProjectNameAndCode(project, actual.name, actual.code)
   } yield {
-    val updated = actual.copy(status = translator.models.Status.Active)
+    val updated = actual.copy(status = Status.Active)
     TranslationDAO.save(updated)
     TranslationDAO.remove(old)
     updated

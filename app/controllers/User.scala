@@ -1,6 +1,5 @@
 package translator.controllers
 
-import com.roundeights.hasher.Implicits._
 import translator._
 import translator.models._
 import translator.forms._
@@ -26,11 +25,7 @@ object UserController extends BaseController {
     DataForm.updateUser.bindFromRequest.fold(
       formWithErrors => JsonBadRequest(Map("error" -> "fail")),
       formData => {
-        var updated = ctx.user.copy(
-          password = formData.sha512
-        )
-
-        UserDAO.save(updated)
+        val updated = UserAPI.update(ctx.user, formData)
         JsonOk(updated.toMap)
       }
     )
@@ -50,12 +45,7 @@ object UserController extends BaseController {
     DataForm.createUser.bindFromRequest.fold(
       formWithErrors => JsonBadRequest(formWithErrors.errors),
       formData => {
-        val created = User(
-          formData._1,
-          formData._2,
-          formData._3.map(Role(_, ctx.project.id))
-        )
-        UserDAO.insert(created)
+        val created = UserAPI.create(ctx.project, formData._1, formData._2, formData._3)
         JsonOk(created.toMap)
       }
     )
