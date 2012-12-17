@@ -4,6 +4,7 @@ import org.elasticsearch.index.query._, FilterBuilders._, QueryBuilders._
 import org.elasticsearch.search._, facet._, terms._, sort._, SortBuilders._, builder._
 import com.mongodb.casbah.Imports._
 import translator._
+import translator.utils.Parser
 
 object TranslationAPI {
 
@@ -101,6 +102,23 @@ object TranslationAPI {
       TranslationDAO.remove(trans)
     case None => None
   }
+
+  /** Parses the content by type and inserts the non existing translations. For
+   *  all entries a TranslationImport class will be created to send the client
+   *  a usefull import response.
+   */
+  def imports(project: Project, user: User, content: String, t: String, code: String) =
+    Parser.parse(content, t) map { row =>
+      val (name, text) = row
+      TranslationDAO.findOneByProjectNameAndCode(project, name, code) match {
+        case Some(trans) => TranslationImport(trans, Status.Skipped)
+        case None => {
+          val trans = create(code, name, text, project, user)
+          TranslationDAO.insert(trans)
+          TranslationImport(trans, Status.Imported)
+        }
+      }
+    }
 
   /** Returns all translations by project.
    *  @TODO Make this method private

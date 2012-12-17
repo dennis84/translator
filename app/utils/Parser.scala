@@ -4,13 +4,13 @@ import play.api.libs.json.Json
 
 object Parser {
 
-  def parse(content: String, ext: String): Map[String, String] = ext match {
+  def parse(content: String, ext: String): List[(String, String)] = (ext match {
     case "json" => json(content)
     case "po"   => po(content)
     case "yaml" => yaml(content)
     case "yml"  => yaml(content)
     case _ => Map.empty[String, String]
-  }
+  }) toList
 
   def json(content: String) = (Json parse content).as[Map[String, String]]
 

@@ -24,3 +24,7 @@ object EmptyTranslation {
 
   def apply(code: String, t: Translation) = Translation(code, t.name, "", t.projectId, t.authorId, Status.Empty)
 }
+
+case class TranslationImport(
+  val translation: Translation,
+  val status: Status)

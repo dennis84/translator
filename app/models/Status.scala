@@ -14,4 +14,7 @@ object Status {
   def Active   = new Status(10, Some("active"))
   def Empty    = new Status(20, Some("empty"))
   def Inactive = new Status(30, Some("inactive"))
+
+  def Imported = new Status(100, Some("imported"))
+  def Skipped  = new Status(110, Some("skipped"))
 }
