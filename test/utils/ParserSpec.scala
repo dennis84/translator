@@ -5,20 +5,7 @@ import org.specs2.mutable._
 
 class ParserSpec extends Specification {
 
-  case class Msg(val id: String, val str: String)
-
   "Parser" should {
-    "xml" in {
-      var string = """
-        <foo>
-          <unit>
-            <key>Foo</key>
-            <value>Bar</value>
-          </unit>
-        </foo>
-      """
-    }
-
     "po" in {
       var string =
 """
@@ -50,7 +37,7 @@ msgid "(.+)"
 msgstr "(.+)"
 """.r
 
-      println((for (regex(id, str) <- regex findAllIn string) yield (id -> str)) toMap)
+      //println((for (regex(id, str) <- regex findAllIn string) yield (id -> str)) toMap)
       1 must_== 1
     }
   }

@@ -129,6 +129,21 @@ object TranslationAPI {
   def all(project: Project) = fixTranslations(
     TranslationDAO.findAllByProject(project), project)
 
+  /** Returns all untranslated translations by project.
+   */
+  def untranslated(project: Project) =
+    filterUntranslated(TranslationDAO.findAllByProject(project), project)
+
+  /** Returns all untranslated translations by project and name.
+   */
+  def untranslated(project: Project, name: String) =
+    filterUntranslated(TranslationDAO.findAllByProjectAndName(project, name), project)
+
+  private def filterUntranslated(translations: List[Translation], project: Project) =
+    fixTranslations(translations, project) filter { trans =>
+      trans.text == "" && (trans.status == Status.Active || trans.status == Status.Empty)
+    }
+
   private def status(project: Project, user: User) =
     user.roles(project) contains (Role.ADMIN) match {
       case true => Status.Active
@@ -140,11 +155,9 @@ object TranslationAPI {
 
   private def progress(project: Project, name: String) = {
     val languages = LanguageDAO.findAllByProject(project)
-    val translations = TranslationDAO.findAllByProjectAndName(project, name)
-
-    languages.filter { lang =>
-      translations exists { trans => trans.code == lang.code && trans.text != "" && trans.status == Status.Active }
-    }.length.toFloat / languages.length * 100
+    val trans = untranslated(project, name)
+      
+    100 - (trans.length.toFloat / languages.length * 100)
   }
 
   private def fixTranslations(trans: List[Translation], project: Project) = {
