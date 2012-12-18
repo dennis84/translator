@@ -4,8 +4,8 @@ object LanguageAPI {
 
   /** Lists all languages by project.
    */
-  def list(project: Project) =
-    LanguageDAO.findAllByProject(project) map (_.toMap)
+  def list(project: Project) = Collection[Language, Lang](
+    LanguageDAO.findAllByProject(project))
 
   /** Returns the first language in database. This is also the primary.
    */
@@ -22,4 +22,11 @@ object LanguageAPI {
     case "" => LanguageAPI.first(project)
     case _  => LanguageDAO.findOneByProjectAndCode(project, code)
   }) map(_.code) getOrElse "en"
+
+  class Lang(lang: Language) extends Item {
+    def response = Map(
+      "id"   -> lang.id.toString,
+      "code" -> lang.code,
+      "name" -> lang.name)
+  }
 }
