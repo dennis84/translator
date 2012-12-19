@@ -13,11 +13,17 @@ case class User(
 
   def roles(project: Project): List[String] =
     roles filter (_.projectId == project.id) map (_.role)
+}
 
-  def toMap = Map(
-    "id" -> id.toString,
-    "username" -> username,
-    "email" -> email.getOrElse(""))
+case class UserVeiw(
+  val model: User,
+  val roles: List[String] = Nil) {
+
+  def serialize = Map(
+    "id" -> model.id.toString,
+    "username" -> model.username,
+    "email" -> model.email.getOrElse(""),
+    "roles" -> roles)
 }
 
 case class Role(

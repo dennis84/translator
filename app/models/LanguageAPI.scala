@@ -5,12 +5,12 @@ object LanguageAPI {
   /** Lists all languages by project.
    */
   def list(project: Project) =
-    LanguageCollection(LanguageDAO.findAllByProject(project))
+    LanguageDAO.findAllByProject(project) map(LanguageView(_))
 
   /** Returns the first language in database. This is also the primary.
    */
-  def first(project: Project): Option[LanguageItem] =
-    LanguageDAO.findFirstByProject(project).headOption map(new LanguageItem(_))
+  def first(project: Project) =
+    LanguageDAO.findFirstByProject(project).headOption map(new LanguageView(_))
 
   /** Returns the language code by language code. At first we check if the code
    *  is empty then returns the primary language code. If the code is not empty
@@ -28,7 +28,7 @@ object LanguageAPI {
   def create(code: String, name: String, project: Project) = {
     val lang = Language(code, name, project.id)
     LanguageDAO.insert(lang)
-    new LanguageItem(lang)
+    new LanguageView(lang)
   }
 
   /** Updates a language with code and name.
@@ -36,30 +36,6 @@ object LanguageAPI {
   def update(lang: Language, code: String, name: String) = {
     val updated = lang.copy(code, name)
     LanguageDAO.save(updated)
-    new LanguageItem(updated)
+    new LanguageView(updated)
   }
-}
-
-class LanguageItem(val model: Language) extends Item {
-
-  def serialize = Map(
-    "id"   -> model.id.toString,
-    "code" -> model.code,
-    "name" -> model.name)
-}
-
-object LanguageCollection {
-
-  def apply(langs: List[Language]) =
-    new Collection(langs.map(new LanguageItem(_)))
-}
-
-trait Item {
-
-  def serialize: Map[String, Any]
-}
-
-class Collection[A <: Item](val models: List[A]) {
-
-  def response = models map(_.serialize)
 }

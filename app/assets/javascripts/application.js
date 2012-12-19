@@ -35,10 +35,13 @@ define([
 
   var withProject = function (id, func) {
     var model = window.projects.get(id)
-    window.user.currentByProject(id)
+    window.user.on("sync", function () {
+      window.project.set(model)
+      func(window.project)
+      window.user.off("sync")
+    })
 
-    window.project.set(model)
-    func(window.project)
+    window.user.currentByProject(id)
   }
 
   var initialize = function () {

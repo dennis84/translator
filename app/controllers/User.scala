@@ -18,7 +18,7 @@ object UserController extends BaseController {
   }
 
   def current = Secured { implicit ctx =>
-    JsonOk(ctx.user.toMap)
+    JsonOk(UserAPI.by(ctx.user).serialize)
   }
 
   def updateCurrent = Secured { implicit ctx =>
@@ -26,18 +26,18 @@ object UserController extends BaseController {
       formWithErrors => JsonBadRequest(Map("error" -> "fail")),
       formData => {
         val updated = UserAPI.update(ctx.user, formData)
-        JsonOk(updated.toMap)
+        JsonOk(updated.serialize)
       }
     )
   }
 
   def currentByProject(project: String) = SecuredWithProject(project) { implicit ctx =>
-    JsonOk(ctx.user.toMap ++ Map("roles" -> ctx.user.roles(ctx.project)))
+    JsonOk(UserAPI.by(ctx.user, ctx.project).serialize)
   }
 
   def list(project: String) = SecuredWithProject(project) { implicit ctx =>
     JsonOk(ProjectAPI.contributors(ctx.project).map { user =>
-      user.toMap ++ Map("roles" -> user.roles(ctx.project))
+      UserAPI.by(user, ctx.project).serialize
     })
   }
 
@@ -46,7 +46,7 @@ object UserController extends BaseController {
       formWithErrors => JsonBadRequest(formWithErrors.errors),
       formData => {
         val created = UserAPI.create(ctx.project, formData._1, formData._2, formData._3)
-        JsonOk(created.toMap)
+        JsonOk(created.serialize)
       }
     )
   }

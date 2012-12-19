@@ -9,12 +9,12 @@ object ProjectAPI {
 
   /** Lists all projects as map.
    */
-  def list(projects: List[Project]) = projects map (generateMap(_))
+  def list(projects: List[Project]) = projects map(createView(_))
 
   /** Finds all projects where user is registered in.
    */
   def listMine(user: User) = user.roles map { role =>
-    ProjectDAO.findOneById(role.projectId)
+    ProjectDAO.findOneById(role.projectId) map(createView(_))
   } flatten
   
   /** List all users by project.
@@ -32,7 +32,7 @@ object ProjectAPI {
     UserDAO.save(user.copy(
       roles = user.roles :+ Role.Admin(project.id)))
     ProjectDAO.insert(project)
-    project
+    createView(project)
   }
 
   /** Signup a new user and a project.
@@ -55,15 +55,12 @@ object ProjectAPI {
     }.map(_.nbWords).reduceLeft(_ + _))
   } toMap
 
-  private def generateMap(project: Project) = Map(
-    "id" -> project.id.toString,
-    "name" -> project.name,
-    "admin" -> admin(project).map(_.toMap).getOrElse(Map()),
-    "statistics" -> Map(
-      "progress" -> progress(project),
-      "nb_entries" -> TranslationAPI.all(project).map(_.name).distinct.length,
-      "nb_words" -> nbWords(project)
-    ))
+  private def createView(project: Project) = ProjectView(
+    project,
+    admin(project).get,
+    progress(project),
+    0,
+    0)
 
   private def uuid = java.util.UUID.randomUUID.toString
 }

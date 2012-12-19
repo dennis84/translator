@@ -31,7 +31,7 @@ define([
       this.$(".nav-project").remove()
       this.$el.append(projectTemplate)
 
-      if (true === window.user.equals(window.project.get("admin"))) {
+      if (true === window.user.isAdmin()) {
         var adminTemplate = $(_.template(navigationAdminTemplate, model.toJSON())).addClass("nav-admin")
         this.$(".nav-admin").remove()
         this.$el.append(adminTemplate)

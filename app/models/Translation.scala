@@ -20,6 +20,22 @@ case class Translation(
   lazy val nbWords = text.split(" ").filterNot(_ == "").length
 }
 
+case class TranslationView(
+  val model: Translation,
+  val nbActivatable: Option[Int] = None,
+  val progress: Option[Float] = None) {
+
+  def serialize = Map(
+    "id" -> model.id.toString,
+    "code" -> model.code,
+    "name" -> model.name,
+    "text" -> model.text,
+    "author" -> "",
+    "status" -> model.status.toString,
+    "nb_activatable" -> nbActivatable,
+    "progress" -> progress)
+}
+
 object EmptyTranslation {
 
   def apply(code: String, t: Translation) = Translation(code, t.name, "", t.projectId, t.authorId, Status.Empty)

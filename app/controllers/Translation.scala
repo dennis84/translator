@@ -13,11 +13,11 @@ object TranslationController extends BaseController {
       getAllOr("untranslated_languages", Seq.empty[String]),
       getOr("activatable", "false"))
 
-    JsonOk(TranslationAPI.entries(ctx.project, filter))
+    JsonOk(TranslationAPI.entries(ctx.project, filter) map(_.serialize))
   }
 
   def listByName(project: String, name: String) = SecuredWithProject(project) { implicit ctx =>
-    JsonOk(TranslationAPI.list(ctx.project, name))
+    JsonOk(TranslationAPI.list(ctx.project, name) map(_.serialize))
   }
 
   def create(project: String) = SecuredWithProject(project) { implicit ctx =>

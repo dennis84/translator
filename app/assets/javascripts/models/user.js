@@ -41,6 +41,7 @@ define([], function () {
       var model = this
       $.getJSON("/" + project + "/user", function (data) {
         model.set(data)
+        model.trigger("sync", model)
       })
     },
 
@@ -77,10 +78,6 @@ define([], function () {
         model.set("password2", "")
         model.trigger("logged_out", model)
       })
-    },
-
-    equals: function (other) {
-      return this.id === other.id
     },
 
     isAdmin: function () {

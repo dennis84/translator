@@ -8,15 +8,15 @@ import translator.forms._
 object ProjectController extends BaseController {
 
   def list = Secured { implicit ctx =>
-    JsonOk(ProjectAPI.list(ctx.projects))
+    JsonOk(ProjectAPI.list(ctx.projects) map(_.serialize))
   }
 
   def create = Secured { implicit ctx =>
     DataForm.newProject.bindFromRequest.fold(
       formWithErrors => JsonBadRequest(formWithErrors.errors),
       formData => {
-        ProjectAPI.create(formData, ctx.user)
-        JsonOk(List())
+        val created = ProjectAPI.create(formData, ctx.user)
+        JsonOk(created.serialize)
       }
     )
   }
@@ -25,8 +25,8 @@ object ProjectController extends BaseController {
     DataForm.signUp.bindFromRequest.fold(
       formWithErrors => JsonBadRequest(formWithErrors.errors),
       formData => {
-        ProjectAPI.signup(formData._1, formData._2, formData._3)
-        JsonOk(List()) withSession ("username" -> formData._2)
+        val created = ProjectAPI.signup(formData._1, formData._2, formData._3)
+        JsonOk(created.serialize) withSession ("username" -> formData._2)
       }
     )
   }

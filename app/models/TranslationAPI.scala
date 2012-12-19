@@ -41,14 +41,16 @@ object TranslationAPI {
         }
       }
 
-      translations filter (_.code == lang.model.code) map (generateMap(_, project))
+      translations.filter { trans =>
+        trans.code == lang.model.code
+      } map(createView(_, project))
     } getOrElse Nil
   }
 
   /** Returns all translations by name.
    */
   def list(project: Project, name: String) = fixTranslations(
-    TranslationDAO.findAllByProjectAndName(project, name), project) map (generateMap(_, project))
+    TranslationDAO.findAllByProjectAndName(project, name), project) map (createView(_, project))
 
   /** Searches for translations by any term and returns a list of mapped
    *  translations.
@@ -58,7 +60,7 @@ object TranslationAPI {
       new ObjectId(searchResponse.id)
     }
 
-    TranslationDAO.findAllByProjectAndIds(project, ids) map (generateMap(_, project))
+    TranslationDAO.findAllByProjectAndIds(project, ids) map (createView(_, project))
   }
 
   /** Creates a new translation.
@@ -73,7 +75,7 @@ object TranslationAPI {
       status(project, user))
     
     TranslationDAO.insert(trans)
-    trans
+    createView(trans)
   }
 
   /** Updates the text of a translation.
@@ -81,7 +83,7 @@ object TranslationAPI {
   def update(before: Translation, text: String) = {
     val updated = before.copy(text = text)
     TranslationDAO.save(updated)
-    updated
+    createView(updated)
   }
 
   /** Sets the translation by id to active and removes the previous translation.
@@ -93,7 +95,7 @@ object TranslationAPI {
     val updated = actual.copy(status = Status.Active)
     TranslationDAO.save(updated)
     TranslationDAO.remove(old)
-    updated
+    createView(updated)
   }
 
   /** Deletes one ore all translations with the same name if the user is an
@@ -118,7 +120,7 @@ object TranslationAPI {
         case Some(trans) => TranslationImport(trans, Status.Skipped)
         case None => {
           val trans = create(code, name, text, project, user)
-          TranslationImport(trans, Status.Imported)
+          TranslationImport(trans.model, Status.Imported)
         }
       }
     }
@@ -178,13 +180,10 @@ object TranslationAPI {
     }
   }
 
-  private def generateMap(trans: Translation, project: Project) = Map(
-    "id" -> trans.id.toString,
-    "code" -> trans.code,
-    "name" -> trans.name,
-    "text" -> trans.text,
-    "author" -> UserDAO.findOneById(trans.authorId).map(_.username).getOrElse("unknown"),
-    "status" -> trans.status.toString,
-    "nb_activatable" -> activatable(project, trans.name).length,
-    "progress" -> progress(project, trans.name))
+  private def createView(trans: Translation, project: Project) = TranslationView(
+    trans,
+    Some(activatable(project, trans.name).length),
+    Some(progress(project, trans.name)))
+ 
+  private def createView(trans: Translation) = TranslationView(trans)
 }
