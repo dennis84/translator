@@ -7,10 +7,4 @@ case class Language(
   val code: String,
   val name: String,
   val projectId: ObjectId,
-  @Key("_id") val id: ObjectId = new ObjectId) {
-
-  def toMap = Map(
-    "id"   -> id.toString,
-    "code" -> code,
-    "name" -> name)
-}
+  @Key("_id") val id: ObjectId = new ObjectId)

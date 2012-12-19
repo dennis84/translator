@@ -31,7 +31,7 @@ object TranslationAPI {
         } map (_.name)
 
         translations = untranslatedNames.map { name =>
-          translations.find(t => name == t.name && lang.code == t.code)
+          translations.find(t => name == t.name && lang.model.code == t.code)
         } flatten
       }
 
@@ -41,7 +41,7 @@ object TranslationAPI {
         }
       }
 
-      translations filter (_.code == lang.code) map (generateMap(_, project))
+      translations filter (_.code == lang.model.code) map (generateMap(_, project))
     } getOrElse Nil
   }
 

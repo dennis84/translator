@@ -14,9 +14,8 @@ object LanguageController extends BaseController {
     DataForm.language.bindFromRequest.fold(
       formWithErrors => JsonBadRequest(formWithErrors.errors),
       formData => {
-        var created = Language(formData._1, formData._2, ctx.project.id)
-        LanguageDAO.insert(created)
-        JsonOk(created.toMap)
+        var created = LanguageAPI.create(formData._1, formData._2, ctx.project)
+        JsonOk(created.serialize)
       }
     )
   }
@@ -26,9 +25,8 @@ object LanguageController extends BaseController {
       DataForm.language.bindFromRequest.fold(
         formWithErrors => JsonBadRequest(formWithErrors.errors),
         formData => {
-          val updated = language.copy(code = formData._1, name = formData._2)
-          LanguageDAO.save(updated)
-          JsonOk(updated.toMap)
+          val updated = LanguageAPI.update(language, formData._1, formData._2)
+          JsonOk(updated.serialize)
         }
       )
     } getOrElse JsonNotFound
