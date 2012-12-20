@@ -14,13 +14,33 @@ case class Project(
   val token: String,
   val adminId: ObjectId,
   val admin: Option[User] = None,
+  val progress: Option[Map[String, Float]] = None,
+  val nbWords: Option[Map[String, Any]] = None,
   val id: ObjectId = new ObjectId) {
 
   def withUser(u: User) = copy(admin = Some(u))
+
+  def withStats(translations: List[Translation], languages: List[Language]) = copy(
+    progress = Some(languages.map { lang =>
+      lang.code -> (translations.filter { trans =>
+        trans.code == lang.code &&
+        trans.text != "" &&
+        trans.status == Status.Active
+      }.length.toFloat) / translations.map(_.name).distinct.length * 100
+    }.toMap),
+    nbWords = Some(languages.map { lang =>
+      lang.code -> (translations.filter { trans =>
+        trans.code == lang.code &&
+        trans.status == Status.Active
+      }.map(_.nbWords).reduceLeftOption(_+_).getOrElse(0))
+    }.toMap)
+  )
 
   def encode = DbProject(name, adminId, token, id)
 
   def serialize = Map(
     "id" -> id.toString,
-    "name" -> name)
+    "name" -> name,
+    "progress" -> progress,
+    "db_words" -> nbWords)
 }

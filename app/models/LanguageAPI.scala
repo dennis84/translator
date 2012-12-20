@@ -4,18 +4,20 @@ import com.mongodb.casbah.Imports._
 
 object LanguageAPI {
 
+  import Implicits._
+
   def by(id: ObjectId, p: Project) =
     LanguageDAO.findOneById(id) map(makeLanguage(_, p))
 
   /** Lists all languages by project.
    */
   def list(project: Project) =
-    LanguageDAO.findAllByProject(project.encode) map(makeLanguage(_, project))
+    LanguageDAO.findAllByProject(project) map(makeLanguage(_, project))
 
   /** Returns the first language in database. This is also the primary.
    */
   def first(project: Project) =
-    LanguageDAO.findFirstByProject(project.encode).headOption map(makeLanguage(_, project))
+    LanguageDAO.findFirstByProject(project).headOption map(makeLanguage(_, project))
 
   /** Returns the language code by language code. At first we check if the code
    *  is empty then returns the primary language code. If the code is not empty
@@ -25,7 +27,7 @@ object LanguageAPI {
    */
   def code(project: Project, code: String) = (code match {
     case "" => LanguageAPI.first(project).map(_.code)
-    case _  => LanguageDAO.findOneByProjectAndCode(project.encode, code).map(_.code)
+    case _  => LanguageDAO.findOneByProjectAndCode(project, code).map(_.code)
   }) getOrElse "en"
 
   /** Creates a new language.
@@ -39,7 +41,7 @@ object LanguageAPI {
   /** Updates a language with code and name.
    */
   def update(lang: Language, code: String, name: String) = {
-    val updated = lang.encode.copy(code, name)
+    val updated = lang.copy(code, name)
     LanguageDAO.save(updated)
     makeLanguage(updated, lang.project)
   }

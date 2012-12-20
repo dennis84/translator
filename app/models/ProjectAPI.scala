@@ -7,49 +7,35 @@ import translator.controllers.{ Context, ProjectContext }
 
 object ProjectAPI {
 
+  import Implicits._
+
   def by(token: String) =
     ProjectDAO.findOneByToken(token) map(makeProject(_))
 
-  /** Lists all projects as map.
-   */
-  def list(projects: List[DbProject]) = projects map(makeProject(_))
-
-  /** Finds all projects where user is registered in.
-   */
   def listMine(user: User) = user.rawRoles map { role =>
-    ProjectDAO.findOneById(role.projectId) map(makeProject(_))
+    ProjectDAO.findOneById(role.projectId) map { p =>
+      val project = makeProject(p)
+      val langs   = LanguageAPI.list(project)
+      val trans   = TranslationAPI.list(project)
+
+      project.withStats(trans, langs)
+    }
   } flatten
 
-  /** Creates a new project.
-   */
   def create(name: String, u: User) = {
     val project = Project(name, uuid, u.id)
     val user = u.copy(rawRoles = u.rawRoles :+ Role.Admin(project.id))
 
-    UserDAO.save(user.encode)
-    ProjectDAO.insert(project.encode)
+    UserDAO.save(user)
+    ProjectDAO.insert(project)
     project
   }
 
-  /** Signup a new user and a project.
-   */
   def signup(projectName: String, username: String, password: String) = {
     val user = User(username, password sha512)
-    UserDAO.insert(user.encode)
+    UserDAO.insert(user)
     create(projectName, user)
   }
-
-  //private def progress(project: Project) = LanguageDAO.findAllByProject(project) map { lang =>
-    //lang.code -> (TranslationAPI.all(project).filter { trans =>
-      //trans.code == lang.code && trans.text != "" && trans.status == Status.Active
-    //}.length.toFloat) / TranslationAPI.all(project).map(_.name).distinct.length * 100
-  //} toMap
-
-  //private def nbWords(project: Project) = LanguageDAO.findAllByProject(project).map { lang =>
-    //lang.code -> (TranslationAPI.all(project).filter { trans =>
-      //trans.code == lang.code && (trans.status == Status.Active || trans.status == Status.Empty)
-    //}.map(_.nbWords).reduceLeft(_ + _))
-  //} toMap
 
   private def uuid = java.util.UUID.randomUUID.toString
 

@@ -17,7 +17,7 @@ object TranslationAPI {
    */
   def export(project: Project, c: String) =
     TranslationDAO.findActivatedByProjectAndCode(
-      project.encode,
+      project,
       LanguageAPI.code(project, c)
     ) map { trans =>
       trans.name -> trans.text
@@ -28,7 +28,8 @@ object TranslationAPI {
    */
   def entries(project: Project, filter: Filter) = {
     LanguageAPI.first(project) map { lang =>
-      var translations = TranslationDAO.findAllByProject(project.encode)
+      val langs = LanguageAPI.list(project)
+      var translations = TranslationDAO.findAllByProject(project) map(makeTranslation(_))
 
       //if ("true" == filter.untranslated) {
         //val untranslatedNames = translations.filter { trans =>
@@ -48,17 +49,24 @@ object TranslationAPI {
 
       translations.filter { trans =>
         trans.code == lang.code
-      } map(makeTranslation(_) withProject(project))
+      } map { trans =>
+        trans.withProject(project).withStats(translations, langs)
+      }
     } getOrElse Nil
   }
+
+  def list(project: Project) =
+    TranslationDAO.findAllByProject(project) map(makeTranslation(_))
 
   /** Returns all translations by name.
    */
   def list(project: Project, name: String) =
-    TranslationDAO.findAllByProjectAndName(project.encode, name).map(makeTranslation(_)).fixed(project)
+    TranslationDAO.findAllByProjectAndName(project, name)
+      .map(makeTranslation(_))
+      .fixed(project)
 
   def activatable(project: Project, name: String) =
-    TranslationDAO.findAllByProjectAndName(project.encode, name).filter { trans =>
+    TranslationDAO.findAllByProjectAndName(project, name).filter { trans =>
       trans.status == Status.Inactive
     } map(makeTranslation(_))
 
@@ -70,7 +78,9 @@ object TranslationAPI {
       new ObjectId(searchResponse.id)
     }
 
-    TranslationDAO.findAllByProjectAndIds(project.encode, ids) map(makeTranslation(_) withProject(project))
+    TranslationDAO.findAllByProjectAndIds(project, ids) map { trans =>
+      makeTranslation(trans).withProject(project)
+    }
   }
 
   /** Creates a new translation.
@@ -92,7 +102,7 @@ object TranslationAPI {
    */
   def update(before: Translation, text: String) = {
     val updated = before.copy(text = text)
-    TranslationDAO.save(updated.encode)
+    TranslationDAO.save(updated)
     updated
   }
 
@@ -100,7 +110,7 @@ object TranslationAPI {
    */
   def switch(user: User, project: Project, id: ObjectId) = for {
     actual <- TranslationDAO.findOneById(id)
-    old    <- TranslationDAO.findOneByProjectNameAndCode(project.encode, actual.name, actual.code)
+    old    <- TranslationDAO.findOneByProjectNameAndCode(project, actual.name, actual.code)
   } yield {
     val updated = actual.copy(status = Status.Active)
     TranslationDAO.save(updated)
@@ -113,7 +123,7 @@ object TranslationAPI {
    */
   def delete(project: Project, id: ObjectId) = TranslationDAO.findOneById(id) match {
     case Some(trans) if (trans.status == Status.Active) =>
-      TranslationDAO.removeAllByProjectAndName(project.encode, trans.name)
+      TranslationDAO.removeAllByProjectAndName(project, trans.name)
     case Some(trans) if (trans.status == Status.Inactive) =>
       TranslationDAO.remove(trans)
     case None => None
@@ -126,7 +136,7 @@ object TranslationAPI {
   def imports(project: Project, user: User, content: String, t: String, code: String) =
     Parser.parse(content, t) map { row =>
       val (name, text) = row
-      TranslationDAO.findOneByProjectNameAndCode(project.encode, name, code) match {
+      TranslationDAO.findOneByProjectNameAndCode(project, name, code) match {
         case Some(trans) => "" //TranslationImport(trans, Status.Skipped)
         case None => {
           val trans = create(code, name, text, project, user)
@@ -139,25 +149,18 @@ object TranslationAPI {
   /** Returns all untranslated translations by project.
    */
   def untranslated(project: Project) =
-    TranslationDAO.findAllByProject(project.encode)
+    TranslationDAO.findAllByProject(project)
 
   /** Returns all untranslated translations by project and name.
    */
   def untranslated(project: Project, name: String) =
-    TranslationDAO.findAllByProjectAndName(project.encode, name)
+    TranslationDAO.findAllByProjectAndName(project, name)
 
   private def status(user: User) =
     user.roles contains (Role.ADMIN) match {
       case true => Status.Active
       case false => Status.Inactive
     }
-
-  //private def progress(project: Project, name: String) = {
-    //val languages = LanguageDAO.findAllByProject(project)
-    //val trans = untranslated(project, name)
-      
-    //100 - (trans.length.toFloat / languages.length * 100)
-  //}
 
   private def makeTranslation(t: DbTranslation) =
     Translation(t.code, t.name, t.text, t.author, t.status, t.projectId, id = t.id)

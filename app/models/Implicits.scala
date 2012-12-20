@@ -2,7 +2,16 @@ package translator.models
 
 object Implicits {
 
-  implicit def list2TranslationCollection(list: List[Translation]) = new TranslationCollection(list)
+  implicit def project2DbProject(p: Project) = p.encode
+
+  implicit def translation2DbTranslation(t: Translation) = t.encode
+
+  implicit def language2DbLanguage(l: Language) = l.encode
+
+  implicit def user2DbUser(u: User) = u.encode
+
+  implicit def list2TranslationCollection(list: List[Translation]) =
+    new TranslationCollection(list)
 }
 
 class TranslationCollection(list: List[Translation]) {

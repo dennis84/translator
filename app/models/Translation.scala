@@ -25,11 +25,25 @@ case class Translation(
   val status: Status,
   val projectId: ObjectId,
   val project: Option[Project] = None,
+  val nbActivatable: Option[Int] = None,
+  val progress: Option[Float] = None,
   val id: ObjectId = new ObjectId) {
 
   lazy val nbWords = text.split(" ").filterNot(_ == "").length
 
   def withProject(p: Project) = copy(project = Some(p))
+
+  def withStats(others: List[Translation], langs: List[Language]) = copy(
+    nbActivatable = Some(others.filter { trans =>
+      trans.name == name &&
+      trans.status == Status.Inactive
+    }.length),
+    progress = Some(others.filter { trans =>
+      trans.name == name &&
+      trans.text != "" &&
+      trans.status == Status.Active
+    }.length.toFloat / langs.length * 100)
+  )
 
   def encode = DbTranslation(code, name, text, projectId, author, status, id)
 
@@ -40,6 +54,6 @@ case class Translation(
     "text" -> text,
     "author" -> author,
     "status" -> status.toString,
-    "nb_activatable" -> 0,
-    "progress" -> 0)
+    "nb_activatable" -> nbActivatable,
+    "progress" -> progress)
 }

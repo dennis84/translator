@@ -4,6 +4,8 @@ import com.roundeights.hasher.Implicits._
 
 object UserAPI {
 
+  import Implicits._
+
   def by(project: DbProject) =
     UserDAO.findOneById(project.adminId) map(makeUser(_))
 
@@ -11,7 +13,7 @@ object UserAPI {
     UserDAO.findOneByUsername(username) map(makeUser(_))
 
   def contributors(p: Project) =
-    UserDAO.findAllByProject(p.encode) map(makeUser(_))
+    UserDAO.findAllByProject(p) map(makeUser(_))
 
   /** Creates a new user.
    */
@@ -25,7 +27,7 @@ object UserAPI {
    */
   def update(before: User, password: String) = {
     val updated = before.copy(password = password.sha512)
-    UserDAO.save(updated.encode)
+    UserDAO.save(updated)
     updated
   }
 
