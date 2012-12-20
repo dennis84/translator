@@ -8,6 +8,8 @@ import translator.utils.Parser
 
 object TranslationAPI {
 
+  implicit def list2TranslationCollection(list: List[Translation]) = new TranslationCollection(list)
+
   def by(id: ObjectId) =
     TranslationDAO.findOneById(id) map(makeTranslation(_))
 
@@ -53,7 +55,7 @@ object TranslationAPI {
   /** Returns all translations by name.
    */
   def list(project: Project, name: String) =
-    TranslationDAO.findAllByProjectAndName(project.encode, name) map(makeTranslation(_))
+    TranslationDAO.findAllByProjectAndName(project.encode, name).map(makeTranslation(_)).fixed(project)
 
   /** Searches for translations by any term and returns a list of mapped
    *  translations.
@@ -151,6 +153,19 @@ object TranslationAPI {
       case false => Status.Inactive
     }
 
+  //private def progress(project: Project, name: String) = {
+    //val languages = LanguageDAO.findAllByProject(project)
+    //val trans = untranslated(project, name)
+      
+    //100 - (trans.length.toFloat / languages.length * 100)
+  //}
+
+  private def makeTranslation(t: DbTranslation) =
+    Translation(t.code, t.name, t.text, t.author, t.status, t.projectId, id = t.id)
+}
+
+class TranslationCollection(list: List[Translation]) {
+
   //private def filterUntranslated(translations: List[Translation], project: Project) =
     //fixTranslations(translations, project) filter { trans =>
       //trans.text == "" && (trans.status == Status.Active || trans.status == Status.Empty)
@@ -159,31 +174,21 @@ object TranslationAPI {
   //private def activatable(project: Project, name: String) =
     //TranslationDAO.findAllByProjectAndName(project, name) filter (_.status == Status.Inactive)
 
-  //private def progress(project: Project, name: String) = {
-    //val languages = LanguageDAO.findAllByProject(project)
-    //val trans = untranslated(project, name)
-      
-    //100 - (trans.length.toFloat / languages.length * 100)
-  //}
+  def fixed(project: Project) = {
+    val langs = LanguageDAO.findAllByProject(project.encode).map(_.code)
+    val diff  = langs.diff(list.filter(_.status == Status.Active).map(_.code))
 
-  //private def fixTranslations(trans: List[Translation], project: Project) = {
-    //val langs = LanguageDAO.findAllByProject(project).map(_.code)
-    //val diff  = langs.diff(trans.filter(_.status == Status.Active).map(_.code))
+    list match {
+      case Nil => List.empty[Translation]
+      case _   => {
+        val unsorted = (list ++ diff.map { code =>
+          Translation(code, list.head.name, "", "", Status.Empty, project.id, Some(project))
+        }) sortBy (_.status.id)
 
-    //trans match {
-      //case Nil => List.empty[Translation]
-      //case _   => {
-        //val unsorted = (trans ++ diff.map { code =>
-          //Translation(code, trans.head.name, "", "", Status.Empty)
-        //}) sortBy (_.status.id)
-
-        //langs map { l =>
-          //unsorted.filter(_.code == l)
-        //} flatten
-      //}
-    //}
-  //}
-
-  private def makeTranslation(t: DbTranslation) =
-    Translation(t.code, t.name, t.text, t.author, t.status, t.projectId, id = t.id)
+        langs map { l =>
+          unsorted.filter(_.code == l)
+        } flatten
+      }
+    }
+  }
 }

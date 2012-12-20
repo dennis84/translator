@@ -39,5 +39,7 @@ case class Translation(
     "name" -> name,
     "text" -> text,
     "author" -> author,
-    "status" -> status.toString)
+    "status" -> status.toString,
+    "nb_activatable" -> 0,
+    "progress" -> 0)
 }

@@ -9,7 +9,7 @@ import com.mongodb.casbah.Imports._
 object LanguageDAO
   extends SalatDAO[DbLanguage, ObjectId](collection = MongoConnection()("translator")("languages")) {
 
-  def findAllByProject(project: Project) =
+  def findAllByProject(project: DbProject) =
     find(MongoDBObject("projectId" -> project.id)) toList
 
   def findAllByProjectId(projectId: ObjectId) =

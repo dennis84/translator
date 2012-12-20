@@ -71,11 +71,10 @@ trait Actions extends Controller with Results with RequestGetter {
     Secured(p) { implicit ctx =>
       (for {
         p <- ctx.projects.find(_.id == id)
-        if (roles.exists { r =>
-          ctx.user.roles.contains(r)
-        })
+        u <- Some(ctx.user.withRoles(p))
+        if (!u.roles.filter(roles.contains(_)).isEmpty)
       } yield {
-        f(ProjectContext(ctx.req, ctx.user, p, ctx.projects))
+        f(ProjectContext(ctx.req, u, p, ctx.projects))
       }) getOrElse JsonNotFound
     }
 }

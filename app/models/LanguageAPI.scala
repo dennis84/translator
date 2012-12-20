@@ -10,7 +10,7 @@ object LanguageAPI {
   /** Lists all languages by project.
    */
   def list(project: Project) =
-    LanguageDAO.findAllByProject(project) map(makeLanguage(_, project))
+    LanguageDAO.findAllByProject(project.encode) map(makeLanguage(_, project))
 
   /** Returns the first language in database. This is also the primary.
    */
