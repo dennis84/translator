@@ -10,12 +10,6 @@ object UserAPI {
   def by(username: String) =
     UserDAO.findOneByUsername(username) map(makeUser(_))
 
-  /** Creates the user view by user.
-   */
-  def by(user: DbUser) = makeUser(user)
-
-  def by(user: DbUser, project: Project) = makeUser(user).withRoles(project)
-
   def contributors(p: Project) =
     UserDAO.findAllByProject(p.encode) map(makeUser(_))
 

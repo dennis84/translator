@@ -15,7 +15,7 @@ object LanguageAPI {
   /** Returns the first language in database. This is also the primary.
    */
   def first(project: Project) =
-    LanguageDAO.findFirstByProject(project).headOption map(makeLanguage(_, project))
+    LanguageDAO.findFirstByProject(project.encode).headOption map(makeLanguage(_, project))
 
   /** Returns the language code by language code. At first we check if the code
    *  is empty then returns the primary language code. If the code is not empty
@@ -25,7 +25,7 @@ object LanguageAPI {
    */
   def code(project: Project, code: String) = (code match {
     case "" => LanguageAPI.first(project).map(_.code)
-    case _  => LanguageDAO.findOneByProjectAndCode(project, code).map(_.code)
+    case _  => LanguageDAO.findOneByProjectAndCode(project.encode, code).map(_.code)
   }) getOrElse "en"
 
   /** Creates a new language.

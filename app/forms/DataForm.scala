@@ -57,5 +57,5 @@ object DataForm {
     ProjectDAO.findOneByName(name).isEmpty
 
   private def languageCodeTaken(code: String, project: Project) =
-    LanguageDAO.findOneByProjectAndCode(project, code).isEmpty
+    LanguageDAO.findOneByProjectAndCode(project.encode, code).isEmpty
 }
