@@ -8,7 +8,7 @@ import translator.utils.Parser
 
 object TranslationAPI {
 
-  implicit def list2TranslationCollection(list: List[Translation]) = new TranslationCollection(list)
+  import Implicits._
 
   def by(id: ObjectId) =
     TranslationDAO.findOneById(id) map(makeTranslation(_))
@@ -56,6 +56,11 @@ object TranslationAPI {
    */
   def list(project: Project, name: String) =
     TranslationDAO.findAllByProjectAndName(project.encode, name).map(makeTranslation(_)).fixed(project)
+
+  def activatable(project: Project, name: String) =
+    TranslationDAO.findAllByProjectAndName(project.encode, name).filter { trans =>
+      trans.status == Status.Inactive
+    } map(makeTranslation(_))
 
   /** Searches for translations by any term and returns a list of mapped
    *  translations.
@@ -131,12 +136,6 @@ object TranslationAPI {
       }
     }
 
-  /** Returns all translations by project.
-   *  @TODO Make this method private
-   */
-  def all(project: Project) =
-    TranslationDAO.findAllByProject(project.encode)
-
   /** Returns all untranslated translations by project.
    */
   def untranslated(project: Project) =
@@ -162,33 +161,4 @@ object TranslationAPI {
 
   private def makeTranslation(t: DbTranslation) =
     Translation(t.code, t.name, t.text, t.author, t.status, t.projectId, id = t.id)
-}
-
-class TranslationCollection(list: List[Translation]) {
-
-  //private def filterUntranslated(translations: List[Translation], project: Project) =
-    //fixTranslations(translations, project) filter { trans =>
-      //trans.text == "" && (trans.status == Status.Active || trans.status == Status.Empty)
-    //}
-
-  //private def activatable(project: Project, name: String) =
-    //TranslationDAO.findAllByProjectAndName(project, name) filter (_.status == Status.Inactive)
-
-  def fixed(project: Project) = {
-    val langs = LanguageDAO.findAllByProject(project.encode).map(_.code)
-    val diff  = langs.diff(list.filter(_.status == Status.Active).map(_.code))
-
-    list match {
-      case Nil => List.empty[Translation]
-      case _   => {
-        val unsorted = (list ++ diff.map { code =>
-          Translation(code, list.head.name, "", "", Status.Empty, project.id, Some(project))
-        }) sortBy (_.status.id)
-
-        langs map { l =>
-          unsorted.filter(_.code == l)
-        } flatten
-      }
-    }
-  }
 }
