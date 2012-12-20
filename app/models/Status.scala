@@ -1,6 +1,8 @@
 package translator.models
 
-case class Status(val id: Int, val name: Option[String] = None) extends Ordered[Status] {
+case class Status(
+  val id: Int,
+  val name: Option[String] = None) extends Ordered[Status] {
 
   def compare(other: Status) = id compare other.id
 

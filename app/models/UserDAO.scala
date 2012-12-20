@@ -7,14 +7,14 @@ import com.mongodb.casbah.Imports._
 import com.mongodb.casbah.MongoCollection
 
 object UserDAO
-  extends SalatDAO[User, ObjectId](collection = MongoConnection()("translator")("users")) {
+  extends SalatDAO[DbUser, ObjectId](collection = MongoConnection()("translator")("users")) {
 
   def findAll = find(DBObject()).toList
 
   def findOneByUsername(username: String) =
     findOne(MongoDBObject("username" -> username))
 
-  def findOneByUsernameAndPassword(username: String, password: String): Option[User] =
+  def findOneByUsernameAndPassword(username: String, password: String) =
     findOne(MongoDBObject("username" -> username, "password" -> password))
 
   def findAllByProject(project: Project) =

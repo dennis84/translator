@@ -21,7 +21,7 @@ object LanguageController extends BaseController {
   }
 
   def update(project: String, id: String) = SecuredWithProject(project, Role.ADMIN) { implicit ctx =>
-    LanguageDAO.findOneById(id) map { language =>
+    LanguageAPI.by(id, ctx.project) map { language =>
       DataForm.language.bindFromRequest.fold(
         formWithErrors => JsonBadRequest(formWithErrors.errors),
         formData => {

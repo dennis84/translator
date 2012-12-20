@@ -4,11 +4,14 @@ import com.roundeights.hasher.Implicits._
 
 object UserAPI {
 
+  def by(project: DbProject) =
+    UserDAO.findOneById(project.adminId) map(makeUser(_, ProjectAPI.by(project)))
+
   /** Creates the user view by user.
    */
-  def by(user: User) = UserVeiw(user)
+  def by(user: DbUser) = makeUser(user)
 
-  def by(user: User, project: Project) = UserVeiw(user, user.roles.filter(_.projectId == project.id).map(_.role))
+  def by(user: DbUser, project: Project) = makeUser(user).withRoles(user, project)
 
   /** Creates a new user.
    */
@@ -25,4 +28,7 @@ object UserAPI {
     UserDAO.save(updated)
     UserVeiw(updated)
   }
+
+  def makeUser(u: DbUser) =
+    User(u.id, u.username, u.password, u.email, u.roles)
 }

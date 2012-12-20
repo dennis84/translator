@@ -7,19 +7,18 @@ import translator.controllers.{ Context, ProjectContext }
 
 object ProjectAPI {
 
+  def by(token: String) =
+    ProjectDAO.findOneByToken(token) map(makeProject(_))
+
   /** Lists all projects as map.
    */
-  def list(projects: List[Project]) = projects map(createView(_))
+  def list(projects: List[DbProject]) = projects map(makeProject(_))
 
   /** Finds all projects where user is registered in.
    */
   def listMine(user: User) = user.roles map { role =>
-    ProjectDAO.findOneById(role.projectId) map(createView(_))
+    ProjectDAO.findOneById(role.projectId) map(makeProject(_))
   } flatten
-  
-  /** List all users by project.
-   */
-  def contributors(project: Project) = UserDAO.findAllByProject(project)
 
   /** Finds the admin of a project.
    */
@@ -27,19 +26,20 @@ object ProjectAPI {
 
   /** Creates a new project.
    */
-  def create(name: String, user: User) = {
-    val project = Project(name, user.id, uuid)
-    UserDAO.save(user.copy(
-      roles = user.roles :+ Role.Admin(project.id)))
-    ProjectDAO.insert(project)
-    createView(project)
+  def create(name: String, u: User) = {
+    val project = Project(name, uuid)
+    val user = u.copy(rawRoles = u.rawRoles :+ Role.Admin(project.id))
+
+    UserDAO.save(user.encode)
+    ProjectDAO.insert(project.encode)
+    project
   }
 
   /** Signup a new user and a project.
    */
   def signup(projectName: String, username: String, password: String) = {
     val user = User(username, password sha512)
-    UserDAO.insert(user)
+    UserDAO.insert(user.encode)
     create(projectName, user)
   }
 
@@ -55,12 +55,8 @@ object ProjectAPI {
     }.map(_.nbWords).reduceLeft(_ + _))
   } toMap
 
-  private def createView(project: Project) = ProjectView(
-    project,
-    admin(project).get,
-    progress(project),
-    0,
-    0)
-
   private def uuid = java.util.UUID.randomUUID.toString
+
+  private def makeProject(p: DbProject) =
+    Project(p.id, p.name, p.token)
 }

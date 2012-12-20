@@ -4,29 +4,36 @@ import com.novus.salat.annotations._
 import com.mongodb.casbah.Imports._
 import translator._
 
+case class DbUser(
+  val username: String,
+  val password: String,
+  val roles: List[DbRole] = List.empty[DbRole],
+  val email: String = "",
+  @Key("_id") val id: ObjectId = new ObjectId)
+
 case class User(
   val username: String,
   val password: String,
-  val roles: List[Role] = List.empty[Role],
-  val email: Option[String] = None,
-  @Key("_id") val id: ObjectId = new ObjectId) {
+  val email: String = "",
+  val roles: List[String] = Nil,
+  val rawRoles: List[DbRole] = Nil,
+  val id: ObjectId = new ObjectId) {
 
-  def roles(project: Project): List[String] =
-    roles filter (_.projectId == project.id) map (_.role)
-}
+  def withRoles(u: DbUser, p: Project) = copy(roles =
+    u.roles.filter { role =>
+      role.projectId == p.id
+    }.map(_.role))
 
-case class UserVeiw(
-  val model: User,
-  val roles: List[String] = Nil) {
+  def encode = DbUser(username, password, rawRoles, email, id)
 
   def serialize = Map(
-    "id" -> model.id.toString,
-    "username" -> model.username,
-    "email" -> model.email.getOrElse(""),
+    "id" -> id.toString,
+    "username" -> username,
+    "email" -> email,
     "roles" -> roles)
 }
 
-case class Role(
+case class DbRole(
   val role: String,
   val projectId: ObjectId)
 
@@ -35,6 +42,6 @@ object Role {
   val ADMIN  = "ROLE_ADMIN"
   val AUTHOR = "ROLE_AUTHOR"
 
-  def Admin(id: ObjectId) = Role(ADMIN, id)
-  def Author(id: ObjectId) = Role(AUTHOR, id)
+  def Admin(id: ObjectId) = DbRole(ADMIN, id)
+  def Author(id: ObjectId) = DbRole(AUTHOR, id)
 }

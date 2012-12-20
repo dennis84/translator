@@ -43,7 +43,7 @@ object TranslationAPI {
 
       translations.filter { trans =>
         trans.code == lang.model.code
-      } map(createView(_, project))
+      } map(makeTranslation(_, project))
     } getOrElse Nil
   }
 
@@ -60,30 +60,30 @@ object TranslationAPI {
       new ObjectId(searchResponse.id)
     }
 
-    TranslationDAO.findAllByProjectAndIds(project, ids) map (createView(_, project))
+    TranslationDAO.findAllByProjectAndIds(project, ids) map (makeTranslation(_, project))
   }
 
   /** Creates a new translation.
    */
   def create(c: String, name: String, text: String, project: Project, user: User) = {
-    val trans = Translation(
+    val trans = DbTranslation(
       LanguageAPI.code(project, c),
       name,
       text,
       project.id,
-      user.id,
-      status(project, user))
+      user.username,
+      status(user))
     
     TranslationDAO.insert(trans)
-    createView(trans)
+    makeTranslation(trans, project)
   }
 
   /** Updates the text of a translation.
    */
   def update(before: Translation, text: String) = {
     val updated = before.copy(text = text)
-    TranslationDAO.save(updated)
-    createView(updated)
+    TranslationDAO.save(updated.encode)
+    updated
   }
 
   /** Sets the translation by id to active and removes the previous translation.
@@ -95,7 +95,7 @@ object TranslationAPI {
     val updated = actual.copy(status = Status.Active)
     TranslationDAO.save(updated)
     TranslationDAO.remove(old)
-    createView(updated)
+    makeTranslation(updated, project)
   }
 
   /** Deletes one ore all translations with the same name if the user is an
@@ -105,7 +105,7 @@ object TranslationAPI {
     case Some(trans) if (trans.status == Status.Active) =>
       TranslationDAO.removeAllByProjectAndName(project, trans.name)
     case Some(trans) if (trans.status == Status.Inactive) =>
-      TranslationDAO.remove(trans)
+      TranslationDAO.remove(trans.encode)
     case None => None
   }
 
@@ -117,10 +117,11 @@ object TranslationAPI {
     Parser.parse(content, t) map { row =>
       val (name, text) = row
       TranslationDAO.findOneByProjectNameAndCode(project, name, code) match {
-        case Some(trans) => TranslationImport(trans, Status.Skipped)
+        case Some(trans) => "" //TranslationImport(trans, Status.Skipped)
         case None => {
           val trans = create(code, name, text, project, user)
-          TranslationImport(trans.model, Status.Imported)
+          //TranslationImport(trans.model, Status.Imported)
+          ""
         }
       }
     }
@@ -146,8 +147,8 @@ object TranslationAPI {
       trans.text == "" && (trans.status == Status.Active || trans.status == Status.Empty)
     }
 
-  private def status(project: Project, user: User) =
-    user.roles(project) contains (Role.ADMIN) match {
+  private def status(user: User) =
+    user.roles contains (Role.ADMIN) match {
       case true => Status.Active
       case false => Status.Inactive
     }
@@ -180,10 +181,13 @@ object TranslationAPI {
     }
   }
 
-  private def createView(trans: Translation, project: Project) = TranslationView(
-    trans,
-    Some(activatable(project, trans.name).length),
-    Some(progress(project, trans.name)))
- 
-  private def createView(trans: Translation) = TranslationView(trans)
+  private def makeTranslation(t: DbTranslation, project: Project) =
+    Translation(
+      t.id,
+      t.code,
+      t.name,
+      t.text,
+      project,
+      t.author,
+      t.status)
 }

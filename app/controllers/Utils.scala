@@ -43,6 +43,23 @@ trait Actions extends Controller with Results with RequestGetter {
       f(req)
     }
 
+  def Secured(f: Context[AnyContent] => Result): Action[AnyContent] =
+    Secured(BodyParsers.parse.anyContent)(f)
+
+  def Secured[A](p: BodyParser[A])(f: Context[A] => Result): Action[A] =
+    Open(p) { implicit req =>
+      (for {
+        token <- get("token")
+        project <- ProjectAPI.by(token)
+      } yield {
+        f(Context(req, project.admin, List(project)))
+      }) getOrElse {
+        req.session.get("username").flatMap(u => UserDAO.findOneByUsername(u)) map { user =>
+          f(Context(req, user, ProjectAPI.listMine(user).map(_.model)))
+        } getOrElse JsonNotFound
+      }
+    }
+
   def SecuredWithProject(id: String)(f: ProjectContext[AnyContent] => Result): Action[AnyContent] =
     SecuredWithProject(id, List("ROLE_ADMIN", "ROLE_AUTHOR"), BodyParsers.parse.anyContent)(f)
 
@@ -59,24 +76,6 @@ trait Actions extends Controller with Results with RequestGetter {
       } yield {
         f(ProjectContext(ctx.req, ctx.user, p, ctx.projects))
       }) getOrElse JsonNotFound
-    }
-
-  def Secured(f: Context[AnyContent] => Result): Action[AnyContent] =
-    Secured(BodyParsers.parse.anyContent)(f)
-
-  def Secured[A](p: BodyParser[A])(f: Context[A] => Result): Action[A] =
-    Open(p) { implicit req =>
-      (for {
-        token <- get("token")
-        project <- ProjectDAO.findOneByToken(token)
-        user <- ProjectAPI.admin(project)
-      } yield {
-        f(Context(req, user, List(project)))
-      }) getOrElse {
-        req.session.get("username").flatMap(u => UserDAO.findOneByUsername(u)) map { user =>
-          f(Context(req, user, ProjectAPI.listMine(user).map(_.model)))
-        } getOrElse JsonNotFound
-      }
     }
 }
 

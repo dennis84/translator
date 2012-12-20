@@ -8,7 +8,7 @@ import translator.forms._
 object ProjectController extends BaseController {
 
   def list = Secured { implicit ctx =>
-    JsonOk(ProjectAPI.list(ctx.projects) map(_.serialize))
+    JsonOk(ctx.projects map(_.serialize))
   }
 
   def create = Secured { implicit ctx =>

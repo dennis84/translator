@@ -7,7 +7,7 @@ import com.mongodb.casbah.MongoCollection
 import com.mongodb.casbah.Imports._
 
 object ProjectDAO
-  extends SalatDAO[Project, ObjectId](collection = MongoConnection()("translator")("projects")) {
+  extends SalatDAO[DbProject, ObjectId](collection = MongoConnection()("translator")("projects")) {
 
   def findAll = find(DBObject()) toList
 
