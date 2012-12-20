@@ -12,12 +12,13 @@ case class DbProject(
 case class Project(
   val name: String,
   val token: String,
+  val adminId: ObjectId,
   val admin: Option[User] = None,
   val id: ObjectId = new ObjectId) {
 
-  def withUser(u: User) = copy(admin = u)
+  def withUser(u: User) = copy(admin = Some(u))
 
-  def encode = DbProject(name, admin.map(_.id).getOrElse(new ObjectId()), token, id)
+  def encode = DbProject(name, adminId, token, id)
 
   def serialize = Map(
     "id" -> id.toString,

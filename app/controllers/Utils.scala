@@ -51,11 +51,12 @@ trait Actions extends Controller with Results with RequestGetter {
       (for {
         token <- get("token")
         project <- ProjectAPI.by(token)
+        user <- UserAPI.by(project.encode)
       } yield {
-        f(Context(req, project.admin, List(project)))
+        f(Context(req, user, List(project.withUser(user))))
       }) getOrElse {
-        req.session.get("username").flatMap(u => UserDAO.findOneByUsername(u)) map { user =>
-          f(Context(req, user, ProjectAPI.listMine(user).map(_.model)))
+        req.session.get("username").flatMap(UserAPI.by(_)) map { user =>
+          f(Context(req, user, ProjectAPI.listMine(user)))
         } getOrElse JsonNotFound
       }
     }
@@ -71,7 +72,7 @@ trait Actions extends Controller with Results with RequestGetter {
       (for {
         p <- ctx.projects.find(_.id == id)
         if (roles.exists { r =>
-          ctx.user.roles(p).contains(r)
+          ctx.user.roles.contains(r)
         })
       } yield {
         f(ProjectContext(ctx.req, ctx.user, p, ctx.projects))

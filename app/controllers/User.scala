@@ -18,7 +18,7 @@ object UserController extends BaseController {
   }
 
   def current = Secured { implicit ctx =>
-    JsonOk(UserAPI.by(ctx.user).serialize)
+    JsonOk(ctx.user.serialize)
   }
 
   def updateCurrent = Secured { implicit ctx =>
@@ -32,12 +32,12 @@ object UserController extends BaseController {
   }
 
   def currentByProject(project: String) = SecuredWithProject(project) { implicit ctx =>
-    JsonOk(UserAPI.by(ctx.user, ctx.project).serialize)
+    JsonOk(ctx.user.withRoles(ctx.project).serialize)
   }
 
   def list(project: String) = SecuredWithProject(project) { implicit ctx =>
-    JsonOk(ProjectAPI.contributors(ctx.project).map { user =>
-      UserAPI.by(user, ctx.project).serialize
+    JsonOk(UserAPI.contributors(ctx.project).map { user =>
+      user.serialize
     })
   }
 

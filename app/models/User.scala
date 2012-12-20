@@ -19,8 +19,8 @@ case class User(
   val rawRoles: List[DbRole] = Nil,
   val id: ObjectId = new ObjectId) {
 
-  def withRoles(u: DbUser, p: Project) = copy(roles =
-    u.roles.filter { role =>
+  def withRoles(p: Project) = copy(roles =
+    rawRoles.filter { role =>
       role.projectId == p.id
     }.map(_.role))
 

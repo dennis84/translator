@@ -18,15 +18,20 @@ case class DbTranslation(
   @Key("_id") val id: ObjectId = new ObjectId)
 
 case class Translation(
-  val id: ObjectId,
   val code: String,
   val name: String,
   val text: String,
-  val project: Project,
   val author: String,
-  val status: Status) {
+  val status: Status,
+  val projectId: ObjectId,
+  val project: Option[Project] = None,
+  val id: ObjectId = new ObjectId) {
 
   lazy val nbWords = text.split(" ").filterNot(_ == "").length
+
+  def withProject(p: Project) = copy(project = Some(p))
+
+  def encode = DbTranslation(code, name, text, projectId, author, status, id)
 
   def serialize = Map(
     "id" -> id.toString,

@@ -31,7 +31,7 @@ object TranslationController extends BaseController {
   }
 
   def update(project: String, id: String) = SecuredWithProject(project, Role.ADMIN) { implicit ctx =>
-    TranslationDAO.findOneById(id) map { trans =>
+    TranslationAPI.by(id) map { trans =>
       DataForm.translation.bindFromRequest.fold(
         formWithErrors => JsonBadRequest(Map("error" -> "fail")),
         formData => {
