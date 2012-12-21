@@ -10,3 +10,4 @@ $ Code mistakes
 $ generate map outside from api wirh special argument
 $ Define rules for each class type (Model - No persistence, DAO - Not to much logic, API encapsulate different logics from daos, ...)
 ? Delete languages
+$ Prevent for js object zombies. Make a view renderer which removes the current views before render the new one.

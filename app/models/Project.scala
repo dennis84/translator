@@ -42,5 +42,5 @@ case class Project(
     "id" -> id.toString,
     "name" -> name,
     "progress" -> progress,
-    "db_words" -> nbWords)
+    "nb_words" -> nbWords)
 }
