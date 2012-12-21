@@ -124,8 +124,10 @@ object TranslationAPI {
   def delete(project: Project, id: ObjectId) = TranslationDAO.findOneById(id) match {
     case Some(trans) if (trans.status == Status.Active) =>
       TranslationDAO.removeAllByProjectAndName(project, trans.name)
+      Some(makeTranslation(trans))
     case Some(trans) if (trans.status == Status.Inactive) =>
       TranslationDAO.remove(trans)
+      Some(makeTranslation(trans))
     case None => None
   }
 
