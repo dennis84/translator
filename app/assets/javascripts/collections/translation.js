@@ -29,7 +29,7 @@ define([
 
     fetchByName: function (name) {
       var collection = this
-      $.getJSON(this.url() + "/" + name, function (data) {
+      $.getJSON(this.url() + "?name=" + name, function (data) {
         var models = _.map(data, function (item) {
           return new Translation(item)
         })

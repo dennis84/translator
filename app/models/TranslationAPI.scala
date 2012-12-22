@@ -13,6 +13,13 @@ object TranslationAPI {
   def by(id: ObjectId) =
     TranslationDAO.findOneById(id) map(makeTranslation(_))
 
+  def entry(id: ObjectId, project: Project) = {
+    val langs = LanguageAPI.list(project)
+    var translations = TranslationDAO.findAllByProject(project) map(makeTranslation(_))
+
+    translations.find(_.id == id).map(_.withProject(project).withStats(translations, langs))
+  }
+
   /** Returns all translations by language as key value format.
    */
   def export(project: Project, c: String) =

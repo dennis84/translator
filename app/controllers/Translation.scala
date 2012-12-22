@@ -7,17 +7,21 @@ import translator.forms._
 
 object TranslationController extends BaseController {
 
-  def list(project: String) = SecuredWithProject(project) { implicit ctx =>
-    val filter = Filter(
-      getOr("untranslated", "false"),
-      getAllOr("untranslated_languages", Seq.empty[String]),
-      getOr("activatable", "false"))
-
-    JsonOk(TranslationAPI.entries(ctx.project, filter) map(_.serialize))
+  def read(project: String, id: String) = SecuredWithProject(project) { implicit ctx =>
+    JsonOk(TranslationAPI.entry(id, ctx.project) map(_.serialize))
   }
 
-  def listByName(project: String, name: String) = SecuredWithProject(project) { implicit ctx =>
-    JsonOk(TranslationAPI.list(ctx.project, name) map(_.serialize))
+  def list(project: String) = SecuredWithProject(project) { implicit ctx =>
+    get("name") map { name =>
+      JsonOk(TranslationAPI.list(ctx.project, name) map(_.serialize))
+    } getOrElse {
+      val filter = Filter(
+        getOr("untranslated", "false"),
+        getAllOr("untranslated_languages", Seq.empty[String]),
+        getOr("activatable", "false"))
+
+      JsonOk(TranslationAPI.entries(ctx.project, filter) map(_.serialize))
+    }
   }
 
   def create(project: String) = SecuredWithProject(project) { implicit ctx =>

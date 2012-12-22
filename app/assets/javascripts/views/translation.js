@@ -26,6 +26,15 @@ define([
       var coll = new Translations
       var view = new TranslationsEditView({ collection: coll })
       coll.fetchByName(this.model.get("name"))
+      coll.on("update", this.refresh, this)
+    },
+
+    refresh: function (model) {
+      this.model.on("sync", function () {
+        $("#translation-list [data-id=" + this.model.id + "]").replaceWith(this.render().el)
+      }, this)
+
+      this.model.fetch()
     }
   })
 

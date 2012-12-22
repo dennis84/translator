@@ -13,8 +13,8 @@ POST    /sign-up                            translator.controllers.ProjectContro
 GET     /projects                           translator.controllers.ProjectController.list
 POST    /projects                           translator.controllers.ProjectController.create
 
+GET     /:project/translations/:id          translator.controllers.TranslationController.read(project, id)
 GET     /:project/translations              translator.controllers.TranslationController.list(project)
-GET     /:project/translations/:name        translator.controllers.TranslationController.listByName(project, name)
 POST    /:project/translations              translator.controllers.TranslationController.create(project)
 PUT     /:project/translations/:id          translator.controllers.TranslationController.update(project, id)
 DELETE  /:project/translations/:id          translator.controllers.TranslationController.delete(project, id)

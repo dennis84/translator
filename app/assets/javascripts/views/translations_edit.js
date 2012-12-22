@@ -43,8 +43,8 @@ define([
         var translation = collection.get(id)
         if (true === translation.hasChanged(item)) {
           if (window.user.isAdmin()) {
-            translation.set(item)
-            translation.save()
+            translation.save(item)
+            collection.trigger("update", translation)
           } else {
             var index = collection.indexOf(translation) + 1
             var clone = translation.clone()

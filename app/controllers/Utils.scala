@@ -14,6 +14,8 @@ trait Results extends Controller {
 
   def JsonOk(map: Map[String, Any]) = Ok(Json generate map) as JSON
 
+  def JsonOk(map: Option[Map[String, Any]]) = Ok(Json generate map.getOrElse(Map.empty[String, Any])) as JSON
+
   def JsonOk(list: List[Any]) = Ok(Json generate list) as JSON
 
   def JsonOk = Ok(Json generate Map()) as JSON
