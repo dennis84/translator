@@ -28,7 +28,7 @@ object TranslationController extends BaseController {
     DataForm.translation.bindFromRequest.fold(
       formWithErrors => JsonBadRequest(Map("error" -> "fail")),
       formData => {
-        TranslationAPI.create(formData._1, formData._2, formData._3, ctx.project, ctx.user)
+        TranslationAPI.create(formData._1, formData._2, formData._3)
         JsonOk(List())
       }
     )

@@ -4,6 +4,7 @@ import org.elasticsearch.index.query._, FilterBuilders._, QueryBuilders._
 import org.elasticsearch.search._, facet._, terms._, sort._, SortBuilders._, builder._
 import com.mongodb.casbah.Imports._
 import translator._
+import translator.controllers.{ Context, ProjectContext }
 import translator.utils.Parser
 
 object TranslationAPI {
@@ -80,18 +81,17 @@ object TranslationAPI {
 
   /** Creates a new translation.
    */
-  def create(c: String, name: String, text: String, project: Project, user: User) = {
-    val trans = DbTranslation(
-      LanguageAPI.code(project, c),
+  def create(c: String, name: String, text: String)(implicit ctx: ProjectContext[_]) = for {
+    _ <- Some("")
+    trans = DbTranslation(
+      LanguageAPI.code(ctx.project, c),
       name,
       text,
-      project.id,
-      user.username,
-      status(user))
-    
-    TranslationDAO.insert(trans)
-    makeTranslation(trans)
-  }
+      ctx.project.id,
+      ctx.user.username,
+      status(ctx.user))
+    _ ← TranslationDAO.insert(trans)
+  } yield makeTranslation(trans)
 
   /** Updates the text of a translation.
    */
@@ -136,7 +136,7 @@ object TranslationAPI {
       TranslationDAO.findOneByProjectNameAndCode(project, name, code) match {
         case Some(trans) => "" //TranslationImport(trans, Status.Skipped)
         case None => {
-          val trans = create(code, name, text, project, user)
+         // val trans = create(code, name, text, project, user)
           //TranslationImport(trans.model, Status.Imported)
           ""
         }
