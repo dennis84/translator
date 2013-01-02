@@ -8,13 +8,15 @@ import translator.models._
 class TranslationAPISpec extends Specification with Fixtures {
 
   "The Translation API" should {
-    "filter entries with no filter" in new TranslationContext {
-      TranslationAPI.entries(project, Filter("", Nil, ""))
-      1 must_== 1
-    }
+    //"filter entries with no filter" in new TranslationContext {
+      //TranslationAPI.entries(project, Filter("", Nil, ""))
+      //1 must_== 1
+    //}
 
     "filter untranslated entries" in new TranslationContext {
-      TranslationAPI.entries(project, Filter("true", Nil, ""))
+      val trans = TranslationAPI.entries(project, Filter("true", List("es"), ""))
+      println(trans)
+      trans.foreach(println(_))
       1 must_== 1
     }
   }

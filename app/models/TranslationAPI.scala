@@ -36,36 +36,18 @@ object TranslationAPI {
   def entries(project: Project, filter: Filter) = {
     LanguageAPI.first(project) map { lang =>
       val langs = LanguageAPI.list(project)
-      var translations = TranslationDAO.filtered(project, lang, filter) map { trans =>
-        makeTranslation(trans)
+      val translations = TranslationDAO.filtered(project, filter) map(makeTranslation(_))
+
+      var filtered = filter.filter(translations.fixed(project))
+
+      val entries = filtered map { trans =>
+        translations.find(t => t.name == trans.name && t.code == lang.code)
+      } flatten
+
+      entries map { trans =>
+        trans.withProject(project).withStats(translations, langs)
       }
-
-      filter.filter(translations.fixed(project))
-
-      //if ("true" == filter.untranslated) {
-        //val untranslatedNames = translations.filter { trans =>
-          //trans.text == "" && filter.untranslatedLanguages.exists(_ == trans.code) && trans.status == Status.Active
-        //} map (_.name)
-
-        //translations = untranslatedNames.map { name =>
-          //translations.find(t => name == t.name && lang.code == t.code)
-        //} flatten
-      //}
-
-      //if ("true" == filter.activatable) {
-        //translations = translations filter { trans =>
-          //TranslationAPI.activatable(project, trans.name).length > 0
-        //}
-      //}
-
-      //translations.filter { trans =>
-        //trans.code == lang.code
-      //} map { trans =>
-        //trans.withProject(project).withStats(translations, langs)
-      //}
     } getOrElse Nil
-
-    List.empty[Translation]
   }
 
   def list(project: Project) =
