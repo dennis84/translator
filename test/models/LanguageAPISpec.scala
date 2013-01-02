@@ -9,11 +9,6 @@ class Spec extends Specification with Fixtures {
 
   "API" should {
     "list" in new LanguageContext {
-      val r = Collection[Language, LanguageItem](
-        LanguageDAO.findAllByProject(project1))
-
-      println(r.models)
-
       1 must_== 1
     }
   }

@@ -36,7 +36,11 @@ object TranslationAPI {
   def entries(project: Project, filter: Filter) = {
     LanguageAPI.first(project) map { lang =>
       val langs = LanguageAPI.list(project)
-      var translations = TranslationDAO.findAllByProject(project) map(makeTranslation(_))
+      var translations = TranslationDAO.filtered(project, lang, filter) map { trans =>
+        makeTranslation(trans)
+      }
+
+      filter.filter(translations.fixed(project))
 
       //if ("true" == filter.untranslated) {
         //val untranslatedNames = translations.filter { trans =>
@@ -54,12 +58,14 @@ object TranslationAPI {
         //}
       //}
 
-      translations.filter { trans =>
-        trans.code == lang.code
-      } map { trans =>
-        trans.withProject(project).withStats(translations, langs)
-      }
+      //translations.filter { trans =>
+        //trans.code == lang.code
+      //} map { trans =>
+        //trans.withProject(project).withStats(translations, langs)
+      //}
     } getOrElse Nil
+
+    List.empty[Translation]
   }
 
   def list(project: Project) =

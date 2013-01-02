@@ -1,6 +1,7 @@
 define([
+  "views/language_edit",
   "text!templates/language.html"
-], function (languageTemplate) {
+], function (LanguageEditView, languageTemplate) {
 
   var module = Backbone.View.extend({
     tagName: "tr",
@@ -20,8 +21,13 @@ define([
 
     open: function (e) {
       e.preventDefault()
+      var languageEdit = new LanguageEditView({
+        model: this.model,
+        collection: this.collection
+      })
+
       window.app.removePane(1)
-      window.languageController.edit(this.model)
+      window.app.addPane(languageEdit.render().el, "language-edit", "spaceless6")
     }
   })
 

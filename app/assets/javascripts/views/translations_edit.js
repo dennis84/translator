@@ -45,12 +45,16 @@ define([
           if (window.user.isAdmin()) {
             translation.save(item)
             collection.trigger("update", translation)
+            var successMessage = "Translation Saved"
           } else {
             var index = collection.indexOf(translation) + 1
             var clone = translation.clone()
             clone.set(item)
             collection.create(clone, { wait: true, at: index })
+            var successMessage = "Translation Suggestion Saved"
           }
+
+          window.app.addMessage("success", successMessage)
         }
       })
     },

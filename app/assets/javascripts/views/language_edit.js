@@ -27,10 +27,17 @@ define([
     save: function (e) {
       e.preventDefault()
       this.model.set(this.$el.find("form").serializeObject())
-      this.collection.create(this.model, { wait: true })
+
+      if (this.model.isNew()) {
+        this.collection.create(this.model, { wait: true })
+        var successMessage = "Language Created"
+      } else {
+        this.model.save()
+        var successMessage = "Language Saved"
+      }
 
       this.model.on("sync", function () {
-        window.app.addMessage("success", "Language Created")
+        window.app.addMessage("success", successMessage)
       })
     },
 

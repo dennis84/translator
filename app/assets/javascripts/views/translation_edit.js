@@ -20,12 +20,14 @@ define([
     accept: function (e) {
       e.preventDefault()
       this.model.activate()
+      window.app.addMessage("success", "Translation Accepted")
     },
 
     reject: function (e) {
       e.preventDefault()
       this.model.destroy()
       this.$el.remove()
+      window.app.addMessage("success", "Translation Suggestion Removed")
     }
   })
 
