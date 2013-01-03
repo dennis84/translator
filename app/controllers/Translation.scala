@@ -20,7 +20,7 @@ object TranslationController extends BaseController {
         getAllOr("untranslated_languages", Seq.empty[String]),
         getOr("activatable", "false"))
 
-      JsonOk(TranslationAPI.entries(ctx.project, filter) map(_.serialize))
+      JsonOk(TranslationAPI.entries(filter) map(_.serialize))
     }
   }
 

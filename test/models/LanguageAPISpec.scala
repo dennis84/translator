@@ -14,6 +14,8 @@ class Spec extends Specification with Fixtures {
   }
 
   trait LanguageContext extends Scope {
+    import translator.models.Implicits._
+
     ProjectDAO.collection.drop
     LanguageDAO.collection.drop
 

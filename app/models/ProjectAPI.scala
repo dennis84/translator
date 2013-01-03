@@ -39,6 +39,6 @@ object ProjectAPI {
 
   private def uuid = java.util.UUID.randomUUID.toString
 
-  private def makeProject(p: DbProject) =
+  def makeProject(p: DbProject) =
     Project(p.name, p.token, p.adminId, id = p.id)
 }

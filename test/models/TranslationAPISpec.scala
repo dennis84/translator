@@ -2,8 +2,11 @@ package test.translator.models
 
 import org.specs2.specification.Scope
 import org.specs2.mutable._
+import play.api.test._
+import play.api.test.Helpers._
 import translator._
 import translator.models._
+import translator.controllers.{ Context, ProjectContext }
 
 class TranslationAPISpec extends Specification with Fixtures {
 
@@ -14,14 +17,16 @@ class TranslationAPISpec extends Specification with Fixtures {
     //}
 
     "filter untranslated entries" in new TranslationContext {
-      val trans = TranslationAPI.entries(project, Filter("true", List("es"), ""))
-      println(trans)
+      implicit val ctx = context
+      val trans = TranslationAPI.entries(Filter("true", List("es"), ""))
       trans.foreach(println(_))
       1 must_== 1
     }
   }
 
   trait TranslationContext extends Scope {
+    import translator.models.Implicits._
+
     ProjectDAO.collection.drop
     TranslationDAO.collection.drop
     LanguageDAO.collection.drop
@@ -37,6 +42,10 @@ class TranslationAPISpec extends Specification with Fixtures {
     LanguageDAO.insert(language1, language2, language3, language4, language5,
       language6, language7, language8, language9)
 
-    val project = Project(project1.name, project1.token, project1.adminId, id = project1.id)
+    val context = ProjectContext(
+      FakeRequest(),
+      user1,
+      project1,
+      List(project1, project2))
   }
 }

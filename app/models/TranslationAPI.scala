@@ -34,19 +34,22 @@ object TranslationAPI {
   /** Retuns the filtered entries, this are the main translations for the
    *  overview.
    */
-  def entries(project: Project, filter: Filter) = {
-    LanguageAPI.first(project) map { lang =>
-      val langs = LanguageAPI.list(project)
-      val translations = TranslationDAO.filtered(project, filter) map(makeTranslation(_))
+  def entries(filter: Filter)(implicit ctx: ProjectContext[_]) = {
+    LanguageAPI.first(ctx.project) map { lang =>
+      val langs = LanguageAPI.list(ctx.project)
+      val translations = TranslationDAO.filtered(ctx.project, filter) map(makeTranslation(_))
 
-      var filtered = filter.filter(translations.fixed(project))
+      var filtered = filter.filter(translations.fixed(ctx.project))
 
       val entries = filtered map { trans =>
-        translations.find(t => t.name == trans.name && t.code == lang.code)
+        translations.find { t =>
+          t.name == trans.name &&
+          t.code == lang.code
+        }
       } flatten
 
       entries map { trans =>
-        trans.withProject(project).withStats(translations, langs)
+        trans.withProject(ctx.project).withStats(translations, langs)
       }
     } getOrElse Nil
   }

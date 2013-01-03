@@ -11,7 +11,7 @@ object LanguageAPI {
 
   /** Lists all languages by project.
    */
-  def list(project: Project) =
+  def list(project: Project): List[Language]=
     LanguageDAO.findAllByProject(project) map(makeLanguage(_, project))
 
   /** Returns the first language in database. This is also the primary.
@@ -47,5 +47,5 @@ object LanguageAPI {
   }
 
   def makeLanguage(l: DbLanguage, project: Project) =
-    Language(l.id, l.code, l.name, project)
+    Language(l.code, l.name, project, l.id)
 }

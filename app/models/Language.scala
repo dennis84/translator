@@ -10,10 +10,10 @@ case class DbLanguage(
   @Key("_id") val id: ObjectId = new ObjectId)
 
 case class Language(
-  val id: ObjectId,
   val code: String,
   val name: String,
-  val project: Project) {
+  val project: Project,
+  val id: ObjectId = new ObjectId) {
 
   def encode = DbLanguage(code, name, project.id, id)
 

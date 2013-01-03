@@ -15,6 +15,8 @@ object Global extends GlobalSettings {
 
 object DataFixtures extends Fixtures {
 
+  import translator.models.Implicits._
+
   def refresh = {
     UserDAO.collection.drop
     ProjectDAO.collection.drop
