@@ -14,6 +14,9 @@ object TranslationAPI {
   def by(id: ObjectId) =
     TranslationDAO.findOneById(id) map(makeTranslation(_))
 
+  /** After updated a translation it's possible to fetch it again to get the
+   *  actual statistics.
+   */
   def entry(id: ObjectId, project: Project) = {
     val langs = LanguageAPI.list(project)
     var translations = TranslationDAO.findAllByProject(project) map(makeTranslation(_))
@@ -32,14 +35,14 @@ object TranslationAPI {
     }
 
   /** Retuns the filtered entries, this are the main translations for the
-   *  overview.
+   *  overview with statistics.
    */
   def entries(filter: Filter)(implicit ctx: ProjectContext[_]) = {
     LanguageAPI.first(ctx.project) map { lang =>
       val langs = LanguageAPI.list(ctx.project)
       val translations = TranslationDAO.filtered(ctx.project, filter) map(makeTranslation(_))
 
-      var filtered = filter.filter(translations.fixed(ctx.project))
+      var filtered = filter.filter(translations.fixed(langs))
 
       val entries = filtered map { trans =>
         translations.find { t =>
@@ -54,15 +57,20 @@ object TranslationAPI {
     } getOrElse Nil
   }
 
+  /** Lists all translations by project. The translations will not have any
+   *  statistics if this is desired use the "entries" method.
+   */
   def list(project: Project) =
     TranslationDAO.findAllByProject(project) map(makeTranslation(_))
 
-  /** Returns all translations by name.
+  /** Returns all translations by name. This method is used to get all
+   *  translations by an entry the result must is fixed and don't have
+   *  statistics.
    */
   def list(project: Project, name: String) =
     TranslationDAO.findAllByProjectAndName(project, name)
       .map(makeTranslation(_))
-      .fixed(project)
+      .fixed
 
   def activatable(project: Project, name: String) =
     TranslationDAO.findAllByProjectAndName(project, name).filter { trans =>

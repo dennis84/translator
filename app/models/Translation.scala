@@ -51,4 +51,6 @@ case class Translation(
     "status" -> status.toString,
     "nb_activatable" -> nbActivatable,
     "progress" -> progress)
+  
+  override def toString = """%s (%s): %s""" format(name, code, text)
 }

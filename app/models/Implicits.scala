@@ -16,26 +16,45 @@ object Implicits {
 
 class TranslationCollection(list: List[Translation]) {
 
-  def filterUntranslated(project: Project) =
-    fixed(project) filter { trans =>
-      trans.text == "" && (trans.status == Status.Active || trans.status == Status.Empty)
+  import Implicits._
+
+  def filterUntranslated =
+    fixed filter { trans =>
+      trans.text == "" &&
+     (trans.status == Status.Active ||
+      trans.status == Status.Empty)
     }
 
-  def fixed(project: Project) = {
-    val langs = LanguageDAO.findAllByProject(project.encode).map(_.code)
-    val diff  = langs.diff(list.filter(_.status == Status.Active).map(_.code))
+  def fixed: List[Translation] = (for {
+    head <- list.headOption
+    project <- head.project
+  } yield {
+    makeItFixed(LanguageDAO.findAllByProject(project) map(_.code))
+  }) getOrElse list
 
-    list match {
-      case Nil => List.empty[Translation]
-      case _   => {
-        val unsorted = (list ++ diff.map { code =>
-          Translation(code, list.head.name, "", "", Status.Empty, project.id, Some(project))
-        }) sortBy (_.status.id)
+  def fixed(langs: List[Language]): List[Translation] =
+    makeItFixed(langs map(_.code))
 
-        langs map { l =>
-          unsorted.filter(_.code == l)
-        } flatten
-      }
-    }
-  }
+  private def makeItFixed(langs: List[String]): List[Translation] = (for {
+    head <- list.headOption
+    project <- head.project
+    if (!list.isEmpty)
+  } yield {
+    val codes = list.filter(_.status == Status.Active).map(_.code)
+    val diff = langs.diff(codes)
+    val unsorted = (list ++ diff.map { code =>
+      Translation(
+        code,
+        head.name,
+        "",
+        "",
+        Status.Empty,
+        project.id,
+        Some(project))
+    }) sortBy (_.status.id)
+
+    langs map { l =>
+      unsorted.filter(_.code == l)
+    } flatten
+  }) getOrElse list
 }

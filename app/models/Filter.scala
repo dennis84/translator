@@ -1,6 +1,7 @@
 package translator.models
 
 import com.mongodb.casbah.Imports._
+import Implicits._
 
 case class Filter(
   val untranslated: String,
@@ -21,14 +22,9 @@ case class Filter(
     var translations = t
 
     if ("true" == untranslated) {
-      translations = translations.filter { trans =>
-        trans.text == "" &&
-        untranslatedLanguages.exists(_ == trans.code) &&
-        trans.status == Status.Active
-      }
+      translations = translations.filterUntranslated
     }
 
     translations
   }
 }
-
