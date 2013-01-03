@@ -40,16 +40,16 @@ object TranslationAPI {
   def entries(filter: Filter)(implicit ctx: ProjectContext[_]) = {
     LanguageAPI.first(ctx.project) map { lang =>
       val langs = LanguageAPI.list(ctx.project)
-      val translations = TranslationDAO.filtered(ctx.project, filter) map(makeTranslation(_))
+      val translations = TranslationDAO.findAllByProject(ctx.project) map(makeTranslation(_))
 
       var filtered = filter.filter(translations.fixed(langs))
 
-      val entries = filtered map { trans =>
+      val entries = filtered.map { trans =>
         translations.find { t =>
           t.name == trans.name &&
           t.code == lang.code
         }
-      } flatten
+      }.flatten.distinct
 
       entries map { trans =>
         trans.withProject(ctx.project).withStats(translations, langs)

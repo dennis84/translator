@@ -8,21 +8,15 @@ case class Filter(
   val untranslatedLanguages: Seq[String],
   val activatable: String) {
 
-  def makeQuery = {
-    var query = MongoDBObject()
-
-    if ("true" == activatable) {
-      query ++ MongoDBObject("status" -> Status.Inactive)
-    }
-
-    query
-  }
-
   def filter(t: List[Translation]) = {
     var translations = t
 
     if ("true" == untranslated) {
       translations = translations.filterUntranslated
+    }
+
+    if ("true" == activatable) {
+      translations = translations.filterActivatable
     }
 
     translations

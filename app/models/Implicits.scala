@@ -25,6 +25,10 @@ class TranslationCollection(list: List[Translation]) {
       trans.status == Status.Empty)
     }
 
+  def filterActivatable = list filter { trans =>
+    trans.status == Status.Inactive
+  }
+
   def fixed: List[Translation] = (for {
     head <- list.headOption
     project <- head.project

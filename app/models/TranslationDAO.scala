@@ -32,7 +32,4 @@ object TranslationDAO
 
   def removeAllByProjectAndName(project: DbProject, name: String) =
     find(MongoDBObject("projectId" -> project.id, "name" -> name)).toList foreach (remove(_))
-
-  def filtered(project: DbProject, filter: Filter) =
-    find(MongoDBObject("projectId" -> project.id) ++ filter.makeQuery) toList
 }

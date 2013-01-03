@@ -11,16 +11,24 @@ import translator.controllers.{ Context, ProjectContext }
 class TranslationAPISpec extends Specification with Fixtures {
 
   "The Translation API" should {
-    //"filter entries with no filter" in new TranslationContext {
-      //TranslationAPI.entries(project, Filter("", Nil, ""))
-      //1 must_== 1
-    //}
+    "filter entries with no filter" in new TranslationContext {
+      implicit val ctx = context
+      val trans = TranslationAPI.entries(Filter("", Nil, ""))
+      trans.length must_== 2L
+    }
 
     "filter untranslated entries" in new TranslationContext {
       implicit val ctx = context
       val trans = TranslationAPI.entries(Filter("true", List("pt"), ""))
-      trans.foreach(println(_))
-      1 must_== 1
+      trans.length must_== 1L
+      trans(0).name must_== "bye_bye"
+    }
+
+    "filter activatable entries" in new TranslationContext {
+      implicit val ctx = context
+      val trans = TranslationAPI.entries(Filter("", Nil, "true"))
+      trans.length must_== 1L
+      trans.foreach(t => println(t.toString))
     }
   }
 
