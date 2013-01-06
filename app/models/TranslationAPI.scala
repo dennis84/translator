@@ -4,7 +4,7 @@ import org.elasticsearch.index.query._, FilterBuilders._, QueryBuilders._
 import org.elasticsearch.search._, facet._, terms._, sort._, SortBuilders._, builder._
 import com.mongodb.casbah.Imports._
 import translator._
-import translator.controllers.{ Context, ProjectContext }
+import translator.{ Context, ProjectContext }
 import translator.utils.Parser
 
 object TranslationAPI {

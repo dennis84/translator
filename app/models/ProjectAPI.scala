@@ -3,7 +3,7 @@ package translator.models
 import com.mongodb.casbah.Imports._
 import com.roundeights.hasher.Implicits._
 import translator._
-import translator.controllers.{ Context, ProjectContext }
+import translator.{ Context, ProjectContext }
 
 object ProjectAPI {
 

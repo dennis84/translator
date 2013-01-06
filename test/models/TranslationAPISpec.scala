@@ -6,7 +6,6 @@ import play.api.test._
 import play.api.test.Helpers._
 import translator._
 import translator.models._
-import translator.controllers.{ Context, ProjectContext }
 
 class TranslationAPISpec extends Specification with Fixtures {
 
