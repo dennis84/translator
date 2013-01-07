@@ -25,8 +25,7 @@ object UserController extends BaseController {
     DataForm.updateUser.bindFromRequest.fold(
       formWithErrors => JsonBadRequest(Map("error" -> "fail")),
       formData => {
-        val updated = UserAPI.update(ctx.user, formData)
-        JsonOk(updated.serialize)
+        JsonOk(UserAPI.update(ctx.user, formData).serialize)
       }
     )
   }
@@ -36,17 +35,14 @@ object UserController extends BaseController {
   }
 
   def list(project: String) = SecuredWithProject(project) { implicit ctx =>
-    JsonOk(UserAPI.contributors(ctx.project).map { user =>
-      user.serialize
-    })
+    JsonOk(UserAPI.contributors(ctx.project) map(_.serialize))
   }
 
   def create(project: String) = SecuredWithProject(project) { implicit ctx =>
     DataForm.createUser.bindFromRequest.fold(
       formWithErrors => JsonBadRequest(formWithErrors.errors),
       formData => {
-        val created = UserAPI.create(ctx.project, formData._1, formData._2, formData._3)
-        JsonOk(created.serialize)
+        JsonOk(UserAPI.create(ctx.project, formData._1, formData._2, formData._3) map(_.serialize))
       }
     )
   }

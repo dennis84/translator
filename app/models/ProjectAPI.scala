@@ -9,7 +9,7 @@ object ProjectAPI {
 
   import Implicits._
 
-  def by(token: String) =
+  def by(token: String): Option[Project] =
     ProjectDAO.findOneByToken(token) map(makeProject(_))
 
   def listMine(user: User) = user.rawRoles map { role =>

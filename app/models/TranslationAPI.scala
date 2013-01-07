@@ -26,13 +26,13 @@ object TranslationAPI {
 
   /** Returns all translations by language as key value format.
    */
-  def export(project: Project, c: String) =
-    TranslationDAO.findActivatedByProjectAndCode(
-      project,
-      LanguageAPI.code(project, c)
-    ) map { trans =>
+  def export(project: Project, code: String): List[(String, String)] = (for {
+    c <- LanguageAPI.code(project, code)
+  } yield {
+    TranslationDAO.findActivatedByProjectAndCode(project, c) map { trans =>
       trans.name -> trans.text
     }
+  }) getOrElse Nil
 
   /** Retuns the filtered entries, this are the main translations for the
    *  overview with statistics.
@@ -92,10 +92,10 @@ object TranslationAPI {
 
   /** Creates a new translation.
    */
-  def create(c: String, name: String, text: String)(implicit ctx: ProjectContext[_]) = for {
-    _ <- Some("")
+  def create(code: String, name: String, text: String)(implicit ctx: ProjectContext[_]) = for {
+    c <- LanguageAPI.code(ctx.project, code)
     trans = DbTranslation(
-      LanguageAPI.code(ctx.project, c),
+      c,
       name,
       text,
       ctx.project.id,

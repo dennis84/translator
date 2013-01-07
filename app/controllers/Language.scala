@@ -14,8 +14,7 @@ object LanguageController extends BaseController {
     DataForm.language.bindFromRequest.fold(
       formWithErrors => JsonBadRequest(formWithErrors.errors),
       formData => {
-        var created = LanguageAPI.create(formData._1, formData._2, ctx.project)
-        JsonOk(created.serialize)
+        JsonOk(LanguageAPI.create(formData._1, formData._2, ctx.project) map(_.serialize))
       }
     )
   }
