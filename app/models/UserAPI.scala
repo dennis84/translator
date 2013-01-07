@@ -6,7 +6,7 @@ object UserAPI {
 
   import Implicits._
 
-  def by(project: DbProject): Option[User] =
+  def by(project: Project): Option[User] =
     UserDAO.byId(project.adminId)
 
   def by(username: String): Option[User] =

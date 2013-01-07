@@ -31,9 +31,11 @@ class TranslationCollection(list: List[Translation]) {
       trans.status == Status.Empty)
     }
 
-  def filterActivatable = list filter { trans =>
-    trans.status == Status.Inactive
-  }
+  def filterActivatable =
+    list filter(_.status == Status.Inactive)
+
+  def filterActive =
+    list filter(_.status == Status.Active)
 
   def fixed: List[Translation] = (for {
     head <- list.headOption
@@ -46,21 +48,15 @@ class TranslationCollection(list: List[Translation]) {
     makeItFixed(langs map(_.code))
 
   private def makeItFixed(langs: List[String]): List[Translation] = (for {
-    head <- list.headOption
-    project <- head.project
+    h <- list.headOption
+    n = h.name
+    p <- h.project
     if (!list.isEmpty)
   } yield {
-    val codes = list.filter(_.status == Status.Active).map(_.code)
+    val codes = list.filterActive.map(_.code)
     val diff = langs.diff(codes)
-    val unsorted = (list ++ diff.map { code =>
-      Translation(
-        code,
-        head.name,
-        "",
-        "",
-        Status.Empty,
-        project.id,
-        Some(project))
+    val unsorted = (list ++ diff.map { c =>
+      Translation.empty(c, n, p)
     }) sortBy (_.status.id)
 
     langs map { l =>

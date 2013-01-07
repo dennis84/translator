@@ -28,8 +28,8 @@ object TranslationController extends BaseController {
     DataForm.translation.bindFromRequest.fold(
       formWithErrors => JsonBadRequest(Map("error" -> "fail")),
       formData => {
-        TranslationAPI.create(formData._1, formData._2, formData._3)
-        JsonOk(List())
+        val (code, name, text) = formData
+        JsonOk(TranslationAPI.create(code, name, text) map(_.serialize))
       }
     )
   }
@@ -38,7 +38,8 @@ object TranslationController extends BaseController {
     DataForm.translation.bindFromRequest.fold(
       formWithErrors => JsonBadRequest(Map("error" -> "fail")),
       formData => {
-        JsonOk(TranslationAPI.update(id, formData._3) map(_.serialize))
+        val (_, _, text) = formData
+        JsonOk(TranslationAPI.update(id, text) map(_.serialize))
       }
     )
   }

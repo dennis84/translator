@@ -24,8 +24,8 @@ object ProjectController extends BaseController {
     DataForm.signUp.bindFromRequest.fold(
       formWithErrors => JsonBadRequest(formWithErrors.errors),
       formData => {
-        JsonOk(ProjectAPI.signup(formData._1, formData._2, formData._3) map { case (user, project) =>
-          project.serialize
+        JsonOk(ProjectAPI.signup(formData._1, formData._2, formData._3) map {
+          case (user, project) => project.serialize
         }) withSession("username" -> formData._2)
       }
     )

@@ -50,18 +50,21 @@ trait Actions extends Controller with Results with RequestGetter {
   def Secured(f: Context[AnyContent] => Result): Action[AnyContent] =
     Secured(BodyParsers.parse.anyContent)(f)
 
-  def Secured[A](p: BodyParser[A])(f: Context[A] => Result): Action[A] =
-    Open(p) { implicit req =>
+  def Secured[A](bp: BodyParser[A])(f: Context[A] => Result): Action[A] =
+    Open(bp) { implicit req =>
       (for {
-        token <- get("token")
-        project <- ProjectAPI.by(token)
-        user <- UserAPI.by(project.encode)
+        t <- get("token")
+        p <- ProjectAPI.by(t)
+        u <- UserAPI.by(p)
       } yield {
-        f(Context(req, user, List(project.withUser(user))))
+        f(Context(req, u, List(p.withUser(u))))
       }) getOrElse {
-        req.session.get("username").flatMap(UserAPI.by(_)) map { user =>
-          f(Context(req, user, ProjectAPI.listMine(user)))
-        } getOrElse JsonNotFound
+        (for {
+          n <- req.session.get("username")
+          u <- UserAPI.by(n)
+        } yield {
+          f(Context(req, u, ProjectAPI.listMine(u)))
+        }) getOrElse JsonNotFound
       }
     }
 
