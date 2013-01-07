@@ -31,7 +31,8 @@ object DataFixtures extends Fixtures {
       trans2en, trans2de, trans2fr, trans2es,
       trans3en, trans3de, trans3fr,
       trans4en, trans4de, trans4fr)
-    LanguageDAO.insert(language1, language2, language3, language4, language5, language6, language7, language8, language9)
+    LanguageDAO.insert(language1, language2, language3, language4, language5,
+      language6, language7, language8, language9)
   }
 }
 

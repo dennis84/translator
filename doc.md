@@ -100,9 +100,3 @@
     # @FIXME
     def imports(project: Project, user: User, content: String, t: String, code: String)
 
-    # @FIXME
-    def untranslated(project: Project)
-
-    # @FIXME
-    def untranslated(project: Project, name: String)
-

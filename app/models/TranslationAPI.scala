@@ -11,13 +11,13 @@ object TranslationAPI {
 
   import Implicits._
 
-  def by(id: ObjectId) =
+  def by(id: ObjectId): Option[Translation] =
     TranslationDAO.findOneById(id) map(makeTranslation(_))
 
   /** After updated a translation it's possible to fetch it again to get the
    *  actual statistics.
    */
-  def entry(id: ObjectId, project: Project) = {
+  def entry(id: ObjectId, project: Project): Option[Translation] = {
     val langs = LanguageAPI.list(project)
     var translations = TranslationDAO.findAllByProject(project) map(makeTranslation(_))
 
@@ -37,7 +37,7 @@ object TranslationAPI {
   /** Retuns the filtered entries, this are the main translations for the
    *  overview with statistics.
    */
-  def entries(filter: Filter)(implicit ctx: ProjectContext[_]) = {
+  def entries(filter: Filter)(implicit ctx: ProjectContext[_]): List[Translation] = {
     LanguageAPI.first(ctx.project) map { lang =>
       val langs = LanguageAPI.list(ctx.project)
       val translations = TranslationDAO.findAllByProject(ctx.project) map(makeTranslation(_))
@@ -60,19 +60,19 @@ object TranslationAPI {
   /** Lists all translations by project. The translations will not have any
    *  statistics if this is desired use the "entries" method.
    */
-  def list(project: Project) =
+  def list(project: Project): List[Translation] =
     TranslationDAO.findAllByProject(project) map(makeTranslation(_))
 
   /** Returns all translations by name. This method is used to get all
    *  translations by an entry the result must is fixed and don't have
    *  statistics.
    */
-  def list(project: Project, name: String) =
+  def list(project: Project, name: String): List[Translation] =
     TranslationDAO.findAllByProjectAndName(project, name)
       .map(makeTranslation(_))
       .fixed
 
-  def activatable(project: Project, name: String) =
+  def activatable(project: Project, name: String): List[Translation] =
     TranslationDAO.findAllByProjectAndName(project, name).filter { trans =>
       trans.status == Status.Inactive
     } map(makeTranslation(_))
@@ -80,7 +80,7 @@ object TranslationAPI {
   /** Searches for translations by any term and returns a list of mapped
    *  translations.
    */
-  def search(project: Project, term: String) = {
+  def search(project: Project, term: String): List[Translation] = {
     val ids = Search.indexer.search(query = queryString(term)).hits.hits.toList.map { searchResponse =>
       new ObjectId(searchResponse.id)
     }
@@ -92,21 +92,26 @@ object TranslationAPI {
 
   /** Creates a new translation.
    */
-  def create(code: String, name: String, text: String)(implicit ctx: ProjectContext[_]) = for {
-    c <- LanguageAPI.code(ctx.project, code)
-    trans = DbTranslation(
-      c,
-      name,
-      text,
-      ctx.project.id,
-      ctx.user.username,
-      status(ctx.user))
-    _ ← TranslationDAO.insert(trans)
-  } yield makeTranslation(trans)
+  def create(
+    code: String,
+    name: String,
+    text: String
+  )(implicit ctx: ProjectContext[_]): Option[Translation] =
+    for {
+      c <- LanguageAPI.code(ctx.project, code)
+      trans = DbTranslation(
+        c,
+        name,
+        text,
+        ctx.project.id,
+        ctx.user.username,
+        status(ctx.user))
+      _ ← TranslationDAO.insert(trans)
+    } yield makeTranslation(trans)
 
   /** Updates the text of a translation.
    */
-  def update(before: Translation, text: String) = {
+  def update(before: Translation, text: String): Translation = {
     val updated = before.copy(text = text)
     TranslationDAO.save(updated)
     updated
@@ -114,28 +119,30 @@ object TranslationAPI {
 
   /** Sets the translation by id to active and removes the previous translation.
    */
-  def switch(user: User, project: Project, id: ObjectId) = for {
-    actual <- TranslationDAO.findOneById(id)
-    old    <- TranslationDAO.findOneByProjectNameAndCode(project, actual.name, actual.code)
-  } yield {
-    val updated = actual.copy(status = Status.Active)
-    TranslationDAO.save(updated)
-    TranslationDAO.remove(old)
-    makeTranslation(updated)
-  }
+  def switch(user: User, project: Project, id: ObjectId): Option[Translation] =
+    for {
+      actual <- TranslationDAO.findOneById(id)
+      old    <- TranslationDAO.findOneByProjectNameAndCode(project, actual.name, actual.code)
+    } yield {
+      val updated = actual.copy(status = Status.Active)
+      TranslationDAO.save(updated)
+      TranslationDAO.remove(old)
+      makeTranslation(updated)
+    }
 
   /** Deletes one ore all translations with the same name if the user is an
    *  author or an admin.
    */
-  def delete(project: Project, id: ObjectId) = TranslationDAO.findOneById(id) match {
-    case Some(trans) if (trans.status == Status.Active) =>
-      TranslationDAO.removeAllByProjectAndName(project, trans.name)
-      Some(makeTranslation(trans))
-    case Some(trans) if (trans.status == Status.Inactive) =>
-      TranslationDAO.remove(trans)
-      Some(makeTranslation(trans))
-    case None => None
-  }
+  def delete(project: Project, id: ObjectId): Option[Translation] =
+    TranslationDAO.findOneById(id) match {
+      case Some(trans) if (trans.status == Status.Active) =>
+        TranslationDAO.removeAllByProjectAndName(project, trans.name)
+        Some(makeTranslation(trans))
+      case Some(trans) if (trans.status == Status.Inactive) =>
+        TranslationDAO.remove(trans)
+        Some(makeTranslation(trans))
+      case None => None
+    }
 
   /** Parses the content by type and inserts the non existing translations. For
    *  all entries a TranslationImport class will be created to send the client
@@ -153,16 +160,6 @@ object TranslationAPI {
         }
       }
     }
-
-  /** Returns all untranslated translations by project.
-   */
-  def untranslated(project: Project) =
-    TranslationDAO.findAllByProject(project)
-
-  /** Returns all untranslated translations by project and name.
-   */
-  def untranslated(project: Project, name: String) =
-    TranslationDAO.findAllByProjectAndName(project, name)
 
   private def status(user: User) =
     user.roles contains (Role.ADMIN) match {
