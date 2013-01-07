@@ -20,15 +20,12 @@ object LanguageController extends BaseController {
   }
 
   def update(project: String, id: String) = SecuredWithProject(project, Role.ADMIN) { implicit ctx =>
-    LanguageAPI.by(id, ctx.project) map { language =>
-      DataForm.language.bindFromRequest.fold(
-        formWithErrors => JsonBadRequest(formWithErrors.errors),
-        formData => {
-          val updated = LanguageAPI.update(language, formData._1, formData._2)
-          JsonOk(updated.serialize)
-        }
-      )
-    } getOrElse JsonNotFound
+    DataForm.language.bindFromRequest.fold(
+      formWithErrors => JsonBadRequest(formWithErrors.errors),
+      formData => {
+        JsonOk(LanguageAPI.update(id, formData._1, formData._2) map(_.serialize))
+      }
+    )
   }
 
   def delete(project: String, id: String) = TODO

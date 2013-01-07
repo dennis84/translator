@@ -54,3 +54,15 @@ case class Translation(
   
   override def toString = """%s (%s): %s""" format(name, code, text)
 }
+
+object Translation {
+
+  def apply(c: String, n: String, t: String, u: User, p: Project): Translation =
+    Translation(c, n, t, u.username, status(u), p.id, Some(p))
+
+  private def status(user: User) =
+    user.roles contains (Role.ADMIN) match {
+      case true => Status.Active
+      case false => Status.Inactive
+    }
+}

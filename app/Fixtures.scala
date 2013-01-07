@@ -24,16 +24,19 @@ trait Fixtures {
   val project1 = _project1.withUser(user1)
   val project2 = _project2.withUser(user2)
 
-  lazy val language1 = Language("en", "English", project1)
-  lazy val language2 = Language("de", "German", project1)
-  lazy val language3 = Language("fr", "French", project1)
-  lazy val language4 = Language("es", "Spanish", project1)
-  lazy val language5 = Language("it", "Italien", project1)
-  lazy val language6 = Language("pt", "Portuguese", project1)
+  def makeLanguage(c: String, t: String, p: Project) =
+    Language(c, t, p.id, Some(p))
 
-  lazy val language7 = Language("en", "English", project2)
-  lazy val language8 = Language("de", "German", project2)
-  lazy val language9 = Language("fr", "French", project2)
+  lazy val language1 = makeLanguage("en", "English", project1)
+  lazy val language2 = makeLanguage("de", "German", project1)
+  lazy val language3 = makeLanguage("fr", "French", project1)
+  lazy val language4 = makeLanguage("es", "Spanish", project1)
+  lazy val language5 = makeLanguage("it", "Italien", project1)
+  lazy val language6 = makeLanguage("pt", "Portuguese", project1)
+
+  lazy val language7 = makeLanguage("en", "English", project2)
+  lazy val language8 = makeLanguage("de", "German", project2)
+  lazy val language9 = makeLanguage("fr", "French", project2)
 
   def makeTranslation(c: String, n: String, t: String, u: User, s: Status, p: Project) =
     Translation(c, n, t, u.username, s, p.id, Some(p))

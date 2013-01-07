@@ -12,10 +12,13 @@ case class DbLanguage(
 case class Language(
   val code: String,
   val name: String,
-  val project: Project,
+  val projectId: ObjectId,
+  val project: Option[Project] = None,
   val id: ObjectId = new ObjectId) {
 
-  def encode = DbLanguage(code, name, project.id, id)
+  def withProject(p: Project) = copy(project = Some(p))
+
+  def encode = DbLanguage(code, name, projectId, id)
 
   def serialize = Map(
     "id" -> id.toString,

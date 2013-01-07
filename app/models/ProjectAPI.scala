@@ -10,16 +10,14 @@ object ProjectAPI {
   import Implicits._
 
   def by(token: String): Option[Project] =
-    ProjectDAO.findOneByToken(token) map(makeProject(_))
+    ProjectDAO.findOneByToken(token)
 
-  def listMine(user: User): List[Project] = user.rawRoles map { role =>
-    for {
-      r <- ProjectDAO.findOneById(role.projectId)
-      p = makeProject(r)
-      l = LanguageAPI.list(p)
-      t = TranslationAPI.list(p)
-    } yield p withStats(t, l)
-  } flatten
+  def listMine(user: User): List[Project] =
+    ProjectDAO.findAllByIds(user.rawRoles.map(_.projectId)) map { p =>
+      p.withStats(
+        TranslationDAO.findAllByProject(p),
+        LanguageDAO.findAllByProject(p))
+    }
 
   def create(name: String, u: User): Option[Project] = for {
     _ <- Some("")
@@ -29,7 +27,11 @@ object ProjectAPI {
     _ <- ProjectDAO.insert(project)
   } yield project
 
-  def signup(projectName: String, username: String, password: String): Option[(User, Project)] = for {
+  def signup(
+    projectName: String,
+    username: String,
+    password: String
+  ): Option[(User, Project)] = for {
     _ <- Some("")
     u = User(username, password sha512)
     _ <- UserDAO.insert(u)
@@ -37,7 +39,4 @@ object ProjectAPI {
   } yield (u, p)
 
   private def uuid = java.util.UUID.randomUUID.toString
-
-  def makeProject(p: DbProject) =
-    Project(p.name, p.token, p.adminId, id = p.id)
 }

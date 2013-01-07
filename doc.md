@@ -2,12 +2,12 @@
 
 ## UserAPI
 
-    # Is used internally of the application not in controller yet.
-    # @FIXME
+    # On a project secured admin page on every request this method will called
+    # and the user by project will get determined.
     def by(project: Project): Option[User]
     
-    # Is used internally of the application not in controller yet.
-    # @FIXME
+    # On a project secured admin page on every request this method will called
+    # and the user by project will get determined.
     def by(username: String): Option[User]
 
     # Lists the users by project in application.

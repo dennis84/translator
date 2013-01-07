@@ -9,9 +9,16 @@ import com.mongodb.casbah.Imports._
 object ProjectDAO
   extends SalatDAO[DbProject, ObjectId](collection = MongoConnection()("translator")("projects")) {
 
-  def findAll = find(DBObject()) toList
+  def findAllByIds(ids: List[ObjectId]): List[Project] =
+    find(MongoDBObject(
+      "projectId" -> MongoDBObject("$in" -> ids))).toList.map(makeProject(_))
 
-  def findOneByToken(token: String) = findOne(MongoDBObject("token" -> token))
+  def findOneByToken(token: String) =
+    findOne(MongoDBObject("token" -> token)) map(makeProject(_))
 
-  def findOneByName(name: String) = findOne(MongoDBObject("name" -> name))
+  def findOneByName(name: String) =
+    findOne(MongoDBObject("name" -> name)) map(makeProject(_))
+
+  def makeProject(p: DbProject) =
+    Project(p.name, p.token, p.adminId, id = p.id)
 }

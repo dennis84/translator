@@ -9,15 +9,26 @@ import com.mongodb.casbah.Imports._
 object LanguageDAO
   extends SalatDAO[DbLanguage, ObjectId](collection = MongoConnection()("translator")("languages")) {
 
-  def findAllByProject(project: DbProject) =
-    find(MongoDBObject("projectId" -> project.id)) toList
+  def findAllByProject(project: Project) =
+    find(MongoDBObject("projectId" -> project.id)).toList
+      .map(makeLanguage(_).withProject(project))
 
   def findAllByProjectId(projectId: ObjectId) =
-    find(MongoDBObject("projectId" -> projectId)) toList
+    find(MongoDBObject("projectId" -> projectId)).toList map(makeLanguage(_))
 
-  def findOneByProjectAndCode(project: DbProject, code: String) =
-    findOne(MongoDBObject("code" -> code, "projectId" -> project.id))
+  def byId(id: ObjectId) =
+    findOneById(id) map(makeLanguage(_))
 
-  def findFirstByProject(project: DbProject) =
-    find(MongoDBObject("projectId" -> project.id)).limit(1) toList
+  def findOneByProjectAndCode(project: Project, code: String) =
+    findOne(MongoDBObject(
+      "code" -> code,
+      "projectId" -> project.id
+    )) map(makeLanguage(_).withProject(project))
+
+  def findFirstByProject(project: Project) =
+    find(MongoDBObject("projectId" -> project.id)).limit(1).toList
+      .map(makeLanguage(_).withProject(project))
+
+  def makeLanguage(l: DbLanguage): Language =
+    Language(l.code, l.name, l.projectId, id = l.id)
 }

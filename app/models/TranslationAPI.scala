@@ -11,21 +11,14 @@ object TranslationAPI {
 
   import Implicits._
 
-  def by(id: ObjectId): Option[Translation] =
-    TranslationDAO.findOneById(id) map(makeTranslation(_))
-
-  /** After updated a translation it's possible to fetch it again to get the
-   *  actual statistics.
-   */
   def entry(id: ObjectId, project: Project): Option[Translation] = {
     val langs = LanguageAPI.list(project)
-    var translations = TranslationDAO.findAllByProject(project) map(makeTranslation(_))
+    var translations = TranslationDAO.findAllByProject(project)
 
-    translations.find(_.id == id).map(_.withProject(project).withStats(translations, langs))
+    translations.find(_.id == id)
+      .map(_.withProject(project).withStats(translations, langs))
   }
 
-  /** Returns all translations by language as key value format.
-   */
   def export(project: Project, code: String): List[(String, String)] = (for {
     c <- LanguageAPI.code(project, code)
   } yield {
@@ -34,13 +27,10 @@ object TranslationAPI {
     }
   }) getOrElse Nil
 
-  /** Retuns the filtered entries, this are the main translations for the
-   *  overview with statistics.
-   */
   def entries(filter: Filter)(implicit ctx: ProjectContext[_]): List[Translation] = {
     LanguageAPI.first(ctx.project) map { lang =>
       val langs = LanguageAPI.list(ctx.project)
-      val translations = TranslationDAO.findAllByProject(ctx.project) map(makeTranslation(_))
+      val translations = TranslationDAO.findAllByProject(ctx.project)
 
       var filtered = filter.filter(translations.fixed(langs))
 
@@ -57,41 +47,18 @@ object TranslationAPI {
     } getOrElse Nil
   }
 
-  /** Lists all translations by project. The translations will not have any
-   *  statistics if this is desired use the "entries" method.
-   */
-  def list(project: Project): List[Translation] =
-    TranslationDAO.findAllByProject(project) map(makeTranslation(_))
-
-  /** Returns all translations by name. This method is used to get all
-   *  translations by an entry the result must is fixed and don't have
-   *  statistics.
-   */
   def list(project: Project, name: String): List[Translation] =
-    TranslationDAO.findAllByProjectAndName(project, name)
-      .map(makeTranslation(_))
-      .fixed
+    TranslationDAO.findAllByProjectAndName(project, name).fixed
 
-  def activatable(project: Project, name: String): List[Translation] =
-    TranslationDAO.findAllByProjectAndName(project, name).filter { trans =>
-      trans.status == Status.Inactive
-    } map(makeTranslation(_))
-
-  /** Searches for translations by any term and returns a list of mapped
-   *  translations.
-   */
   def search(project: Project, term: String): List[Translation] = {
     val ids = Search.indexer.search(query = queryString(term)).hits.hits.toList.map { searchResponse =>
       new ObjectId(searchResponse.id)
     }
 
-    TranslationDAO.findAllByProjectAndIds(project, ids) map { trans =>
-      makeTranslation(trans).withProject(project)
-    }
+    TranslationDAO.findAllByProjectAndIds(project, ids)
+      .map(_.withProject(project))
   }
 
-  /** Creates a new translation.
-   */
   def create(
     code: String,
     name: String,
@@ -99,55 +66,36 @@ object TranslationAPI {
   )(implicit ctx: ProjectContext[_]): Option[Translation] =
     for {
       c <- LanguageAPI.code(ctx.project, code)
-      trans = DbTranslation(
-        c,
-        name,
-        text,
-        ctx.project.id,
-        ctx.user.username,
-        status(ctx.user))
-      _ ← TranslationDAO.insert(trans)
-    } yield makeTranslation(trans)
+      t = Translation(c, name, text, ctx.user, ctx.project)
+      _ ← TranslationDAO.insert(t)
+    } yield t
 
-  /** Updates the text of a translation.
-   */
-  def update(before: Translation, text: String): Translation = {
-    val updated = before.copy(text = text)
-    TranslationDAO.save(updated)
-    updated
-  }
+  def update(id: ObjectId, text: String): Option[Translation] = for {
+    t <- TranslationDAO.byId(id)
+    u = t.copy(text = text)
+    wc = TranslationDAO.save(u)
+  } yield u
 
-  /** Sets the translation by id to active and removes the previous translation.
-   */
   def switch(user: User, project: Project, id: ObjectId): Option[Translation] =
     for {
-      actual <- TranslationDAO.findOneById(id)
-      old    <- TranslationDAO.findOneByProjectNameAndCode(project, actual.name, actual.code)
-    } yield {
-      val updated = actual.copy(status = Status.Active)
-      TranslationDAO.save(updated)
-      TranslationDAO.remove(old)
-      makeTranslation(updated)
-    }
+      a <- TranslationDAO.byId(id)
+      o <- TranslationDAO.findOneByProjectNameAndCode(project, a.name, a.code)
+      u = a.copy(status = Status.Active)
+      wc1 = TranslationDAO.save(u)
+      wc2 = TranslationDAO.remove(o.encode)
+    } yield u
 
-  /** Deletes one ore all translations with the same name if the user is an
-   *  author or an admin.
-   */
   def delete(project: Project, id: ObjectId): Option[Translation] =
-    TranslationDAO.findOneById(id) match {
+    TranslationDAO.byId(id) match {
       case Some(trans) if (trans.status == Status.Active) =>
         TranslationDAO.removeAllByProjectAndName(project, trans.name)
-        Some(makeTranslation(trans))
+        Some(trans)
       case Some(trans) if (trans.status == Status.Inactive) =>
-        TranslationDAO.remove(trans)
-        Some(makeTranslation(trans))
+        TranslationDAO.remove(trans.encode)
+        Some(trans)
       case None => None
     }
 
-  /** Parses the content by type and inserts the non existing translations. For
-   *  all entries a TranslationImport class will be created to send the client
-   *  a usefull import response.
-   */
   def imports(project: Project, user: User, content: String, t: String, code: String) =
     Parser.parse(content, t) map { row =>
       val (name, text) = row
@@ -160,13 +108,4 @@ object TranslationAPI {
         }
       }
     }
-
-  private def status(user: User) =
-    user.roles contains (Role.ADMIN) match {
-      case true => Status.Active
-      case false => Status.Inactive
-    }
-
-  private def makeTranslation(t: DbTranslation) =
-    Translation(t.code, t.name, t.text, t.author, t.status, t.projectId, id = t.id)
 }

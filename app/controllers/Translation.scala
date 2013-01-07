@@ -35,15 +35,12 @@ object TranslationController extends BaseController {
   }
 
   def update(project: String, id: String) = SecuredWithProject(project, Role.ADMIN) { implicit ctx =>
-    TranslationAPI.by(id) map { trans =>
-      DataForm.translation.bindFromRequest.fold(
-        formWithErrors => JsonBadRequest(Map("error" -> "fail")),
-        formData => {
-          TranslationAPI.update(trans, formData._3)
-          JsonOk(List())
-        }
-      )
-    } getOrElse JsonNotFound
+    DataForm.translation.bindFromRequest.fold(
+      formWithErrors => JsonBadRequest(Map("error" -> "fail")),
+      formData => {
+        JsonOk(TranslationAPI.update(id, formData._3) map(_.serialize))
+      }
+    )
   }
 
   def activate(project: String, id: String) = SecuredWithProject(project, Role.ADMIN) { implicit ctx =>

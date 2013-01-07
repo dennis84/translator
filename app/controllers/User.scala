@@ -25,7 +25,7 @@ object UserController extends BaseController {
     DataForm.updateUser.bindFromRequest.fold(
       formWithErrors => JsonBadRequest(Map("error" -> "fail")),
       formData => {
-        JsonOk(UserAPI.update(ctx.user, formData).serialize)
+        JsonOk(UserAPI.update(ctx.user, formData) map(_.serialize))
       }
     )
   }
