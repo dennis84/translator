@@ -10,5 +10,4 @@ $ Code mistakes
 ? Delete languages
 $ Prevent for js object zombies. Make a view renderer which removes the current views before render the new one.
 $ TranslationAPI.entry: Do not load all translation, only the childs of translation by id
-$ Define rules for each class type (Model - No persistence, DAO - Not to much logic, API encapsulate different logics from daos, should dao's return db objects or full objects?, Should the api only for the controllers and the direct response?)
 $ Filter attrs to boolean

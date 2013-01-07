@@ -28,7 +28,7 @@ object TranslationAPI {
   }) getOrElse Nil
 
   def entries(filter: Filter)(implicit ctx: ProjectContext[_]): List[Translation] = {
-    LanguageAPI.first(ctx.project) map { lang =>
+    LanguageDAO.findFirstByProject(ctx.project) map { lang =>
       val langs = LanguageAPI.list(ctx.project)
       val translations = TranslationDAO.findAllByProject(ctx.project)
 

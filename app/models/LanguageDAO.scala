@@ -28,6 +28,7 @@ object LanguageDAO
   def findFirstByProject(project: Project) =
     find(MongoDBObject("projectId" -> project.id)).limit(1).toList
       .map(makeLanguage(_).withProject(project))
+      .headOption
 
   def makeLanguage(l: DbLanguage): Language =
     Language(l.code, l.name, l.projectId, id = l.id)

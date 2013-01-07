@@ -9,11 +9,8 @@ object LanguageAPI {
   def list(project: Project): List[Language] =
     LanguageDAO.findAllByProject(project)
 
-  def first(project: Project): Option[Language] =
-    LanguageDAO.findFirstByProject(project).headOption
-
   def code(project: Project, code: String): Option[String] = code match {
-    case "" => first(project).map(_.code)
+    case "" => LanguageDAO.findFirstByProject(project) map(_.code)
     case _  => LanguageDAO.findOneByProjectAndCode(project, code).map(_.code)
   }
 
