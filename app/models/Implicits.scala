@@ -1,6 +1,12 @@
 package translator.models
 
+import com.mongodb.casbah.Imports._
+
 object Implicits {
+
+  implicit def objectId2string(id: ObjectId): String = id.toString
+
+  implicit def string2objectId(id: String): ObjectId = new ObjectId(id)
 
   implicit def project2DbProject(p: Project) = p.encode
 
