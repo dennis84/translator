@@ -1,9 +1,9 @@
 package translator.controllers
 
 import com.mongodb.casbah.Imports._
-import translator._
 import translator.models._
 import translator.forms._
+import translator.models.Implicits._
 
 object TranslationController extends BaseController {
 

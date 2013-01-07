@@ -3,6 +3,7 @@ import com.mongodb.casbah.commons.conversions.scala.RegisterJodaTimeConversionHe
 import com.codahale.jerkson.Json
 import translator._
 import translator.models._
+import translator.models.Implicits._
 
 object Global extends GlobalSettings {
 

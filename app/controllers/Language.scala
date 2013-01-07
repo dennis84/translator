@@ -1,8 +1,8 @@
 package translator.controllers
 
-import translator._
 import translator.models._
 import translator.forms._
+import translator.models.Implicits._
 
 object LanguageController extends BaseController {
 
