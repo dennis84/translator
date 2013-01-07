@@ -15,8 +15,7 @@ object ProjectController extends BaseController {
     DataForm.newProject.bindFromRequest.fold(
       formWithErrors => JsonBadRequest(formWithErrors.errors),
       formData => {
-        val created = ProjectAPI.create(formData, ctx.user)
-        JsonOk(created.serialize)
+        JsonOk(ProjectAPI.create(formData, ctx.user) map(_.serialize))
       }
     )
   }
@@ -25,8 +24,9 @@ object ProjectController extends BaseController {
     DataForm.signUp.bindFromRequest.fold(
       formWithErrors => JsonBadRequest(formWithErrors.errors),
       formData => {
-        val created = ProjectAPI.signup(formData._1, formData._2, formData._3)
-        JsonOk(created.serialize) withSession ("username" -> formData._2)
+        JsonOk(ProjectAPI.signup(formData._1, formData._2, formData._3) map { case (user, project) =>
+          project.serialize
+        }) withSession("username" -> formData._2)
       }
     )
   }

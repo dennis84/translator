@@ -37,7 +37,7 @@
     def first(project: Project): Option[Language]
 
     # @FIXME
-    def code(project: Project, code: String): String
+    def code(project: Project, code: String): Option[String]
 
     # To create a language in application admin.
     def create(code: String, name: String, project: Project): Option[Language]
@@ -68,7 +68,7 @@
     def entry(id: ObjectId, project: Project)
 
     # @FIXME
-    def export(project: Project, c: String)
+    def export(project: Project, c: String): List[(String, String)]
 
     # To list all master translations in application.
     def entries(filter: Filter)(implicit ctx: ProjectContext[_])
