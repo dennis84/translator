@@ -12,7 +12,7 @@ object TranslationAPI {
   import Implicits._
 
   def entry(id: ObjectId, project: Project): Option[Translation] = {
-    val langs = LanguageAPI.list(project)
+    val langs = LanguageDAO.findAllByProject(project)
     var translations = TranslationDAO.findAllByProject(project)
 
     translations.find(_.id == id)
@@ -29,7 +29,7 @@ object TranslationAPI {
 
   def entries(filter: Filter)(implicit ctx: ProjectContext[_]): List[Translation] = {
     LanguageDAO.primary(ctx.project) map { lang =>
-      val langs = LanguageAPI.list(ctx.project)
+      val langs = LanguageDAO.findAllByProject(ctx.project)
       val translations = TranslationDAO.findAllByProject(ctx.project)
 
       var filtered = filter.filter(translations.fixed(langs))
