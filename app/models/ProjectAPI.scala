@@ -9,14 +9,14 @@ object ProjectAPI {
 
   import Implicits._
 
-  def by(token: String): Option[Project] =
-    ProjectDAO.findOneByToken(token)
+  def byToken(token: String): Option[Project] =
+    ProjectDAO.byToken(token)
 
   def listMine(user: User): List[Project] =
-    ProjectDAO.findAllByIds(user.rawRoles.map(_.projectId)) map { p =>
+    ProjectDAO.listByIds(user.rawRoles.map(_.projectId)) map { p =>
       p.withStats(
-        TranslationDAO.findAllByProject(p),
-        LanguageDAO.findAllByProject(p))
+        TranslationDAO.list(p),
+        LanguageDAO.list(p))
     }
 
   def create(name: String, user: User): Option[Project] = for {

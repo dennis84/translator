@@ -54,7 +54,7 @@ trait Actions extends Controller with Results with RequestGetter {
     Open(bp) { implicit req =>
       (for {
         t <- get("token")
-        p <- ProjectAPI.by(t)
+        p <- ProjectAPI.byToken(t)
         u <- UserAPI.by(p)
       } yield {
         f(Context(req, u, List(p.withUser(u))))

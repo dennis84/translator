@@ -9,11 +9,9 @@ object UserAPI {
   def by(project: Project): Option[User] =
     UserDAO.byId(project.adminId)
 
-  def by(username: String): Option[User] =
-    UserDAO.findOneByUsername(username)
+  def by(username: String): Option[User] = UserDAO.byUsername(username)
 
-  def contributors(p: Project): List[User] =
-    UserDAO.findAllByProject(p)
+  def contributors(p: Project): List[User] = UserDAO.list(p)
 
   def create(
     project: Project,

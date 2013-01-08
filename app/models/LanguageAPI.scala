@@ -7,7 +7,7 @@ object LanguageAPI {
   import Implicits._
 
   def list(project: Project): List[Language] =
-    LanguageDAO.findAllByProject(project)
+    LanguageDAO.list(project)
 
   def create(code: String, name: String, project: Project): Option[Language] = for {
     c <- LanguageDAO.validateCode(project, code)

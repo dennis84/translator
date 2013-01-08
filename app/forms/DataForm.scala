@@ -13,7 +13,7 @@ object DataForm {
     "username" -> nonEmptyText,
     "password" -> nonEmptyText
   ) verifying ("error.authentication", fields => fields match {
-    case (u, p) => UserDAO.findOneByUsernameAndPassword(u, p.sha512).isDefined
+    case (u, p) => UserDAO.byCredentials(u, p.sha512).isDefined
   }))
 
   lazy val createUser = Form(tuple(
@@ -51,11 +51,11 @@ object DataForm {
   ))
 
   private def usernameTaken(username: String) =
-    UserDAO.findOneByUsername(username).isEmpty
+    UserDAO.byUsername(username).isEmpty
 
   private def projectNameTaken(name: String) =
-    ProjectDAO.findOneByName(name).isEmpty
+    ProjectDAO.byName(name).isEmpty
 
   private def languageCodeTaken(code: String, project: Project) =
-    LanguageDAO.findOneByProjectAndCode(project, code).isEmpty
+    LanguageDAO.byCode(project, code).isEmpty
 }

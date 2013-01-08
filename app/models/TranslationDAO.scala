@@ -10,44 +10,52 @@ import com.mongodb.casbah.map_reduce.MapReduceInlineOutput
 object TranslationDAO
   extends SalatDAO[DbTranslation, ObjectId](collection = MongoConnection()("translator")("translations")) {
 
-  def findAll: List[Translation] =
+  def all: List[Translation] =
     find(MongoDBObject()).toList map(makeTranslation(_))
 
-  def findAllByProject(project: Project): List[Translation] =
+  def list(project: Project): List[Translation] =
     find(MongoDBObject("projectId" -> project.id)).toList
       .map(makeTranslation(_) withProject(project))
 
-  def findAllByProjectAndCode(project: Project, code: String): List[Translation] =
+  def listByName(project: Project, name: String): List[Translation] =
     find(MongoDBObject(
       "projectId" -> project.id,
-      "code" -> code)).toList map(makeTranslation(_) withProject(project))
+      "name" -> name
+    )).toList map {
+      makeTranslation(_) withProject(project)
+    }
 
-  def findAllByProjectAndName(project: Project, name: String): List[Translation] =
+  def listByIds(project: Project, ids: List[ObjectId]): List[Translation] =
     find(MongoDBObject(
       "projectId" -> project.id,
-      "name" -> name)).toList map(makeTranslation(_) withProject(project))
+      "_id" -> MongoDBObject("$in" -> ids)
+    )).toList map {
+      makeTranslation(_) withProject(project)
+    }
 
-  def findActivatedByProjectAndCode(project: Project, code: String): List[Translation] =
+  def listActive(project: Project, code: String): List[Translation] =
     find(MongoDBObject(
       "projectId" -> project.id,
       "code" -> code,
-      "status.code" -> Status.Active.id)).toList map(makeTranslation(_) withProject(project))
-
-  def findAllByProjectAndIds(project: Project, ids: List[ObjectId]): List[Translation] =
-    find(MongoDBObject(
-      "projectId" -> project.id,
-      "_id" -> MongoDBObject("$in" -> ids))).toList map(makeTranslation(_) withProject(project))
+      "status.code" -> Status.Active.id
+    )).toList map {
+      makeTranslation(_) withProject(project)
+    }
 
   def byId(id: ObjectId): Option[Translation] =
     findOneById(id) map(makeTranslation(_))
 
-  def findOneByProjectNameAndCode(project: Project, name: String, code: String): Option[Translation] =
+  def activated(p: Project, name: String, code: String): Option[Translation] =
     findOne(MongoDBObject(
-      "projectId" -> project.id,
+      "projectId" -> p.id,
       "name" -> name,
-      "code" -> code)) map(makeTranslation(_) withProject(project))
+      "code" -> code,
+      "status.id" -> Status.Active.id
+    )) map {
+      makeTranslation(_) withProject(p)
+    }
 
-  def removeAllByProjectAndName(project: Project, name: String) =
+  def removeEntry(project: Project, name: String) =
     find(MongoDBObject(
       "projectId" -> project.id,
       "name" -> name

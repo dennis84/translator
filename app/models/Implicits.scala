@@ -41,7 +41,7 @@ class TranslationCollection(list: List[Translation]) {
     h <- list.headOption
     p <- h.project
   } yield {
-    makeItFixed(LanguageDAO.findAllByProject(p) map(_.code))
+    makeItFixed(LanguageDAO.list(p) map(_.code))
   }) getOrElse list
 
   def fixed(langs: List[Language]): List[Translation] =

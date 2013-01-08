@@ -41,7 +41,7 @@ object SearchFixtures {
   def refresh = {
     Search.reset
 
-    TranslationDAO.findAll map { trans =>
+    TranslationDAO.all map { trans =>
       Search.indexer.index("translator", "translation", trans.id, Json generate Map(
         "name" -> trans.name,
         "text" -> trans.text))
