@@ -11,7 +11,7 @@ object ProjectDAO
 
   def findAllByIds(ids: List[ObjectId]): List[Project] =
     find(MongoDBObject(
-      "projectId" -> MongoDBObject("$in" -> ids))).toList.map(makeProject(_))
+      "_id" -> MongoDBObject("$in" -> ids))).toList map(makeProject(_))
 
   def findOneByToken(token: String) =
     findOne(MongoDBObject("token" -> token)) map(makeProject(_))
