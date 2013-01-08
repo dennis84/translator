@@ -29,7 +29,7 @@ define([
       this.model.set(this.$el.find("form").serializeObject())
       this.collection.create(this.model, { wait: true })
 
-      this.model.on("sync", function () {
+      this.model.on("sync", function (model) {
         window.app.addMessage("success", "Translation Created")
       })
     },

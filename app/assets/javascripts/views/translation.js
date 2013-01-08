@@ -24,17 +24,21 @@ define([
     open: function (e) {
       e.preventDefault()
       var coll = new Translations
-      var view = new TranslationsEditView({ collection: coll })
+      var trans = new TranslationsEditView({ collection: coll })
+      var view = this
+
+      var refresh = function () {
+        view.model.on("sync", function () {
+          $("#translation-list [data-id=" + view.model.id + "]")
+            .replaceWith(view.render().el)
+        })
+
+        view.model.fetch()
+        coll.fetchByName(view.model.get("name"))
+      }
+
       coll.fetchByName(this.model.get("name"))
-      coll.on("update", this.refresh, this)
-    },
-
-    refresh: function (model) {
-      this.model.on("sync", function () {
-        $("#translation-list [data-id=" + this.model.id + "]").replaceWith(this.render().el)
-      }, this)
-
-      this.model.fetch()
+      coll.on("update", refresh, this)
     }
   })
 

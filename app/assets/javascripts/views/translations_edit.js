@@ -44,7 +44,9 @@ define([
         if (true === translation.hasChanged(item)) {
           if (window.user.isAdmin()) {
             translation.save(item)
-            collection.trigger("update", translation)
+            translation.on("sync", function () {
+              collection.trigger("update", translation)
+            })
             var successMessage = "Translation Saved"
           } else {
             var index = collection.indexOf(translation) + 1

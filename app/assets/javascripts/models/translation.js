@@ -13,6 +13,8 @@ define([], function () {
       var model = this
       $.postJSON(this.url() + "/activate", {}, function (data) {
         model.set(data)
+        model.trigger("update", model)
+        model.collection.trigger("update", model)
       })
     },
 
