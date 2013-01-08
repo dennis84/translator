@@ -22,13 +22,13 @@ object UserAPI {
     roles: List[String]
   ): Option[User] = for {
     _ <- Some("")
-    user = User(
+    u = User(
       username,
       password,
       rawRoles = roles.map(DbRole(_, project.id))
     )
-    _ <- UserDAO.insert(user)
-  } yield user.withRoles(project)
+    _ <- UserDAO.insert(u)
+  } yield u.withRoles(project)
 
   def update(before: User, password: String): Option[User] = for {
     u <- UserDAO.byId(before.id)

@@ -17,7 +17,7 @@ object LanguageAPI {
 
   def update(id: String, code: String, name: String): Option[Language] = for {
     l <- LanguageDAO.byId(id)
-    updated = l.copy(code = code, name = name)
-    wc = LanguageDAO.save(updated)
-  } yield updated
+    u = l.copy(code = code, name = name)
+    wc = LanguageDAO.save(u)
+  } yield u
 }

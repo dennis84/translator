@@ -38,29 +38,30 @@ class TranslationCollection(list: List[Translation]) {
     list filter(_.status == Status.Active)
 
   def fixed: List[Translation] = (for {
-    head <- list.headOption
-    project <- head.project
+    h <- list.headOption
+    p <- h.project
   } yield {
-    makeItFixed(LanguageDAO.findAllByProject(project) map(_.code))
+    makeItFixed(LanguageDAO.findAllByProject(p) map(_.code))
   }) getOrElse list
 
   def fixed(langs: List[Language]): List[Translation] =
     makeItFixed(langs map(_.code))
 
-  private def makeItFixed(langs: List[String]): List[Translation] = (for {
-    h <- list.headOption
-    n = h.name
-    p <- h.project
-    if (!list.isEmpty)
-  } yield {
-    val codes = list.filterActive.map(_.code)
-    val diff = langs.diff(codes)
-    val unsorted = (list ++ diff.map { c =>
-      Translation.empty(c, n, p)
-    }) sortBy (_.status.id)
+  private def makeItFixed(langs: List[String]): List[Translation] =
+    (for {
+      h <- list.headOption
+      n = h.name
+      p <- h.project
+      if (!list.isEmpty)
+    } yield {
+      val codes = list.filterActive.map(_.code)
+      val diff = langs.diff(codes)
+      val unsorted = (list ++ diff.map { c =>
+        Translation.empty(c, n, p)
+      }) sortBy (_.status.id)
 
-    langs map { l =>
-      unsorted.filter(_.code == l)
-    } flatten
-  }) getOrElse list
+      langs map { l =>
+        unsorted.filter(_.code == l)
+      } flatten
+    }) getOrElse list
 }

@@ -19,13 +19,13 @@ object ProjectAPI {
         LanguageDAO.findAllByProject(p))
     }
 
-  def create(name: String, u: User): Option[Project] = for {
+  def create(name: String, user: User): Option[Project] = for {
     _ <- Some("")
-    project = Project(name, uuid, u.id)
-    user = u.copy(rawRoles = u.rawRoles :+ Role.Admin(project.id))
-    wc = UserDAO.save(user)
-    _ <- ProjectDAO.insert(project)
-  } yield project
+    p = Project(name, uuid, user.id)
+    u = user.copy(rawRoles = user.rawRoles :+ Role.Admin(p.id))
+    wc = UserDAO.save(u)
+    _ <- ProjectDAO.insert(p)
+  } yield p
 
   def signup(
     projectName: String,
