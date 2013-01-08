@@ -9,7 +9,8 @@ define([
     id: "languages",
 
     events: {
-      "click .create": "create"
+      "click .create": "create",
+      "click .remove": "remove"
     },
 
     initialize: function () {
@@ -38,6 +39,18 @@ define([
 
       window.app.removePane(1)
       window.app.addPane(languageEdit.render().el, "language-create", "spaceless6")
+    },
+
+    remove: function (e) {
+      e.preventDefault()
+      var view = this
+      this.$(".check input:checked").each(function (i, el) {
+        var lang = $(el).closest("tr")
+        var model = view.collection.get(lang.attr("data-id"))
+        view.collection.remove(model)
+        model.destroy()
+        $(lang).remove()
+      })
     }
   })
 

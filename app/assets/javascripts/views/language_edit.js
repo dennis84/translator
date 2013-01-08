@@ -4,7 +4,7 @@ define([
 
   var module = Backbone.View.extend({
     id: "language-edit",
-    className: "language-edit",
+    className: "language-edit pane-edit",
 
     events: {
       "click .save": "save",

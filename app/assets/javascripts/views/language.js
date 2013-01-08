@@ -7,7 +7,7 @@ define([
     tagName: "tr",
 
     events: {
-      "click td": "open"
+      "click td:not(.check)": "open"
     },
 
     initialize: function () {
@@ -16,6 +16,7 @@ define([
 
     render: function () {
       this.$el.html(_.template(languageTemplate, this.model.toJSON()))
+      this.$el.attr("data-id", this.model.id)
       return this
     },
 
