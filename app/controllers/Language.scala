@@ -28,5 +28,10 @@ object LanguageController extends BaseController {
     )
   }
 
-  def delete(project: String, id: String) = TODO
+  def delete(project: String, id: String) = SecuredWithProject(project, Role.ADMIN) { implicit ctx =>
+    LanguageAPI.delete(ctx.project, id) match {
+      case Some(lang) => JsonOk(lang.serialize)
+      case None => JsonBadRequest(Map("error" -> "fail"))
+    }
+  }
 }

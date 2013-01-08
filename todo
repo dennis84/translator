@@ -7,7 +7,6 @@ $ Code mistakes
 ----
 
 ! messages (error, success)
-? Delete languages
 $ Prevent for js object zombies. Make a view renderer which removes the current views before render the new one.
 $ TranslationAPI.entry: Do not load all translation, only the childs of translation by id
 $ Filter attrs to boolean

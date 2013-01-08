@@ -20,4 +20,9 @@ object LanguageAPI {
     u = l.copy(code = code, name = name)
     wc = LanguageDAO.save(u)
   } yield u
+
+  def delete(p: Project, id: String) = for {
+    l <- LanguageDAO.byId(id)
+    wc = LanguageDAO.remove(l.encode)
+  } yield l
 }
