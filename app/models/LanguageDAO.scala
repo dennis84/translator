@@ -25,10 +25,15 @@ object LanguageDAO
       "projectId" -> project.id
     )) map(makeLanguage(_).withProject(project))
 
-  def findFirstByProject(project: Project) =
+  def primary(project: Project) =
     find(MongoDBObject("projectId" -> project.id)).limit(1).toList
       .map(makeLanguage(_).withProject(project))
       .headOption
+
+  def validateCode(project: Project, code: String): Option[String] = code match {
+    case "" => primary(project) map(_.code)
+    case _  => findOneByProjectAndCode(project, code).map(_.code)
+  }
 
   def makeLanguage(l: DbLanguage): Language =
     Language(l.code, l.name, l.projectId, id = l.id)

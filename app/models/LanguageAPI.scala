@@ -9,16 +9,11 @@ object LanguageAPI {
   def list(project: Project): List[Language] =
     LanguageDAO.findAllByProject(project)
 
-  def code(project: Project, code: String): Option[String] = code match {
-    case "" => LanguageDAO.findFirstByProject(project) map(_.code)
-    case _  => LanguageDAO.findOneByProjectAndCode(project, code).map(_.code)
-  }
-
-  def create(cd: String, name: String, project: Project): Option[Language] = for {
-    c <- code(project, cd)
-    lang = Language(c, name, project.id)
-    _ <- LanguageDAO.insert(lang)
-  } yield lang.withProject(project)
+  def create(code: String, name: String, project: Project): Option[Language] = for {
+    c <- LanguageDAO.validateCode(project, code)
+    l = Language(c, name, project.id)
+    _ <- LanguageDAO.insert(l)
+  } yield l.withProject(project)
 
   def update(id: String, code: String, name: String): Option[Language] = for {
     l <- LanguageDAO.byId(id)

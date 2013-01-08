@@ -20,7 +20,7 @@ object TranslationAPI {
   }
 
   def export(project: Project, code: String): List[(String, String)] = (for {
-    c <- LanguageAPI.code(project, code)
+    c <- LanguageDAO.validateCode(project, code)
   } yield {
     TranslationDAO.findActivatedByProjectAndCode(project, c) map { trans =>
       trans.name -> trans.text
@@ -28,7 +28,7 @@ object TranslationAPI {
   }) getOrElse Nil
 
   def entries(filter: Filter)(implicit ctx: ProjectContext[_]): List[Translation] = {
-    LanguageDAO.findFirstByProject(ctx.project) map { lang =>
+    LanguageDAO.primary(ctx.project) map { lang =>
       val langs = LanguageAPI.list(ctx.project)
       val translations = TranslationDAO.findAllByProject(ctx.project)
 
@@ -65,7 +65,7 @@ object TranslationAPI {
     text: String
   )(implicit ctx: ProjectContext[_]): Option[Translation] =
     for {
-      c <- LanguageAPI.code(ctx.project, code)
+      c <- LanguageDAO.validateCode(ctx.project, code)
       t = Translation(c, name, text, ctx.user, ctx.project)
       _ ← TranslationDAO.insert(t)
     } yield t
