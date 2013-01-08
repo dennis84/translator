@@ -24,7 +24,7 @@ class TranslationCollection(list: List[Translation]) {
 
   import Implicits._
 
-  def filterUntranslated =
+  def filterUntranslated(langs: Seq[String]) =
     fixed filter { trans =>
       trans.text == "" &&
      (trans.status == Status.Active ||
@@ -58,7 +58,7 @@ class TranslationCollection(list: List[Translation]) {
       val diff = langs.diff(codes)
       val unsorted = (list ++ diff.map { c =>
         Translation.empty(c, n, p)
-      }) sortBy (_.status.id)
+      }) sortBy(_.status.id)
 
       langs map { l =>
         unsorted.filter(_.code == l)

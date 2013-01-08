@@ -12,7 +12,7 @@ case class Filter(
     var translations = t
 
     if ("true" == untranslated) {
-      translations = translations.filterUntranslated
+      translations = translations.filterUntranslated(untranslatedLanguages)
     }
 
     if ("true" == activatable) {

@@ -15,28 +15,28 @@ object TranslationDAO
 
   def findAllByProject(project: Project): List[Translation] =
     find(MongoDBObject("projectId" -> project.id)).toList
-      .map(makeTranslation(_))
+      .map(makeTranslation(_) withProject(project))
 
   def findAllByProjectAndCode(project: Project, code: String): List[Translation] =
     find(MongoDBObject(
       "projectId" -> project.id,
-      "code" -> code)).toList map(makeTranslation(_))
+      "code" -> code)).toList map(makeTranslation(_) withProject(project))
 
   def findAllByProjectAndName(project: Project, name: String): List[Translation] =
     find(MongoDBObject(
       "projectId" -> project.id,
-      "name" -> name)).toList map(makeTranslation(_))
+      "name" -> name)).toList map(makeTranslation(_) withProject(project))
 
   def findActivatedByProjectAndCode(project: Project, code: String): List[Translation] =
     find(MongoDBObject(
       "projectId" -> project.id,
       "code" -> code,
-      "status.code" -> Status.Active.id)).toList map(makeTranslation(_))
+      "status.code" -> Status.Active.id)).toList map(makeTranslation(_) withProject(project))
 
   def findAllByProjectAndIds(project: Project, ids: List[ObjectId]): List[Translation] =
     find(MongoDBObject(
       "projectId" -> project.id,
-      "_id" -> MongoDBObject("$in" -> ids))).toList map(makeTranslation(_))
+      "_id" -> MongoDBObject("$in" -> ids))).toList map(makeTranslation(_) withProject(project))
 
   def byId(id: ObjectId): Option[Translation] =
     findOneById(id) map(makeTranslation(_))
@@ -45,7 +45,7 @@ object TranslationDAO
     findOne(MongoDBObject(
       "projectId" -> project.id,
       "name" -> name,
-      "code" -> code)) map(makeTranslation(_))
+      "code" -> code)) map(makeTranslation(_) withProject(project))
 
   def removeAllByProjectAndName(project: Project, name: String) =
     find(MongoDBObject(

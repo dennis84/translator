@@ -36,8 +36,6 @@ class ParserSpec extends Specification {
         ex(id, txt) <- ex findAllIn str
       } yield (id -> txt)) toMap
 
-      println(result)
-
       1 must_== 1
     }
   }

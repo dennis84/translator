@@ -5,7 +5,7 @@ import org.specs2.mutable._
 import translator._
 import translator.models._
 
-class Spec extends Specification with Fixtures {
+class LanguageAPISpec extends Specification with Fixtures {
 
   "API" should {
     "list" in new LanguageContext {

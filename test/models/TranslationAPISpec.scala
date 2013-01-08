@@ -19,15 +19,17 @@ class TranslationAPISpec extends Specification with Fixtures {
     "filter untranslated entries" in new TranslationContext {
       implicit val ctx = context
       val trans = TranslationAPI.entries(Filter("true", List("pt"), ""))
-      trans.length must_== 1L
-      trans(0).name must_== "bye_bye"
+      trans.length must_== 2L
     }
 
     "filter activatable entries" in new TranslationContext {
       implicit val ctx = context
       val trans = TranslationAPI.entries(Filter("", Nil, "true"))
       trans.length must_== 1L
-      trans.foreach(t => println(t.toString))
+    }
+
+    "list fixed" in new TranslationContext {
+      val r = TranslationAPI.list(project1, "hello_world")
     }
   }
 
