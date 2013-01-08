@@ -98,16 +98,16 @@ object TranslationAPI {
       case None => None
     }
 
-  def imports(project: Project, user: User, content: String, t: String, code: String) = ""
-    // Parser.parse(content, t) map { row =>
-    //   val (name, text) = row
-    //   TranslationDAO.findOneByProjectNameAndCode(project, name, code) match {
-    //     case Some(trans) => "" //TranslationImport(trans, Status.Skipped)
-    //     case None => {
-    //      // val trans = create(code, name, text, project, user)
-    //       //TranslationImport(trans.model, Status.Imported)
-    //       ""
-    //     }
-    //   }
-    // }
+  def inject(p: Project, u: User, content: String, t: String, code: String): List[Translation] =
+    Parser.parse(content, t).map { row =>
+      val (name, text) = row
+      TranslationDAO.byNameAndCode(p, name, code) match {
+        case Some(trans) => Some(trans.copy(status = Status.Skipped))
+        case None => for {
+          c <- LanguageDAO.validateCode(p, code)
+          t = Translation(c, name, text, u, p)
+          _ ← TranslationDAO.insert(t)
+        } yield t
+      }
+    }.flatten
 }

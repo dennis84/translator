@@ -17,8 +17,8 @@ object ImportController extends BaseController {
     form.bindFromRequest.fold(
       formWithErrors => JsonBadRequest(formWithErrors.errors),
       formData => {
-        TranslationAPI.imports(ctx.project, ctx.user, formData._1, formData._2, formData._3)
-        JsonOk(List())
+        val (c, t, l) = formData
+        JsonOk(TranslationAPI.inject(ctx.project, ctx.user, c, t, l) map(_.serialize))
       }
     )
   }

@@ -45,6 +45,14 @@ object TranslationDAO
   def byId(id: ObjectId): Option[Translation] =
     findOneById(id) map(makeTranslation(_))
 
+  def byNameAndCode(p: Project, name: String, code: String) =
+    findOne(MongoDBObject(
+      "name" -> name,
+      "code" -> code
+    )) map {
+      makeTranslation(_) withProject(p)
+    }
+
   def activated(p: Project, name: String, code: String): Option[Translation] =
     findOne(MongoDBObject(
       "projectId" -> p.id,
