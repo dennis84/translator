@@ -25,8 +25,8 @@ object TranslationController extends BaseController {
   }
 
   def create(project: String) = SecuredWithProject(project) { implicit ctx =>
-    DataForm.translation.bindFromRequest.fold(
-      formWithErrors => JsonBadRequest(Map("error" -> "fail")),
+    DataForm.entry.bindFromRequest.fold(
+      formWithErrors => JsonBadRequest(formWithErrors.errors),
       formData => {
         val (code, name, text) = formData
         JsonOk(TranslationAPI.create(code, name, text) map(_.serialize))
@@ -36,7 +36,7 @@ object TranslationController extends BaseController {
 
   def update(project: String, id: String) = SecuredWithProject(project, Role.ADMIN) { implicit ctx =>
     DataForm.translation.bindFromRequest.fold(
-      formWithErrors => JsonBadRequest(Map("error" -> "fail")),
+      formWithErrors => JsonBadRequest(formWithErrors.errors),
       formData => {
         val (_, _, text) = formData
         JsonOk(TranslationAPI.update(id, text) map(_.serialize))

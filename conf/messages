@@ -6,5 +6,5 @@ error.authentication=Invalid username or password
 error.username_taken=Username taken
 error.project_name_taken=Project name taken
 error.password_mismatch=Password mismatch
-error.entry_name_taken=Entry with same name exists
+error.translation_name_taken=Entry with same name exists
 error.language_code_taken=Language already exists
