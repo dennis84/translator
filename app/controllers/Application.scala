@@ -97,9 +97,12 @@ trait RequestGetter {
   protected def getOr(name: String, default: String)(implicit req: Request[_]) =
     get(name, req) getOrElse default
 
-  protected def getAll(name: String, req: RequestHeader) =
-    req.queryString get name
+  protected def getBoolean(name: String)(implicit req: Request[_]): Boolean =
+    get(name, req) match {
+      case Some("true") => true
+      case _ => false
+    }
 
-  protected def getAllOr(name: String, default: Seq[String])(implicit req: Request[_]) =
-    getAll(name, req) getOrElse (default)
+  protected def getAll(name: String)(implicit req: Request[_]): List[String] =
+    req.queryString.get(name).map(_.toList) getOrElse List.empty[String]
 }

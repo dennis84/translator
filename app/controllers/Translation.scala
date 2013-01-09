@@ -16,9 +16,9 @@ object TranslationController extends BaseController {
       JsonOk(TranslationAPI.list(ctx.project, name) map(_.serialize))
     } getOrElse {
       val filter = Filter(
-        getOr("untranslated", "false"),
-        getAllOr("untranslated_languages", Seq.empty[String]),
-        getOr("activatable", "false"))
+        getBoolean("untranslated"),
+        getAll("untranslated_languages"),
+        getBoolean("activatable"))
 
       JsonOk(TranslationAPI.entries(filter) map(_.serialize))
     }

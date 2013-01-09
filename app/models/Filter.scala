@@ -4,18 +4,18 @@ import com.mongodb.casbah.Imports._
 import Implicits._
 
 case class Filter(
-  val untranslated: String,
-  val untranslatedLanguages: Seq[String],
-  val activatable: String) {
+  val untranslated: Boolean,
+  val untranslatedLanguages: List[String],
+  val activatable: Boolean) {
 
   def filter(t: List[Translation]) = {
     var translations = t
 
-    if ("true" == untranslated) {
+    if (untranslated) {
       translations = translations.filterUntranslated(untranslatedLanguages)
     }
 
-    if ("true" == activatable) {
+    if (activatable) {
       translations = translations.filterActivatable
     }
 
