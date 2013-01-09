@@ -9,7 +9,7 @@ case class DbTranslation(
   val text: String,
   val projectId: ObjectId,
   val author: String,
-  val status: Status,
+  val status: Int,
   @Key("_id") val id: ObjectId = new ObjectId)
 
 case class Translation(
@@ -40,7 +40,7 @@ case class Translation(
     }.length.toFloat / langs.length * 100)
   )
 
-  def encode = DbTranslation(code, name, text, projectId, author, status, id)
+  def encode = DbTranslation(code, name, text, projectId, author, status.id, id)
 
   def serialize = Map(
     "id" -> id.toString,

@@ -70,5 +70,5 @@ object TranslationDAO
     )).toList foreach(remove(_))
 
   private def makeTranslation(t: DbTranslation) =
-    Translation(t.code, t.name, t.text, t.author, t.status, t.projectId, id = t.id)
+    Translation(t.code, t.name, t.text, t.author, Status(t.status), t.projectId, id = t.id)
 }
