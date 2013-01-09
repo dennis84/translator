@@ -15,10 +15,12 @@ define([
   "views/translations",
   "views/languages",
   "views/users",
-  "views/import"
+  "views/import",
+  "views/sync"
 ], function (User, Project, Languages, Projects, Translations, Users,
   ApplicationView, UserProfileView, UserNewView, StartView, DashboardView,
-  ProjectView, ProjectNewView, TranslationsView, LanguagesView, UsersView, ImportView) {
+  ProjectView, ProjectNewView, TranslationsView, LanguagesView, UsersView,
+  ImportView, SyncView) {
 
   var Router = Backbone.Router.extend({
     routes: {
@@ -29,7 +31,8 @@ define([
       "!/:project/translations": "translations",
       "!/:project/languages":    "languages",
       "!/:project/import":       "importer",
-      "!/:project/users":        "users"
+      "!/:project/users":        "users",
+      "!/:project/sync":         "sync"
     }
   })
 
@@ -106,6 +109,13 @@ define([
     router.on("route:importer", function (projectId) {
       withProject(projectId, function (project) {
         var view = new ImportView
+      })
+    })
+
+    router.on("route:sync", function (projectId) {
+      withProject(projectId, function (project) {
+        var view = new SyncView
+        view.render()
       })
     })
 
