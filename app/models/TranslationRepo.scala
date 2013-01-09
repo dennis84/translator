@@ -1,6 +1,11 @@
-//package translator.models
+package translator.models
 
-//object TranslationRepo {
+import translator.utils.git._
+import translator.ProjectContext
 
-  //def write(t: Translation)(implicit ctx: ProjectContext[_]) = ""
-//}
+object TranslationRepo {
+
+  def write(t: Translation)(implicit ctx: ProjectContext[_]) = WithRepo(ctx) { git =>
+    ""
+  }
+}
