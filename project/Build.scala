@@ -8,7 +8,6 @@ trait Resolvers {
   val typesafe = "typesafe.com" at "http://repo.typesafe.com/typesafe/releases/"
   val codahale = "repo.codahale.com" at "http://repo.codahale.com/"
   val iliaz = "iliaz.com" at "http://scala.iliaz.com/"
-  val jgitMaven = "jgit-maven" at "http://download.eclipse.org/jgit/maven"
 }
 
 trait Dependencies {
@@ -16,7 +15,6 @@ trait Dependencies {
   val hasher = "com.roundeights" % "hasher" % "0.3" from "http://cloud.github.com/downloads/Nycto/Hasher/hasher_2.9.1-0.3.jar"
   val scalastic = "com.traackr" % "scalastic_2.9.2" % "0.0.6-HACKED"
   val scalaTime = "org.scala-tools.time" %% "time" % "0.5"
-  val jgit = "org.eclipse.jgit" % "org.eclipse.jgit" % "2.2.0.201212191850-r"
 }
 
 object ApplicationBuild extends Build with Resolvers with Dependencies {
@@ -25,11 +23,11 @@ object ApplicationBuild extends Build with Resolvers with Dependencies {
     scalaVersion := "2.9.1",
     organization := "com.github.dennis84",
     version := "1.0",
-    resolvers := Seq(iliaz, codahale, sonatype, sonatypeS, typesafe, jgitMaven),
+    resolvers := Seq(iliaz, codahale, sonatype, sonatypeS, typesafe),
     scalacOptions := Seq("-deprecation", "-unchecked")
   )
 
   lazy val translator = PlayProject("translator", settings = buildSettings).settings(
-    libraryDependencies ++= Seq(salat, hasher, scalastic, scalaTime, jgit)
+    libraryDependencies ++= Seq(salat, hasher, scalastic, scalaTime)
   )
 }
