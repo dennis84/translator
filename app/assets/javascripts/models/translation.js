@@ -18,6 +18,16 @@ define([], function () {
       })
     },
 
+    reject: function () {
+      var model = this
+      this.on("sync", function () {
+        console.log("destroy")
+        model.trigger("update", model)
+        model.collection.trigger("update", model)
+      })
+      this.destroy({ wait: true })
+    },
+
     hasChanged: function (diff) {
       return false === _.isEqual({
         text: this.get("text")

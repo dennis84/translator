@@ -14,3 +14,4 @@ $ TranslationAPI.entry: Do not load all translation, only the childs of translat
 ! reject translation does not update the entry
 ! filter untranslated does not work
 ! filter form does not select the right options
+! cannot create a translation because the entry name is taken

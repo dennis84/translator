@@ -25,7 +25,7 @@ define([
 
     reject: function (e) {
       e.preventDefault()
-      this.model.destroy()
+      this.model.reject()
       this.$el.remove()
       window.app.addMessage("success", "Translation Suggestion Removed")
     }
