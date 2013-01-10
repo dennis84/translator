@@ -38,7 +38,7 @@ define([
       }
 
       coll.fetchByName(this.model.get("name"))
-      coll.on("update", refresh, this)
+      coll.on("update destroy", refresh, this)
     }
   })
 
