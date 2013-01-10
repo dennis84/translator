@@ -51,13 +51,6 @@ object DataForm {
     "text" -> text
   ))
 
-  def entry(implicit ctx: ProjectContext[_]) = Form(tuple(
-    "code" -> text,
-    "name" -> nonEmptyText
-      .verifying("error.translation_name_taken", translationNameTaken(_, ctx.project)),
-    "text" -> text
-  ))
-
   private def usernameTaken(username: String) =
     UserDAO.byUsername(username).isEmpty
 
@@ -66,7 +59,4 @@ object DataForm {
 
   private def languageCodeTaken(code: String, p: Project) =
     LanguageDAO.byCode(p, code).isEmpty
-
-  private def translationNameTaken(name: String, p: Project) =
-    TranslationDAO.byName(p, name).isEmpty
 }

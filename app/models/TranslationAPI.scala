@@ -66,7 +66,9 @@ object TranslationAPI {
   )(implicit ctx: ProjectContext[_]): Option[Translation] =
     for {
       c <- LanguageDAO.validateCode(ctx.project, code)
-      t = Translation(c, name, text, ctx.user, ctx.project)
+      d = Translation(c, name, text, ctx.user, ctx.project)
+      s <- this.findStatus(d, ctx.user)
+      t = d.copy(status = s)
       _ ← TranslationDAO.insert(t)
     } yield t
 
@@ -110,4 +112,15 @@ object TranslationAPI {
         } yield t
       }
     }.flatten
+
+  private def findStatus(t: Translation, u: User): Option[Status] =
+    for {
+      p <- t.project
+    } yield TranslationDAO.activated(p, t.name, t.code) match {
+      case Some(a) => Status.Inactive
+      case None => u.roles.contains(Role.ADMIN) match {
+        case true => Status.Active
+        case false => Status.Inactive
+      }
+    }
 }

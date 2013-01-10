@@ -52,20 +52,14 @@ case class Translation(
     "nb_activatable" -> nbActivatable,
     "progress" -> progress)
   
-  override def toString = """%s (%s): %s""" format(name, code, text)
+  override def toString = """%s (%s): %s (%s)""" format(name, code, text, status)
 }
 
 object Translation {
 
   def apply(c: String, n: String, t: String, u: User, p: Project): Translation =
-    Translation(c, n, t, u.username, status(u), p.id, Some(p))
+    Translation(c, n, t, u.username, Status.Inactive, p.id, Some(p))
 
   def empty(c: String, n: String, p: Project) =
     Translation(c, n, "", "", Status.Empty, p.id, Some(p))
-
-  private def status(user: User) =
-    user.roles contains (Role.ADMIN) match {
-      case true => Status.Active
-      case false => Status.Inactive
-    }
 }

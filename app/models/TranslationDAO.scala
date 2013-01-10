@@ -37,7 +37,7 @@ object TranslationDAO
     find(MongoDBObject(
       "projectId" -> project.id,
       "code" -> code,
-      "status.code" -> Status.Active.id
+      "status" -> Status.Active.id
     )).toList map {
       makeTranslation(_) withProject(project)
     }
@@ -67,7 +67,7 @@ object TranslationDAO
       "projectId" -> p.id,
       "name" -> name,
       "code" -> code,
-      "status.id" -> Status.Active.id
+      "status" -> Status.Active.id
     )) map {
       makeTranslation(_) withProject(p)
     }

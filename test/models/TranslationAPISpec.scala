@@ -31,8 +31,13 @@ class TranslationAPISpec extends Specification with Fixtures {
       trans.length must_== 1L
     }
 
-    "list fixed" in new TranslationContext {
-      val r = TranslationAPI.list(project1, "hello_world")
+    "create" in new TranslationContext {
+      implicit val ctx = context
+      val t1 = TranslationAPI.create("de", "test", "Test")
+      println(t1)
+      
+      val t2 = TranslationAPI.create("de", "hello_world", "Foo")
+      println(t2)
     }
   }
 
@@ -56,7 +61,7 @@ class TranslationAPISpec extends Specification with Fixtures {
 
     val context = ProjectContext(
       FakeRequest(),
-      user1,
+      user1.withRoles(project1),
       project1,
       List(project1, project2))
   }
