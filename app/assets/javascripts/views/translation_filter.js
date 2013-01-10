@@ -37,7 +37,8 @@ define([
 
     apply: function (e) {
       e.preventDefault()
-      this.model.set(this.$el.find("form").serializeObject())
+      var data = this.$el.find("form").serializeObject()
+      this.model.set(data)
       this.trigger("close", this)
     },
 
