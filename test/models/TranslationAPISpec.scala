@@ -18,8 +18,11 @@ class TranslationAPISpec extends Specification with Fixtures {
 
     "filter untranslated entries" in new TranslationContext {
       implicit val ctx = context
-      val trans = TranslationAPI.entries(Filter(true, List("pt"), false))
-      trans.length must_== 2L
+      val trans1 = TranslationAPI.entries(Filter(true, List("es"), false))
+      trans1.length must_== 1L
+
+      val trans2 = TranslationAPI.entries(Filter(true, List("pt"), false))
+      trans2.length must_== 2L
     }
 
     "filter activatable entries" in new TranslationContext {

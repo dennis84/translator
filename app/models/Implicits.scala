@@ -24,11 +24,12 @@ class TranslationCollection(list: List[Translation]) {
 
   import Implicits._
 
-  def filterUntranslated(langs: Seq[String]) =
-    fixed filter { trans =>
+  def filterUntranslated(langs: List[String]) =
+    list filter { trans =>
       trans.text == "" &&
      (trans.status == Status.Active ||
-      trans.status == Status.Empty)
+      trans.status == Status.Empty) &&
+      langs.contains(trans.code)
     }
 
   def filterActivatable =
@@ -50,18 +51,17 @@ class TranslationCollection(list: List[Translation]) {
   private def makeItFixed(langs: List[String]): List[Translation] =
     (for {
       h <- list.headOption
-      n = h.name
       p <- h.project
       if (!list.isEmpty)
-    } yield {
-      val codes = list.filterActive.map(_.code)
+    } yield list groupBy(_.name) map { case (name, trans) =>
+      val codes = trans.filterActive.map(_.code)
       val diff = langs.diff(codes)
-      val unsorted = (list ++ diff.map { c =>
-        Translation.empty(c, n, p)
+      val unsorted = (trans ++ diff.map { c =>
+        Translation.empty(c, name, p)
       }) sortBy(_.status.id)
 
       langs map { l =>
         unsorted.filter(_.code == l)
       } flatten
-    }) getOrElse list
+    }) map(_.flatten.toList) getOrElse list
 }
