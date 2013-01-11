@@ -10,7 +10,7 @@ object LanguageAPI {
     LanguageDAO.list(project)
 
   def create(code: String, name: String, project: Project): Option[Language] = for {
-    c <- LanguageDAO.validateCode(project, code)
+    c <- Some(code)
     l = Language(c, name, project.id)
     _ <- LanguageDAO.insert(l)
   } yield l.withProject(project)
