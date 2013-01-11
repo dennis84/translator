@@ -11,6 +11,7 @@ POST    /:project/users                     translator.controllers.UserControlle
 POST    /sign-up                            translator.controllers.ProjectController.signUp
 
 GET     /projects                           translator.controllers.ProjectController.list
+GET     /projects/:id                       translator.controllers.ProjectController.read(id)
 POST    /projects                           translator.controllers.ProjectController.create
 
 GET     /:project/translations/:id          translator.controllers.TranslationController.read(project, id)

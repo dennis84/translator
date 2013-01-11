@@ -2,7 +2,11 @@ define([], function () {
 
   var module = Backbone.Model.extend({
     url: function () {
-      return "/projects"
+      if (true === this.isNew()) {
+        return "/projects"
+      }
+
+      return "/projects/" + this.id
     },
 
     defaults: {

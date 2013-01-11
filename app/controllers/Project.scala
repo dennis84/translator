@@ -11,6 +11,10 @@ object ProjectController extends BaseController {
     JsonOk(ctx.projects map(_.serialize))
   }
 
+  def read(id: String) = SecuredWithProject(id) { implicit ctx =>
+    JsonOk(ProjectAPI.show.serialize)
+  }
+
   def create = Secured { implicit ctx =>
     DataForm.newProject.bindFromRequest.fold(
       formWithErrors => JsonBadRequest(formWithErrors.errors),

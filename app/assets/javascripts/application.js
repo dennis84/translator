@@ -74,10 +74,15 @@ define([
     })
 
     router.on("route:project", function (projectId) {
-      withProject(projectId, function (project) {
+      window.project.set("id", projectId)
+      window.project.on("change", function () {
+        window.project.off("change")
+        window.projects.get(projectId).set(window.project.attributes)
         var view = new ProjectView({ model: window.project })
         view.render()
-      })
+      }, this)
+
+      window.project.fetch()
     })
 
     router.on("route:translations", function (projectId) {

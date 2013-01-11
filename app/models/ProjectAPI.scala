@@ -9,15 +9,17 @@ object ProjectAPI {
 
   import Implicits._
 
+  def show(implicit ctx: ProjectContext[_]): Project = ctx.project
+    .withUser(ctx.user)
+    .withStats(
+      TranslationDAO.list(ctx.project),
+      LanguageDAO.list(ctx.project))
+
   def byToken(token: String): Option[Project] =
     ProjectDAO.byToken(token)
 
   def listMine(user: User): List[Project] =
-    ProjectDAO.listByIds(user.rawRoles.map(_.projectId)) map { p =>
-      p.withStats(
-        TranslationDAO.list(p),
-        LanguageDAO.list(p))
-    }
+    ProjectDAO.listByIds(user.rawRoles.map(_.projectId))
 
   def create(name: String, user: User): Option[Project] = for {
     _ <- Some("")

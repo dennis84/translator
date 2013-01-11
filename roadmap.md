@@ -12,8 +12,6 @@ $ Code mistakes
 - (?) If an entry with existig name will created then the new one will pasted to
       the existing collection as an inactive. In the view the translation will
       dropped under the other entries thats a bug in all cases.
-- (!) Update project if navigating to. The statistic changes will not shown if
-      navigate back to project
 - (%) Update entries with filter if adding or changing a translation
 
 # Milestone: 1.1
