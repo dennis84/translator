@@ -27,7 +27,11 @@ define([
 
     upload: function (e) {
       e.preventDefault()
-      this.model.upload(document.getElementById("file").files, this.$el.find("form").serializeObject())
+      this.model.upload(
+        document.getElementById("file").files,
+        this.$el.find("form").serializeObject())
+
+      window.app.addMessage("success", "Import Success")
     }
   })
 

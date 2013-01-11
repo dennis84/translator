@@ -107,7 +107,7 @@ object TranslationAPI {
         case Some(trans) => Some(trans.copy(status = Status.Skipped))
         case None => for {
           c <- LanguageDAO.validateCode(p, code)
-          t = Translation(c, name, text, u, p)
+          t = Translation(c, name, text, u, p).copy(status = Status.Active)
           _ ← TranslationDAO.insert(t)
         } yield t
       }
