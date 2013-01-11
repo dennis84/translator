@@ -1,3 +1,5 @@
+```
+
 ! Important
 ? Is this needed?
 % Cool to have
@@ -26,3 +28,5 @@ $ Code mistakes
 - (!) Scala 2.10 (Better wait for full Salat support)
 - (%) Sync
 - (%) Versioning
+
+```
