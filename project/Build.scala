@@ -14,7 +14,7 @@ trait Dependencies {
   val salat = "com.novus" %% "salat" % "1.9.1"
   val hasher = "com.roundeights" % "hasher" % "0.3" from "http://cloud.github.com/downloads/Nycto/Hasher/hasher_2.9.1-0.3.jar"
   val scalastic = "com.traackr" % "scalastic_2.9.2" % "0.0.6-HACKED"
-  val scalaTime = "org.scala-tools.time" %% "time" % "0.5"
+  val scalaTime = "com.github.nscala-time" %% "nscala-time" % "0.2.0"
 }
 
 object ApplicationBuild extends Build with Resolvers with Dependencies {
