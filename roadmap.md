@@ -9,6 +9,7 @@ $ Code mistakes
 ----
 
 # Milestone: 1.0
+- (!) Project menu don't show admin links
 - (?) If an entry with existig name will created then the new one will pasted to
       the existing collection as an inactive. In the view the translation will
       dropped under the other entries thats a bug in all cases.
