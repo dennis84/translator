@@ -40,7 +40,6 @@ define([
     var model = window.projects.get(id)
     window.user.on("sync", function () {
       window.project.set(model)
-      window.project.trigger("change", window.project)
       func(window.project)
       window.user.off("sync")
     })
