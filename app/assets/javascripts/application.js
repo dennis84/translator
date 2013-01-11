@@ -40,6 +40,7 @@ define([
     var model = window.projects.get(id)
     window.user.on("sync", function () {
       window.project.set(model)
+      window.project.trigger("change", window.project)
       func(window.project)
       window.user.off("sync")
     })
@@ -74,15 +75,14 @@ define([
     })
 
     router.on("route:project", function (projectId) {
-      window.project.set("id", projectId)
-      window.project.on("change", function () {
-        window.project.off("change")
-        window.projects.get(projectId).set(window.project.attributes)
-        var view = new ProjectView({ model: window.project })
-        view.render()
-      }, this)
+      withProject(projectId, function (project) {
+        window.project.on("change", function () {
+          var view = new ProjectView({ model: window.project })
+          view.render()
+        }, this)
 
-      window.project.fetch()
+        window.project.fetch()
+      })
     })
 
     router.on("route:translations", function (projectId) {
