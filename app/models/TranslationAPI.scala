@@ -50,13 +50,16 @@ object TranslationAPI {
   def list(project: Project, name: String): List[Translation] =
     TranslationDAO.listByName(project, name).fixed
 
-  def search(project: Project, term: String): List[Translation] = {
+  def search(p: Project, term: String): List[Translation] = {
     val ids = Search.indexer.search(query = queryString(term)).hits.hits.toList.map { searchResponse =>
       new ObjectId(searchResponse.id)
     }
 
-    TranslationDAO.listByIds(project, ids)
-      .map(_.withProject(project))
+    TranslationDAO.listByIds(p, ids) map { trans =>
+      trans.withProject(p).withStats(
+        TranslationDAO.list(p),
+        LanguageDAO.list(p))
+    }
   }
 
   def create(

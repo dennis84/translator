@@ -13,10 +13,10 @@ $ Code mistakes
       the existing collection as an inactive. In the view the translation will
       dropped under the other entries thats a bug in all cases.
 - (%) Update entries with filter if adding or changing a translation
+- (%) Import results status
+- (!) Github sync schema
 
 # Milestone: 1.1
-- (!) Search results with stats
-- (%) Import status
 - ($) Prevent for js object zombies. Make a view renderer which removes the
       current views before render the new one.
 - ($) TranslationAPI.entry: Do not load all translation, only the childs of
