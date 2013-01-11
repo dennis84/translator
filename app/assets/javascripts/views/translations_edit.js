@@ -52,6 +52,7 @@ define([
             var index = collection.indexOf(translation) + 1
             var clone = translation.clone()
             clone.set(item)
+            clone.set("status", "empty")
             collection.create(clone, { wait: true, at: index })
             var successMessage = "Translation Suggestion Saved"
           }
