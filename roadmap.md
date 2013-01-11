@@ -9,7 +9,6 @@ $ Code mistakes
 ----
 
 # Milestone: 1.0
-- (!) Create trans for foo project in language fr throws 404 page
 - (?) If an entry with existig name will created then the new one will pasted to
       the existing collection as an inactive. In the view the translation will
       dropped under the other entries thats a bug in all cases.
