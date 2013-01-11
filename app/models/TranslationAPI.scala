@@ -55,11 +55,11 @@ object TranslationAPI {
       new ObjectId(searchResponse.id)
     }
 
-    TranslationDAO.listByIds(p, ids) map { trans =>
-      trans.withProject(p).withStats(
-        TranslationDAO.list(p),
-        LanguageDAO.list(p))
-    }
+    val trans = TranslationDAO.list(p)
+    val langs = LanguageDAO.list(p)
+
+    TranslationDAO.listByIds(p, ids)
+      .map(_.withProject(p).withStats(trans, langs))
   }
 
   def create(
