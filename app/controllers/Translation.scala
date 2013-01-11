@@ -29,8 +29,7 @@ object TranslationController extends BaseController {
       formWithErrors => JsonBadRequest(formWithErrors.errors),
       formData => {
         val (code, name, text) = formData
-        TranslationAPI.create(code, name, text) map(_.serialize)
-        JsonOk(List())
+        JsonOk(TranslationAPI.create(code, name, text) map(_.serialize))
       }
     )
   }

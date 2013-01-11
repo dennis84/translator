@@ -11,13 +11,13 @@ class TranslationAPISpec extends Specification with Fixtures {
 
   "The Translation API" should {
     "filter entries with no filter" in new TranslationContext {
-      implicit val ctx = context
+      implicit val ctx = adminContext
       val trans = TranslationAPI.entries(Filter(false, Nil, false))
       trans.length must_== 2L
     }
 
     "filter untranslated entries" in new TranslationContext {
-      implicit val ctx = context
+      implicit val ctx = adminContext
       val trans1 = TranslationAPI.entries(Filter(true, List("es"), false))
       trans1.length must_== 1L
 
@@ -26,18 +26,27 @@ class TranslationAPISpec extends Specification with Fixtures {
     }
 
     "filter activatable entries" in new TranslationContext {
-      implicit val ctx = context
+      implicit val ctx = adminContext
       val trans = TranslationAPI.entries(Filter(false, Nil, true))
       trans.length must_== 1L
     }
 
-    "create" in new TranslationContext {
-      implicit val ctx = context
+    "create in user1 context" in new TranslationContext {
+      implicit val ctx = adminContext
       val t1 = TranslationAPI.create("de", "test", "Test")
-      println(t1)
+      t1.get.status must_== Status.Active
       
       val t2 = TranslationAPI.create("de", "hello_world", "Foo")
-      println(t2)
+      t2.get.status must_== Status.Inactive
+    }
+
+    "create in user2 context" in new TranslationContext {
+      implicit val ctx = memberContext
+      val t1 = TranslationAPI.create("de", "test", "Test")
+      t1.get.status must_== Status.Inactive
+
+      val t2 = TranslationAPI.create("de", "hello_world", "Foo")
+      t2.get.status must_== Status.Inactive
     }
   }
 
@@ -59,9 +68,15 @@ class TranslationAPISpec extends Specification with Fixtures {
     LanguageDAO.insert(language1, language2, language3, language4, language5,
       language6, language7, language8, language9)
 
-    val context = ProjectContext(
+    val adminContext = ProjectContext(
       FakeRequest(),
       user1.withRoles(project1),
+      project1,
+      List(project1, project2))
+
+    val memberContext = ProjectContext(
+      FakeRequest(),
+      user2.withRoles(project1),
       project1,
       List(project1, project2))
   }
