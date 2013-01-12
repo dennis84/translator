@@ -16,6 +16,7 @@ $ Code mistakes
 - (%) Update entries with filter if adding or changing a translation
 - (%) Import results status
 - (!) Github sync schema
+- (!) Add creadtedAt to translations
 
 # Milestone: 1.1
 - ($) Prevent for js object zombies. Make a view renderer which removes the
@@ -27,5 +28,10 @@ $ Code mistakes
 - (!) Scala 2.10 (Better wait for full Salat support)
 - (%) Sync
 - (%) Versioning
+- (!) Anonymous edit translations
+- (!) Tutorial like Shopify (Show what to do when a new project was creaded)
+- (!) CLI Toolbelt
+- (!) Wordpress Plugin
+
 
 ```
