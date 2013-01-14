@@ -26,11 +26,23 @@ define([
 
     save: function (e) {
       e.preventDefault()
+      var model = this.model
       this.model.set(this.$el.find("form").serializeObject())
-      this.collection.create(this.model, { wait: true })
+
+      var trans = this.collection.find(function (m) {
+        return m.get("name") === model.get("name")
+      })
+
+      if (_.isUndefined(trans)) {
+        this.collection.create(this.model, { wait: true })
+      } else {
+        window.app.addMessage("warning",
+          "Translation was not created another translation with same name " +
+          "already exists")
+      }
 
       this.model.on("sync", function (model) {
-        window.app.addMessage("success", "Translation Created")
+        window.app.addMessage("success", "Translation created")
       })
     },
 
