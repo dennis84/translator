@@ -8,6 +8,10 @@
 
 ```
 
+# Requirements
+elasticsearch
+mongodb
+
 # Install play 2.0.4
 git clone https://github.com/playframework/Play20.git
 cd Play20
