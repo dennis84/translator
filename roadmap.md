@@ -9,7 +9,6 @@ $ Code mistakes
 ----
 
 # Milestone: 1.0
-- (!) Display that translations cannot created without languages
 - (%) Update entries with filter if adding or changing a translation
 - (%) Import results status
 - (!) Github sync schema
@@ -26,7 +25,6 @@ $ Code mistakes
 - (%) Sync
 - (%) Versioning
 - (!) Anonymous edit translations
-- (!) Tutorial like Shopify (Show what to do when a new project was creaded)
 - (!) CLI Toolbelt
 - (!) Wordpress Plugin
 
