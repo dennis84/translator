@@ -212,3 +212,57 @@ select.form-error {
 .form-error-message {
   color: #B94A48;
 }
+
+
+/* =============================================================================
+   Navigations
+   ========================================================================== */
+
+.nav-list-framed {
+  padding: 0;
+  border: 1px solid #ccc;
+  .border-radius(3px);
+  &:hover {
+    border-color: #bbb;
+    border-bottom-color: #aaa;
+    .box-shadow(0 1px 2px rgba(0,0,0,0.1));
+  }
+  li {
+    border-bottom: 1px solid #ccc;
+    a {
+      margin: 0;
+      padding: 10px;
+    }
+  }
+  li:last-child {
+    border-bottom: 0;
+  }
+}
+
+
+/* =============================================================================
+   Modal
+   ========================================================================== */
+
+.modal {
+  background: #f9f9f9;
+  border: 0;
+  .border-radius(3px);
+  h1 {
+    margin-top: 0;
+    font-size: 24px;
+    text-align: center;
+  }
+  form {
+    margin-bottom: 0;
+  }
+  .form-actions {
+    margin-bottom: 0;
+    background-color: #f0f0f0;
+  }
+}
+
+.modal-backdrop {
+  opacity: 1;
+  .ellipse-background(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.75))
+}

@@ -33,6 +33,7 @@ define([
 
       this.model.on("sync", function () {
         window.app.addMessage("success", "Project Created")
+        window.man.project()
       })
     },
 

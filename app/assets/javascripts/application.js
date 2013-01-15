@@ -17,11 +17,11 @@ define([
   "views/users",
   "views/import",
   "views/sync",
-  "views/tutorial"
+  "views/manual"
 ], function (User, Project, Languages, Projects, Translations, Users,
   ApplicationView, UserProfileView, UserNewView, StartView, DashboardView,
   ProjectView, ProjectNewView, TranslationsView, LanguagesView, UsersView,
-  ImportView, SyncView, Tutorial) {
+  ImportView, SyncView, ManualView) {
 
   var Router = Backbone.Router.extend({
     routes: {
@@ -58,7 +58,7 @@ define([
 
     window.user = new User
     window.project = new Project
-    window.tutorial = new Tutorial
+    window.man = new ManualView
 
     router.on("route:dashboard", function () {
       var view = new DashboardView
@@ -130,7 +130,6 @@ define([
         window.projects.on("reset", function () {
           window.app = new ApplicationView
           window.app.render()
-          window.tutorial.show()
           Backbone.history.start()
         })
         window.projects.fetch()
