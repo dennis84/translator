@@ -9,6 +9,8 @@ $ Code mistakes
 ----
 
 # Milestone: 1.0
+- (!) Anonymous edit translations
+- (!) Database connections for prod, dev and test
 - (%) Update entries with filter if adding or changing a translation
 - (%) Import results status
 - (!) Github sync schema
@@ -24,7 +26,6 @@ $ Code mistakes
 - (!) Scala 2.10 (Better wait for full Salat support)
 - (%) Sync
 - (%) Versioning
-- (!) Anonymous edit translations
 - (!) CLI Toolbelt
 - (!) Wordpress Plugin
 
