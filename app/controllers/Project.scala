@@ -11,7 +11,7 @@ object ProjectController extends BaseController {
     JsonOk(ctx.projects map(_.serialize))
   }
 
-  def read(id: String) = SecuredWithProject(id) { implicit ctx =>
+  def read(id: String) = WithProject(id) { implicit ctx =>
     JsonOk(ProjectAPI.show.serialize)
   }
 

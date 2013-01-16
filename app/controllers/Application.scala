@@ -39,51 +39,60 @@ trait Results extends Controller {
 
 trait Actions extends Controller with Results with RequestGetter {
 
-  def Open(f: Request[AnyContent] => Result): Action[AnyContent] =
+  def Open(f: Context[AnyContent] => Result): Action[AnyContent] =
     Open(BodyParsers.parse.anyContent)(f)
 
-  def Open[A](p: BodyParser[A])(f: Request[A] => Result): Action[A] =
-    Action(p) { implicit req =>
-      f(req)
-    }
+  def Open[A](p: BodyParser[A])(f: Context[A] => Result): Action[A] =
+    Action(p)(req => f(makeContext(req)))
 
   def Secured(f: Context[AnyContent] => Result): Action[AnyContent] =
     Secured(BodyParsers.parse.anyContent)(f)
 
   def Secured[A](bp: BodyParser[A])(f: Context[A] => Result): Action[A] =
-    Open(bp) { implicit req =>
-      (for {
-        t <- get("token")
-        p <- ProjectAPI.byToken(t)
-        u <- UserAPI.by(p)
-      } yield {
-        f(Context(req, u, List(p.withUser(u))))
-      }) getOrElse {
-        (for {
-          n <- req.session.get("username")
-          u <- UserAPI.by(n)
-        } yield {
-          f(Context(req, u, ProjectAPI.listMine(u)))
-        }) getOrElse JsonNotFound
+    Open(bp)(implicit ctx => if (ctx.user.isAnon) JsonNotFound else f(ctx))
+
+  def WithProject(id: String)(f: ProjectContext[AnyContent] => Result): Action[AnyContent] =
+    WithProject(id, List("ROLE_ADMIN", "ROLE_AUTHOR"), BodyParsers.parse.anyContent)(f)
+
+  def WithProject(id: String, roles: String*)(f: ProjectContext[AnyContent] => Result): Action[AnyContent] =
+    WithProject(id, roles.toList, BodyParsers.parse.anyContent)(f)
+
+  def WithProject[A](
+    id: String,
+    roles: List[String],
+    bp: BodyParser[A]
+  )(f: ProjectContext[A] => Result): Action[A] = {
+    ProjectAPI.byId(id) map { p =>
+      Open(bp) { implicit ctx =>
+        if(ctx.user.isAnon && p.open == false)
+          JsonNotFound
+        else if(ctx.user.isAnon && p.open)
+          f(ProjectContext(ctx.req, ctx.user, p, List(p)))
+        else if(p.open)
+          f(ProjectContext(ctx.req, ctx.user, p, (ctx.projects :+ p).distinct))
+        else
+          f(ProjectContext(ctx.req, ctx.user, p, ctx.projects))
       }
-    }
+    } getOrElse Action(bp)(req => JsonNotFound)
+  }
 
-  def SecuredWithProject(id: String)(f: ProjectContext[AnyContent] => Result): Action[AnyContent] =
-    SecuredWithProject(id, List("ROLE_ADMIN", "ROLE_AUTHOR"), BodyParsers.parse.anyContent)(f)
-
-  def SecuredWithProject(id: String, roles: String*)(f: ProjectContext[AnyContent] => Result): Action[AnyContent] =
-    SecuredWithProject(id, roles.toList, BodyParsers.parse.anyContent)(f)
-
-  def SecuredWithProject[A](id: String, roles: List[String], p: BodyParser[A])(f: ProjectContext[A] => Result): Action[A] =
-    Secured(p) { implicit ctx =>
+  private def makeContext[A](req: Request[A]): Context[A] = {
+    implicit val r = req
+    (for {
+      t <- get("token")
+      p <- ProjectAPI.byToken(t)
+      u <- UserAPI.by(p)
+    } yield {
+      Context(req, u, List(p.withUser(u)))
+    }) getOrElse {
       (for {
-        p <- ctx.projects.find(_.id == id)
-        u  = ctx.user.withRoles(p)
-        if (!u.roles.filter(roles.contains(_)).isEmpty)
+        n <- req.session.get("username")
+        u <- UserAPI.by(n)
       } yield {
-        f(ProjectContext(ctx.req, u, p, ctx.projects))
-      }) getOrElse JsonNotFound
+        Context(req, u, ProjectAPI.listMine(u))
+      }) getOrElse Context(req, User.Anonymous)
     }
+  }
 }
 
 trait RequestGetter {

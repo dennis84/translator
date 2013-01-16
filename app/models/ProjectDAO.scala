@@ -14,6 +14,9 @@ object ProjectDAO
       "_id" -> MongoDBObject("$in" -> ids)
     )).toList map(makeProject(_))
 
+  def byId(id: ObjectId) =
+    findOneById(id) map(makeProject(_))
+
   def byToken(token: String) =
     findOne(MongoDBObject("token" -> token)) map(makeProject(_))
 
@@ -21,5 +24,5 @@ object ProjectDAO
     findOne(MongoDBObject("name" -> name)) map(makeProject(_))
 
   private def makeProject(p: DbProject) =
-    Project(p.name, p.token, p.adminId, id = p.id)
+    Project(p.name, p.token, p.adminId, open = p.open, id = p.id)
 }

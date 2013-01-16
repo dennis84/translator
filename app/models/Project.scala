@@ -7,6 +7,7 @@ case class DbProject(
   val name: String,
   val adminId: ObjectId,
   val token: String,
+  val open: Boolean = false,
   val repo: Option[String] = None,
   @Key("_id") val id: ObjectId = new ObjectId)
 
@@ -15,6 +16,7 @@ case class Project(
   val token: String,
   val adminId: ObjectId,
   val admin: Option[User] = None,
+  val open: Boolean = false,
   val repo: Option[String] = None,
   val progress: Option[Map[String, Float]] = None,
   val nbWords: Option[Map[String, Any]] = None,
@@ -38,11 +40,12 @@ case class Project(
     }.toMap)
   )
 
-  def encode = DbProject(name, adminId, token, repo, id)
+  def encode = DbProject(name, adminId, token, open, repo, id)
 
   def serialize = Map(
     "id" -> id.toString,
     "name" -> name,
     "progress" -> progress,
-    "nb_words" -> nbWords)
+    "nb_words" -> nbWords,
+    "open" -> open)
 }

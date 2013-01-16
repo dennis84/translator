@@ -6,7 +6,7 @@ import translator.forms._
 
 object ExportController extends BaseController {
 
-  def translations(project: String) = SecuredWithProject(project) { implicit ctx =>
+  def translations(project: String) = WithProject(project) { implicit ctx =>
     JsonOk(TranslationAPI.export(ctx.project, getOr("language", "")))
   }
 }

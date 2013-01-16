@@ -19,6 +19,8 @@ case class User(
   val rawRoles: List[DbRole] = Nil,
   val id: ObjectId = new ObjectId) {
 
+  def isAnon = roles contains "ROLE_ANONYMOUS"
+
   def withRoles(p: Project) = copy(roles =
     rawRoles.filter { role =>
       role.projectId == p.id
@@ -31,6 +33,14 @@ case class User(
     "username" -> username,
     "email" -> email,
     "roles" -> roles)
+}
+
+object User {
+
+  def Anonymous = User(
+    username = "anonymous",
+    password = "",
+    roles = List("ROLE_ANONYMOUS"))
 }
 
 case class DbRole(

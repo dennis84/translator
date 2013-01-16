@@ -6,7 +6,7 @@ import translator.models._
 case class Context[A](
   val req: Request[A],
   val user: User,
-  val projects: List[Project]) extends WrappedRequest(req)
+  val projects: List[Project] = Nil) extends WrappedRequest(req)
 
 case class ProjectContext[A](
   val req: Request[A],

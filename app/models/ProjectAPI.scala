@@ -15,8 +15,9 @@ object ProjectAPI {
       TranslationDAO.list(ctx.project),
       LanguageDAO.list(ctx.project))
 
-  def byToken(token: String): Option[Project] =
-    ProjectDAO.byToken(token)
+  def byId(id: String): Option[Project] = ProjectDAO.byId(id)
+
+  def byToken(token: String): Option[Project] = ProjectDAO.byToken(token)
 
   def listMine(user: User): List[Project] =
     ProjectDAO.listByIds(user.rawRoles.map(_.projectId))

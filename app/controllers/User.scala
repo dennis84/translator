@@ -30,19 +30,20 @@ object UserController extends BaseController {
     )
   }
 
-  def currentByProject(project: String) = SecuredWithProject(project) { implicit ctx =>
+  def currentByProject(project: String) = WithProject(project) { implicit ctx =>
     JsonOk(ctx.user.withRoles(ctx.project).serialize)
   }
 
-  def list(project: String) = SecuredWithProject(project) { implicit ctx =>
+  def list(project: String) = WithProject(project, Role.ADMIN) { implicit ctx =>
     JsonOk(UserAPI.contributors(ctx.project) map(_.serialize))
   }
 
-  def create(project: String) = SecuredWithProject(project) { implicit ctx =>
+  def create(project: String) = WithProject(project, Role.ADMIN) { implicit ctx =>
     DataForm.createUser.bindFromRequest.fold(
       formWithErrors => JsonBadRequest(formWithErrors.errors),
       formData => {
-        JsonOk(UserAPI.create(ctx.project, formData._1, formData._2, formData._3) map(_.serialize))
+        val (username, password, roles) = formData
+        JsonOk(UserAPI.create(ctx.project, username, password, roles) map(_.serialize))
       }
     )
   }
