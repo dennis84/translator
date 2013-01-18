@@ -52,7 +52,6 @@ define([
     },
 
     removeView: function (view) {
-      console.log(view)
       view.undelegateEvents()
       view.$el.removeData().unbind()
       view.remove()

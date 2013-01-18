@@ -34,7 +34,10 @@ define([], function () {
       name: "",
       text: "",
       author: "",
-      status: "empty"
+      status: "empty",
+      nb_activatable: null,
+      nb_must_activated: null,
+      progress: null
     }
   })
 

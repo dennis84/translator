@@ -21,6 +21,7 @@ case class Translation(
   val projectId: ObjectId,
   val project: Option[Project] = None,
   val nbActivatable: Option[Int] = None,
+  val nbMustActivated: Option[Int] = None,
   val progress: Option[Float] = None,
   val id: ObjectId = new ObjectId) {
 
@@ -33,10 +34,16 @@ case class Translation(
       trans.name == name &&
       trans.status == Status.Inactive
     }.length),
+    nbMustActivated = Some(others.filter(_.name == name).groupBy(_.code).filter { g =>
+      g._2.exists(_.status == Status.Inactive) &&
+      (!g._2.exists(_.status == Status.Active) ||
+        g._2.exists(t => t.status == Status.Active && t.text == ""))
+    }.map(_._2).toList.length),
     progress = Some(others.filter { trans =>
       trans.name == name &&
       trans.text != "" &&
-      trans.status == Status.Active
+      (trans.status == Status.Active ||
+       trans.status == Status.Inactive)
     }.length.toFloat / langs.length * 100)
   )
 
@@ -50,6 +57,7 @@ case class Translation(
     "author" -> author,
     "status" -> status.toString,
     "nb_activatable" -> nbActivatable,
+    "nb_must_activated" -> nbMustActivated,
     "progress" -> progress)
   
   override def toString = """%s (%s): %s (%s)""" format(name, code, text, status)
