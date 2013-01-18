@@ -42,18 +42,21 @@ define([
       var view = _.pick(this.panes, n)
       if (false === _.isUndefined(view)) {
         _.drop(this.panes, n)
-        view.undelegateEvents()
-        view.$el.removeData().unbind()
-        view.remove()
-        Backbone.View.prototype.remove.call(view)
+        this.removeView(view)
       }
     },
 
     removePanes: function () {
-      for (i in this.panes) {
-        this.removePane(i)
-      }
+      _.each(this.panes, this.removeView, this)
       this.panes = []
+    },
+
+    removeView: function (view) {
+      console.log(view)
+      view.undelegateEvents()
+      view.$el.removeData().unbind()
+      view.remove()
+      Backbone.View.prototype.remove.call(view)
     },
 
     addMessage: function (type, message) {
