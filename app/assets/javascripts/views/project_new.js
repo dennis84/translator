@@ -19,7 +19,7 @@ define([
     render: function () {
       this.$el.html(_.template(projectNewTemplate, this.model.toJSON()))
       window.app.removePanes()
-      window.app.addPane(this.el, "project-new", "spaceless4")
+      window.app.addPane(this, "spaceless4")
     },
 
     renderErrors: function (model, response) {

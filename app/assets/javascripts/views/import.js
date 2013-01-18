@@ -22,7 +22,7 @@ define([
       this.model.set("languages", this.languages.toJSON())
       this.$el.html(_.template(importTemplate, this.model.toJSON()))
       window.app.removePanes()
-      window.app.addPane(this.el, "import", "spaceless4")
+      window.app.addPane(this, "spaceless4")
     },
 
     upload: function (e) {

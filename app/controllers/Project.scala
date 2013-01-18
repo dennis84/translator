@@ -18,20 +18,26 @@ object ProjectController extends BaseController {
   def create = Secured { implicit ctx =>
     DataForm.newProject.bindFromRequest.fold(
       formWithErrors => JsonBadRequest(formWithErrors.errors),
-      formData => {
+      formData =>
         JsonOk(ProjectAPI.create(formData, ctx.user) map(_.serialize))
-      }
+    )
+  }
+
+  def update(id: String) = Secured { implicit ctx =>
+    DataForm.updateProject.bindFromRequest.fold(
+      formWithErrors => JsonBadRequest(formWithErrors.errors),
+      formData =>
+        JsonOk(ProjectAPI.update(id, formData._1, formData._2) map(_.serialize))
     )
   }
 
   def signUp = Open { implicit req =>
     DataForm.signUp.bindFromRequest.fold(
       formWithErrors => JsonBadRequest(formWithErrors.errors),
-      formData => {
+      formData =>
         JsonOk(ProjectAPI.signup(formData._1, formData._2, formData._3) map {
           case (user, project) => project.serialize
         }) withSession("username" -> formData._2)
-      }
     )
   }
 }

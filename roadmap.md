@@ -14,6 +14,8 @@ $ Code mistakes
 - (%) Import results status
 - (!) Github sync schema
 - (!) Add creadtedAt to translations
+- (!) Add translation suggestions to complete stats
+- (!) Show translations suggestions with existing parent blue and without red
 
 # Milestone: 1.1
 - ($) Prevent for js object zombies. Make a view renderer which removes the

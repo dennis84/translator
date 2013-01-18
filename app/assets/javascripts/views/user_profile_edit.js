@@ -14,7 +14,7 @@ define([
     render: function () {
       this.$el.html(_.template(userProfileEditTemplate, this.model.toJSON()))
       window.app.removePane(1)
-      window.app.addPane(this.el, "user-profile-edit", "spaceless6")
+      window.app.addPane(this, "spaceless6")
     },
 
     save: function (e) {

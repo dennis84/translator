@@ -30,6 +30,14 @@ object ProjectAPI {
     _ <- ProjectDAO.insert(p)
   } yield p
 
+  def update(id: String, repo: String, open: Boolean): Option[Project] = for {
+    p <- ProjectDAO.byId(id)
+    project = p.copy(repo = Some(repo), open = open)
+    wc = ProjectDAO.save(project.encode)
+  } yield project withStats(
+    TranslationDAO.list(project),
+    LanguageDAO.list(project))
+
   def signup(
     projectName: String,
     username: String,

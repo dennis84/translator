@@ -24,5 +24,5 @@ object ProjectDAO
     findOne(MongoDBObject("name" -> name)) map(makeProject(_))
 
   private def makeProject(p: DbProject) =
-    Project(p.name, p.token, p.adminId, open = p.open, id = p.id)
+    Project(p.name, p.token, p.adminId, open = p.open, repo = p.repo, id = p.id)
 }

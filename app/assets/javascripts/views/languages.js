@@ -10,7 +10,7 @@ define([
 
     events: {
       "click .create": "create",
-      "click .remove": "remove"
+      "click .remove": "removeLanguage"
     },
 
     initialize: function () {
@@ -22,7 +22,7 @@ define([
       this.$el.html(_.template(languagesTemplate, {}))
       this.collection.each(this.add, this)
       window.app.removePanes()
-      window.app.addPane(this.el, "languages", "spaceless4")
+      window.app.addPane(this, "spaceless4")
     },
 
     add: function (model) {
@@ -38,10 +38,10 @@ define([
       })
 
       window.app.removePane(1)
-      window.app.addPane(languageEdit.render().el, "language-create", "spaceless6")
+      window.app.addPane(languageEdit.render(), "spaceless6")
     },
 
-    remove: function (e) {
+    removeLanguage: function (e) {
       e.preventDefault()
       var view = this
       this.$(".check input:checked").each(function (i, el) {

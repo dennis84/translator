@@ -47,5 +47,6 @@ case class Project(
     "name" -> name,
     "progress" -> progress,
     "nb_words" -> nbWords,
-    "open" -> open)
+    "open" -> open,
+    "repo" -> repo)
 }

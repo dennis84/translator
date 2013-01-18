@@ -23,7 +23,7 @@ define([
       this.$el.html(_.template(usersTemplate, {}))
       this.collection.each(this.add, this)
       window.app.removePanes()
-      window.app.addPane(this.el, "users", "spaceless4")
+      window.app.addPane(this, "spaceless4")
     },
 
     add: function (model) {
@@ -39,7 +39,7 @@ define([
       })
 
       window.app.removePane(1)
-      window.app.addPane(userEdit.render().el, "user-create", "spaceless6")
+      window.app.addPane(userEdit.render(), "spaceless6")
     },
 
     addUser: function (e) {
@@ -50,7 +50,7 @@ define([
       })
 
       window.app.removePane(1)
-      window.app.addPane(userAdd.render().el, "user-add", "spaceless6")
+      window.app.addPane(userAdd.render(), "spaceless6")
     }
   })
 

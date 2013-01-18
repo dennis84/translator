@@ -11,7 +11,7 @@ define([
 
     events: {
       "click .create": "create",
-      "click .remove": "remove",
+      "click .remove": "removeTranslation",
       "keyup .search": "search",
       "click #clear-filter": "clearFilter"
     },
@@ -45,7 +45,7 @@ define([
       })
 
       window.app.removePanes()
-      window.app.addPane(this.el, "translations", "spaceless4")
+      window.app.addPane(this, "spaceless4")
     },
 
     reset: function (e) {
@@ -68,10 +68,10 @@ define([
       e.preventDefault()
       var view = new TranslationNewView({ model: new Translation, collection: this.collection })
       window.app.removePane(1)
-      window.app.addPane(view.render().el, "translation-new", "spaceless6")
+      window.app.addPane(view.render(), "spaceless6")
     },
 
-    remove: function (e) {
+    removeTranslation: function (e) {
       e.preventDefault()
       var view = this
       this.$(".check input:checked").each(function (i, el) {

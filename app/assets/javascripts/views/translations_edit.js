@@ -21,7 +21,7 @@ define([
     render: function () {
       this.$el.html(_.template(translationsEditTemplate, {}))
       window.app.removePane(1)
-      window.app.addPane(this.el, "translations-edit", "spaceless6")
+      window.app.addPane(this, "spaceless6")
     },
 
     reset: function () {

@@ -7,6 +7,7 @@ define([
   var module = Backbone.View.extend({
     id: "application",
     className: "application",
+    panes: [],
 
     initialize: function () {
       this.navigation = new NavigationView
@@ -18,7 +19,7 @@ define([
       this.navigation.render()
     },
 
-    renderErrors: function (view, response, b, c, d) {
+    renderErrors: function (view, response) {
       view.$(".form-error-message").remove()
       this.$(".form-error").removeClass(".form-error")
 
@@ -29,20 +30,30 @@ define([
       view.model.off("sync")
     },
 
-    addPane: function (html, name, classes) {
-      var pane = $(html).appendTo(this.$el).addClass("pane").addClass(name + "-pane").addClass(classes)
+    addPane: function (view, classes) {
+      var pane = $(view.el).appendTo(this.$el)
+        .addClass("pane")
+        .addClass(classes)
+
+      this.panes.push(view)
     },
 
-    removePane: function (nameOrIndex) {
-      if (true === _.isNumber(nameOrIndex)) {
-        this.$el.find(".pane").eq(nameOrIndex).remove()
-      } else if (true === _.isString(nameOrIndex)) {
-        this.$el.find("." + nameOrIndex + "-pane").remove()
+    removePane: function (n) {
+      var view = _.pick(this.panes, n)
+      if (false === _.isUndefined(view)) {
+        _.drop(this.panes, n)
+        view.undelegateEvents()
+        view.$el.removeData().unbind()
+        view.remove()
+        Backbone.View.prototype.remove.call(view)
       }
     },
 
     removePanes: function () {
-      this.$el.find(".pane").remove()
+      for (i in this.panes) {
+        this.removePane(i)
+      }
+      this.panes = []
     },
 
     addMessage: function (type, message) {

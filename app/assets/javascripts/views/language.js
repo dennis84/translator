@@ -28,7 +28,7 @@ define([
       })
 
       window.app.removePane(1)
-      window.app.addPane(languageEdit.render().el, "language-edit", "spaceless6")
+      window.app.addPane(languageEdit.render(), "spaceless6")
     }
   })
 

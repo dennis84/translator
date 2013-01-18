@@ -39,6 +39,11 @@ object DataForm {
     "name" -> nonEmptyText.verifying("error.project_name_taken", projectNameTaken _)
   ))
 
+  lazy val updateProject = Form(tuple(
+    "repo" -> text,
+    "open" -> boolean
+  ))
+
   def language(implicit ctx: ProjectContext[_]) = Form(tuple(
     "code" -> nonEmptyText
       .verifying("error.language_code_taken", languageCodeTaken(_, ctx.project)),

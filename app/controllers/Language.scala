@@ -13,18 +13,16 @@ object LanguageController extends BaseController {
   def create(project: String) = WithProject(project, Role.ADMIN) { implicit ctx =>
     DataForm.language.bindFromRequest.fold(
       formWithErrors => JsonBadRequest(formWithErrors.errors),
-      formData => {
+      formData =>
         JsonOk(LanguageAPI.create(formData._1, formData._2, ctx.project) map(_.serialize))
-      }
     )
   }
 
   def update(project: String, id: String) = WithProject(project, Role.ADMIN) { implicit ctx =>
     DataForm.language.bindFromRequest.fold(
       formWithErrors => JsonBadRequest(formWithErrors.errors),
-      formData => {
+      formData =>
         JsonOk(LanguageAPI.update(id, formData._1, formData._2) map(_.serialize))
-      }
     )
   }
 

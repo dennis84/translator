@@ -13,6 +13,7 @@ POST    /sign-up                            translator.controllers.ProjectContro
 GET     /projects                           translator.controllers.ProjectController.list
 GET     /projects/:id                       translator.controllers.ProjectController.read(id)
 POST    /projects                           translator.controllers.ProjectController.create
+PUT     /projects/:id                       translator.controllers.ProjectController.update(id)
 
 GET     /:project/translations/:id          translator.controllers.TranslationController.read(project, id)
 GET     /:project/translations              translator.controllers.TranslationController.list(project)

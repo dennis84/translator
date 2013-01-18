@@ -12,8 +12,10 @@ define([], function () {
     defaults: {
       id: null,
       name: "",
-      admin: {},
-      statistics: {}
+      progress: "",
+      nb_words: "",
+      open: "",
+      repo: ""
     }
   })
 

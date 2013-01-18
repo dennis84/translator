@@ -24,9 +24,8 @@ object UserController extends BaseController {
   def updateCurrent = Secured { implicit ctx =>
     DataForm.updateUser.bindFromRequest.fold(
       formWithErrors => JsonBadRequest(Map("error" -> "fail")),
-      formData => {
+      formData =>
         JsonOk(UserAPI.update(ctx.user, formData) map(_.serialize))
-      }
     )
   }
 
