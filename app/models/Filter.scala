@@ -8,17 +8,17 @@ case class Filter(
   val untranslatedLanguages: List[String],
   val activatable: Boolean) {
 
-  def filter(t: List[Translation]) = {
-    var translations = t
+  def filter(e: List[Entry]) = {
+    var entries = e
 
     if (untranslated) {
-      translations = translations.filterUntranslated(untranslatedLanguages)
+      entries = entries.filter(_.nbUntranslated(untranslatedLanguages) > 0)
     }
 
     if (activatable) {
-      translations = translations.filterActivatable
+      entries = entries.filter(_.nbActivatable > 0)
     }
 
-    translations
+    entries
   }
 }

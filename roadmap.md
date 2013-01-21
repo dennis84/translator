@@ -9,7 +9,7 @@ $ Code mistakes
 ----
 
 # Milestone: 1.0
-- (!) Database connections for prod, dev and test
+- (!) Database connections for prod, dev and test.
 - (%) Update entries with filter if adding or changing a translation
 - (%) Import results status
 - (!) Github sync schema
@@ -22,6 +22,7 @@ $ Code mistakes
       current views before render the new one.
 - ($) TranslationAPI.entry: Do not load all translation, only the childs of
       translation by id
+- (!) Paginate translations (infinite scroll)
 
 # Milestone: 1.x
 - (!) Scala 2.10 (Better wait for full Salat support)

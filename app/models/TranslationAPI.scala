@@ -11,55 +11,42 @@ object TranslationAPI {
 
   import Implicits._
 
-  def entry(id: ObjectId, project: Project): Option[Translation] = {
-    val langs = LanguageDAO.list(project)
-    var translations = TranslationDAO.list(project)
-
-    translations.find(_.id == id)
-      .map(_.withProject(project).withStats(translations, langs))
-  }
+  def entry(p: Project, id: String): Option[Entry] = for {
+    t <- TranslationDAO.byId(id)
+    l = LanguageDAO.list(p)
+    c = TranslationDAO.listByName(p, t.name)
+  } yield Entry(t, p, l, c)
 
   def export(project: Project, code: String): List[(String, String)] = (for {
     c <- LanguageDAO.validateCode(project, code)
   } yield {
-    TranslationDAO.listActive(project, c) map { trans =>
-      trans.name -> trans.text
-    }
+    TranslationDAO.listActive(project, c) map(t => t.name -> t.text)
   }) getOrElse Nil
 
-  def entries(filter: Filter)(implicit ctx: ProjectContext[_]): List[Translation] = {
+  def entries(filter: Filter)(implicit ctx: ProjectContext[_]): List[Entry] = {
     LanguageDAO.primary(ctx.project) map { lang =>
       val langs = LanguageDAO.list(ctx.project)
-      val translations = TranslationDAO.list(ctx.project)
+      val trans = TranslationDAO.listActive(ctx.project, lang.code)
+      val entries = trans.map(t =>
+        Entry(t, ctx.project, langs, TranslationDAO.listByName(ctx.project, t.name)))
 
-      var filtered = filter.filter(translations.fixed(langs))
-
-      val entries = filtered.map { trans =>
-        translations.find { t =>
-          t.name == trans.name &&
-          t.code == lang.code
-        }
-      }.flatten.distinct
-
-      entries map { trans =>
-        trans.withProject(ctx.project).withStats(translations, langs)
-      }
+      filter.filter(entries)
     } getOrElse Nil
   }
 
-  def list(project: Project, name: String): List[Translation] =
-    TranslationDAO.listByName(project, name).fixed
+  def list(p: Project, name: String): List[Translation] =
+    TranslationDAO.listByName(p, name) fixed(LanguageDAO.list(p))
 
-  def search(p: Project, term: String): List[Translation] = {
+  def search(p: Project, term: String): List[Entry] = {
     val ids = Search.indexer.search(query = queryString(term)).hits.hits.toList.map { searchResponse =>
       new ObjectId(searchResponse.id)
     }
 
-    val trans = TranslationDAO.list(p)
     val langs = LanguageDAO.list(p)
 
-    TranslationDAO.listByIds(p, ids)
-      .map(_.withProject(p).withStats(trans, langs))
+    TranslationDAO.listByIds(p, ids) map { t =>
+      Entry(t, p, langs, TranslationDAO.listByName(p, t.name))
+    }
   }
 
   def create(

@@ -8,7 +8,7 @@ import translator.models.Implicits._
 object TranslationController extends BaseController {
 
   def read(project: String, id: String) = WithProject(project) { implicit ctx =>
-    JsonOk(TranslationAPI.entry(id, ctx.project) map(_.serialize))
+    JsonOk(TranslationAPI.entry(ctx.project, id) map(_.serialize))
   }
 
   def list(project: String) = WithProject(project) { implicit ctx =>
