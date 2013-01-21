@@ -67,11 +67,11 @@ trait Actions extends Controller with Results with RequestGetter {
         if(ctx.user.isAnon && p.open == false)
           JsonNotFound
         else if(ctx.user.isAnon && p.open)
-          f(ProjectContext(ctx.req, ctx.user, p, List(p)))
+          f(ProjectContext(ctx.req, ctx.user.withRoles(p), p, List(p)))
         else if(p.open)
-          f(ProjectContext(ctx.req, ctx.user, p, (ctx.projects :+ p).distinct))
+          f(ProjectContext(ctx.req, ctx.user.withRoles(p), p, (ctx.projects :+ p).distinct))
         else
-          f(ProjectContext(ctx.req, ctx.user, p, ctx.projects))
+          f(ProjectContext(ctx.req, ctx.user.withRoles(p), p, ctx.projects))
       }
     } getOrElse Action(bp)(req => JsonNotFound)
   }
@@ -83,7 +83,7 @@ trait Actions extends Controller with Results with RequestGetter {
       p <- ProjectAPI.byToken(t)
       u <- UserAPI.by(p)
     } yield {
-      Context(req, u, List(p.withUser(u)))
+      Context(req, u.withRoles(p), List(p.withUser(u)))
     }) getOrElse {
       (for {
         n <- req.session.get("username")
