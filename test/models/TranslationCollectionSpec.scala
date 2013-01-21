@@ -12,16 +12,20 @@ class TranslationCollectionSpec extends Specification with Fixtures {
 
   "translation collection" should {
     "filter activatable" in new TranslationContext {
-      val trans = TranslationDAO.listByName(project1, "bye_bye")
-      val r = trans.filterActivatable
-      println(r)
+      val trans1 = TranslationDAO.listByName(project1, "hello_world")
+      trans1.filterActivatable.length must_== 2L
+
+      val trans2 = TranslationDAO.listByName(project1, "bye_bye")
+      trans2.filterActivatable.length must_== 0L
     }
 
-    /* "filter must activated" in new TranslationContext { */
-    /*   val trans = TranslationDAO.listByName(project1, "bye_bye") */
-    /*   val r = trans.filterMustActivated */
-    /*   println(r) */
-    /* } */
+    "filter must activated" in new TranslationContext {
+      val trans1 = TranslationDAO.listByName(project1, "hello_world")
+      trans1.filterMustActivated.length must_== 1L
+
+      val trans2 = TranslationDAO.listByName(project1, "bye_bye")
+      trans2.filterMustActivated.length must_== 0L
+    }
   }
 
   trait TranslationContext extends Scope {
