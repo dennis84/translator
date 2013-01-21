@@ -27,6 +27,8 @@ define([
     save: function (e) {
       e.preventDefault()
       var model = this.model
+        , view = this
+
       this.model.set(this.$el.find("form").serializeObject())
 
       var trans = this.collection.find(function (m) {
@@ -36,14 +38,20 @@ define([
       if (_.isUndefined(trans)) {
         this.collection.create(this.model, { wait: true })
       } else {
-        window.app.addMessage("warning",
-          "Translation was not created another translation with same name " +
-          "already exists")
+        window.app.addMessage("error", " A Translation with same name already exists.")
       }
 
       this.model.on("sync", function (model) {
         window.app.addMessage("success", "Translation created")
       })
+
+      var next = this.model.clone()
+      next.on("reset", function (m) {
+        view.$("input:text").val("")
+        view.$("input:text:visible:first").focus()
+      })
+
+      this.model = next.reset()
     },
 
     cancel: function (e) {

@@ -69,6 +69,7 @@ define([
       var view = new TranslationNewView({ model: new Translation, collection: this.collection })
       window.app.removePane(1)
       window.app.addPane(view.render(), "spaceless6")
+      view.$("input:text:visible:first").focus()
     },
 
     removeTranslation: function (e) {

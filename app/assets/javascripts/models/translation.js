@@ -28,6 +28,12 @@ define([], function () {
       return "empty" === this.get("status")
     },
 
+    reset: function () {
+      this.set(this.defaults)
+      this.trigger("reset", this)
+      return this
+    },
+
     defaults: {
       id: "",
       code: "",
