@@ -1,4 +1,4 @@
-package translator.utils
+package translator.core
 
 import play.api.libs.json.Json
 

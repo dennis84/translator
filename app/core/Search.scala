@@ -1,4 +1,4 @@
-package translator
+package translator.core
 
 import com.traackr.scalastic.elasticsearch._
 import com.codahale.jerkson.Json

@@ -4,6 +4,12 @@ import com.mongodb.casbah.Imports._
 
 object Implicits {
 
+  implicit val customSalatContext = new com.novus.salat.Context {
+    val name = "Translator Context"
+  }
+
+  implicit val wc = WriteConcern.Safe
+
   implicit def objectId2string(id: ObjectId): String = id.toString
 
   implicit def string2objectId(id: String): ObjectId = new ObjectId(id)

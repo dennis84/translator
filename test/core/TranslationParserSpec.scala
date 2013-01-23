@@ -1,9 +1,9 @@
-package test.translator.utils
+package test.translator.core
 
 import org.specs2.specification.Scope
 import org.specs2.mutable._
 
-class ParserSpec extends Specification {
+class TranslationParserSpec extends Specification {
 
   "Parser" should {
     "po" in {

@@ -1,7 +1,6 @@
-package translator
+package translator.core
 
 import play.api.mvc._
-import translator.core._
 
 case class Context[A](
   val req: Request[A],

@@ -4,7 +4,7 @@ import org.specs2.specification.Scope
 import org.specs2.mutable._
 import play.api.test._
 import play.api.test.Helpers._
-import translator._
+import translator.test.Fixtures
 import translator.core._
 import translator.core.Implicits._
 

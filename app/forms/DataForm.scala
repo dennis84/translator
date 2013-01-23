@@ -5,7 +5,6 @@ import play.api.data.Forms._
 import play.api.data.validation.Constraints._
 import com.roundeights.hasher.Implicits._
 import translator.core._
-import translator.{ Context, ProjectContext }
 
 object DataForm {
 
