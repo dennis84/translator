@@ -7,7 +7,7 @@ import com.mongodb.casbah.MongoCollection
 import com.mongodb.casbah.Imports._
 import com.mongodb.casbah.map_reduce.MapReduceInlineOutput
 
-object TranslationDAO
+class TranslationDAO
   extends SalatDAO[DbTranslation, ObjectId](collection = MongoConnection()("translator")("translations")) {
 
   def all: List[Translation] =

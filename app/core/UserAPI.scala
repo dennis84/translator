@@ -2,16 +2,16 @@ package translator.core
 
 import com.roundeights.hasher.Implicits._
 
-object UserAPI {
+class UserAPI(userDAO: UserDAO) {
 
   import Implicits._
 
   def by(project: Project): Option[User] =
-    UserDAO.byId(project.adminId)
+    userDAO.byId(project.adminId)
 
-  def by(username: String): Option[User] = UserDAO.byUsername(username)
+  def by(username: String): Option[User] = userDAO.byUsername(username)
 
-  def contributors(p: Project): List[User] = UserDAO.list(p)
+  def contributors(p: Project): List[User] = userDAO.list(p)
 
   def create(
     project: Project,
@@ -25,12 +25,15 @@ object UserAPI {
       password,
       rawRoles = roles.map(DbRole(_, project.id))
     )
-    _ <- UserDAO.insert(u)
+    _ <- userDAO.insert(u)
   } yield u.withRoles(project)
 
   def update(before: User, password: String): Option[User] = for {
-    u <- UserDAO.byId(before.id)
+    u <- userDAO.byId(before.id)
     up = u.copy(password = password.sha512)
-    wc = UserDAO.save(up)
+    wc = userDAO.save(up)
   } yield up
+
+  def authenticate(u: String, p: String): Option[User] =
+    userDAO byCredentials(u, p.sha512)
 }

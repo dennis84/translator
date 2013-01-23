@@ -5,45 +5,48 @@ import org.elasticsearch.search._, facet._, terms._, sort._, SortBuilders._, bui
 import com.mongodb.casbah.Imports._
 import translator._
 
-object TranslationAPI {
+class TranslationAPI(
+  transDAO: TranslationDAO,
+  langDAO: LanguageDAO,
+  indexer: TranslationIndexer) {
 
   import Implicits._
 
   def entry(p: Project, id: String): Option[Entry] = for {
-    t <- TranslationDAO.byId(id)
-    l = LanguageDAO.list(p)
-    c = TranslationDAO.listByName(p, t.name)
+    t <- transDAO.byId(id)
+    l = langDAO.list(p)
+    c = transDAO.listByName(p, t.name)
   } yield Entry(t, p, l, c)
 
   def export(project: Project, code: String): List[(String, String)] = (for {
-    c <- LanguageDAO.validateCode(project, code)
+    c <- langDAO.validateCode(project, code)
   } yield {
-    TranslationDAO.listActive(project, c) map(t => t.name -> t.text)
+    transDAO.listActive(project, c) map(t => t.name -> t.text)
   }) getOrElse Nil
 
   def entries(filter: Filter)(implicit ctx: ProjectContext[_]): List[Entry] = {
-    LanguageDAO.primary(ctx.project) map { lang =>
-      val langs = LanguageDAO.list(ctx.project)
-      val trans = TranslationDAO.listActive(ctx.project, lang.code)
+    langDAO.primary(ctx.project) map { lang =>
+      val langs = langDAO.list(ctx.project)
+      val trans = transDAO.listActive(ctx.project, lang.code)
       val entries = trans.map(t =>
-        Entry(t, ctx.project, langs, TranslationDAO.listByName(ctx.project, t.name)))
+        Entry(t, ctx.project, langs, transDAO.listByName(ctx.project, t.name)))
 
       filter.filter(entries)
     } getOrElse Nil
   }
 
   def list(p: Project, name: String): List[Translation] =
-    TranslationDAO.listByName(p, name) fixed(LanguageDAO.list(p))
+    transDAO.listByName(p, name) fixed(langDAO.list(p))
 
   def search(p: Project, term: String): List[Entry] = {
-    val ids = Search.indexer.search(query = queryString(term)).hits.hits.toList.map { searchResponse =>
+    val ids = indexer.indexer.search(query = queryString(term)).hits.hits.toList.map { searchResponse =>
       new ObjectId(searchResponse.id)
     }
 
-    val langs = LanguageDAO.list(p)
+    val langs = langDAO.list(p)
 
-    TranslationDAO.listByIds(p, ids) map { t =>
-      Entry(t, p, langs, TranslationDAO.listByName(p, t.name))
+    transDAO.listByIds(p, ids) map { t =>
+      Entry(t, p, langs, transDAO.listByName(p, t.name))
     }
   }
 
@@ -53,37 +56,37 @@ object TranslationAPI {
     text: String
   )(implicit ctx: ProjectContext[_]): Option[Translation] =
     for {
-      c <- LanguageDAO.validateCode(ctx.project, code)
+      c <- langDAO.validateCode(ctx.project, code)
       d = Translation(c, name, text, ctx.user, ctx.project)
       s <- this.findStatus(d, ctx.user)
       t = d.copy(status = s)
-      _ ← TranslationDAO.insert(t)
+      _ ← transDAO.insert(t)
     } yield t
 
-  def update(id: ObjectId, text: String): Option[Translation] = for {
-    t <- TranslationDAO.byId(id)
+  def update(id: String, text: String): Option[Translation] = for {
+    t <- transDAO.byId(id)
     u = t.copy(text = text)
-    wc = TranslationDAO.save(u)
+    wc = transDAO.save(u)
   } yield u
 
-  def switch(user: User, project: Project, id: ObjectId): Option[Translation] =
+  def switch(user: User, project: Project, id: String): Option[Translation] =
     for {
-      a <- TranslationDAO.byId(id)
-      o = TranslationDAO.activated(project, a.name, a.code)
+      a <- transDAO.byId(id)
+      o = transDAO.activated(project, a.name, a.code)
       u = a.copy(status = Status.Active)
-      _ = TranslationDAO.save(u)
+      _ = transDAO.save(u)
     } yield {
-      if (o.isDefined) TranslationDAO.remove(o.get.encode)
+      if (o.isDefined) transDAO.remove(o.get.encode)
       u
     }
 
-  def delete(project: Project, id: ObjectId): Option[Translation] =
-    TranslationDAO.byId(id) match {
+  def delete(project: Project, id: String): Option[Translation] =
+    transDAO.byId(id) match {
       case Some(trans) if (trans.status == Status.Active) =>
-        TranslationDAO.removeEntry(project, trans.name)
+        transDAO.removeEntry(project, trans.name)
         Some(trans)
       case Some(trans) if (trans.status == Status.Inactive) =>
-        TranslationDAO.remove(trans.encode)
+        transDAO.remove(trans.encode)
         Some(trans)
       case None => None
     }
@@ -91,12 +94,12 @@ object TranslationAPI {
   def inject(p: Project, u: User, content: String, t: String, code: String): List[Translation] =
     Parser.parse(content, t).map { row =>
       val (name, text) = row
-      TranslationDAO.byNameAndCode(p, name, code) match {
+      transDAO.byNameAndCode(p, name, code) match {
         case Some(trans) => Some(trans.copy(status = Status.Skipped))
         case None => for {
-          c <- LanguageDAO.validateCode(p, code)
+          c <- langDAO.validateCode(p, code)
           t = Translation(c, name, text, u, p).copy(status = Status.Active)
-          _ ← TranslationDAO.insert(t)
+          _ ← transDAO.insert(t)
         } yield t
       }
     }.flatten
@@ -104,7 +107,7 @@ object TranslationAPI {
   private def findStatus(t: Translation, u: User): Option[Status] =
     for {
       p <- t.project
-    } yield TranslationDAO.activated(p, t.name, t.code) match {
+    } yield transDAO.activated(p, t.name, t.code) match {
       case Some(a) => Status.Inactive
       case None => u.roles.contains(Role.ADMIN) match {
         case true => Status.Active

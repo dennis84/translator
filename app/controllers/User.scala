@@ -2,12 +2,11 @@ package translator.controllers
 
 import translator._
 import translator.core._
-import translator.forms._
 
 object UserController extends BaseController {
 
   def authenticate = Open { implicit req =>
-    DataForm.login.bindFromRequest.fold(
+    env.forms.login.bindFromRequest.fold(
       formWithErrors => JsonBadRequest(formWithErrors.errors),
       formData => JsonOk(List()) withSession ("username" -> formData._1)
     )
@@ -22,10 +21,10 @@ object UserController extends BaseController {
   }
 
   def updateCurrent = Secured { implicit ctx =>
-    DataForm.updateUser.bindFromRequest.fold(
+    env.forms.updateUser.bindFromRequest.fold(
       formWithErrors => JsonBadRequest(Map("error" -> "fail")),
       formData =>
-        JsonOk(UserAPI.update(ctx.user, formData) map(_.serialize))
+        JsonOk(env.userAPI.update(ctx.user, formData) map(_.serialize))
     )
   }
 
@@ -34,15 +33,15 @@ object UserController extends BaseController {
   }
 
   def list(project: String) = WithProject(project, Role.ADMIN) { implicit ctx =>
-    JsonOk(UserAPI.contributors(ctx.project) map(_.serialize))
+    JsonOk(env.userAPI.contributors(ctx.project) map(_.serialize))
   }
 
   def create(project: String) = WithProject(project, Role.ADMIN) { implicit ctx =>
-    DataForm.createUser.bindFromRequest.fold(
+    env.forms.createUser.bindFromRequest.fold(
       formWithErrors => JsonBadRequest(formWithErrors.errors),
       formData => {
         val (username, password, roles) = formData
-        JsonOk(UserAPI.create(ctx.project, username, password, roles) map(_.serialize))
+        JsonOk(env.userAPI.create(ctx.project, username, password, roles) map(_.serialize))
       }
     )
   }

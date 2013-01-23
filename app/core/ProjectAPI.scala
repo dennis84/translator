@@ -4,38 +4,42 @@ import com.mongodb.casbah.Imports._
 import com.roundeights.hasher.Implicits._
 import translator._
 
-object ProjectAPI {
+class ProjectAPI(
+  projectDAO: ProjectDAO,
+  userDAO: UserDAO,
+  transDAO: TranslationDAO,
+  langDAO: LanguageDAO) {
 
   import Implicits._
 
   def show(implicit ctx: ProjectContext[_]): Project = ctx.project
     .withUser(ctx.user)
     .withStats(
-      TranslationDAO.list(ctx.project),
-      LanguageDAO.list(ctx.project))
+      transDAO.list(ctx.project),
+      langDAO.list(ctx.project))
 
-  def byId(id: String): Option[Project] = ProjectDAO.byId(id)
+  def byId(id: String): Option[Project] = projectDAO.byId(id)
 
-  def byToken(token: String): Option[Project] = ProjectDAO.byToken(token)
+  def byToken(token: String): Option[Project] = projectDAO.byToken(token)
 
   def listMine(user: User): List[Project] =
-    ProjectDAO.listByIds(user.rawRoles.map(_.projectId))
+    projectDAO.listByIds(user.rawRoles.map(_.projectId))
 
   def create(name: String, user: User): Option[Project] = for {
     _ <- Some("")
     p = Project(name, uuid, user.id)
     u = user.copy(rawRoles = user.rawRoles :+ Role.Admin(p.id))
-    wc = UserDAO.save(u)
-    _ <- ProjectDAO.insert(p)
+    wc = userDAO.save(u)
+    _ <- projectDAO.insert(p)
   } yield p
 
   def update(id: String, repo: String, open: Boolean): Option[Project] = for {
-    p <- ProjectDAO.byId(id)
+    p <- projectDAO.byId(id)
     project = p.copy(repo = Some(repo), open = open)
-    wc = ProjectDAO.save(project.encode)
+    wc = projectDAO.save(project.encode)
   } yield project withStats(
-    TranslationDAO.list(project),
-    LanguageDAO.list(project))
+    transDAO.list(project),
+    langDAO.list(project))
 
   def signup(
     projectName: String,
@@ -44,7 +48,7 @@ object ProjectAPI {
   ): Option[(User, Project)] = for {
     _ <- Some("")
     u = User(username, password sha512)
-    _ <- UserDAO.insert(u)
+    _ <- userDAO.insert(u)
     p <- create(projectName, u)
   } yield (u, p)
 

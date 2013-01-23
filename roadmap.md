@@ -9,6 +9,7 @@ $ Code mistakes
 ----
 
 # Milestone: 1.0
+- (!) Fix tests
 - (!) Database connections for prod, dev and test.
 - (%) Update entries with filter if adding or changing a translation
 - (%) Import results status

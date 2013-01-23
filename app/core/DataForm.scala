@@ -1,18 +1,20 @@
-package translator.forms
+package translator.core
 
 import play.api.data._
 import play.api.data.Forms._
 import play.api.data.validation.Constraints._
 import com.roundeights.hasher.Implicits._
-import translator.core._
 
-object DataForm {
+class DataForm(
+  userDAO: UserDAO,
+  projectDAO: ProjectDAO,
+  langDAO: LanguageDAO) {
 
   lazy val login = Form(tuple(
     "username" -> nonEmptyText,
     "password" -> nonEmptyText
   ) verifying ("error.authentication", fields => fields match {
-    case (u, p) => UserDAO.byCredentials(u, p.sha512).isDefined
+    case (u, p) => userDAO.byCredentials(u, p.sha512).isDefined
   }))
 
   lazy val createUser = Form(tuple(
@@ -56,11 +58,11 @@ object DataForm {
   ))
 
   private def usernameTaken(username: String) =
-    UserDAO.byUsername(username).isEmpty
+    userDAO.byUsername(username).isEmpty
 
   private def projectNameTaken(name: String) =
-    ProjectDAO.byName(name).isEmpty
+    projectDAO.byName(name).isEmpty
 
   private def languageCodeTaken(code: String, p: Project) =
-    LanguageDAO.byCode(p, code).isEmpty
+    langDAO.byCode(p, code).isEmpty
 }

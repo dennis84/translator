@@ -6,7 +6,7 @@ import com.novus.salat.dao._
 import com.mongodb.casbah.Imports._
 import com.mongodb.casbah.MongoCollection
 
-object UserDAO
+class UserDAO
   extends SalatDAO[DbUser, ObjectId](collection = MongoConnection()("translator")("users")) {
 
   def list(project: DbProject): List[User] =

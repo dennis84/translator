@@ -2,7 +2,6 @@ package translator.controllers
 
 import play.api.data._
 import play.api.data.Forms._
-import translator._
 import translator.core._
 
 object ImportController extends BaseController {
@@ -18,7 +17,7 @@ object ImportController extends BaseController {
       formWithErrors => JsonBadRequest(formWithErrors.errors),
       formData => {
         val (c, t, l) = formData
-        JsonOk(TranslationAPI.inject(ctx.project, ctx.user, c, t, l) map(_.serialize))
+        JsonOk(env.transAPI.inject(ctx.project, ctx.user, c, t, l) map(_.serialize))
       }
     )
   }

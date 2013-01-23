@@ -10,9 +10,9 @@ import translator.core._
 
 object Application extends BaseController
 
-trait BaseController extends Controller with Actions with Results with RequestGetter
+trait BaseController extends Controller with RequestGetter {
 
-trait Results extends Controller {
+  protected val env = Environment(Play.unsafeApplication)
 
   def JsonOk(map: Map[String, Any]) = Ok(Json generate map) as JSON
 
@@ -35,9 +35,6 @@ trait Results extends Controller {
   def JsonUnauthorized = Unauthorized
 
   def JsonNotFound = NotFound
-}
-
-trait Actions extends Controller with Results with RequestGetter {
 
   def Open(f: Context[AnyContent] => Result): Action[AnyContent] =
     Open(BodyParsers.parse.anyContent)(f)
@@ -62,7 +59,7 @@ trait Actions extends Controller with Results with RequestGetter {
     roles: List[String],
     bp: BodyParser[A]
   )(f: ProjectContext[A] => Result): Action[A] = {
-    ProjectAPI.byId(id) map { p =>
+    env.projectAPI.byId(id) map { p =>
       Open(bp) { implicit ctx =>
         if(ctx.user.isAnon && p.open == false)
           JsonNotFound
@@ -80,16 +77,16 @@ trait Actions extends Controller with Results with RequestGetter {
     implicit val r = req
     (for {
       t <- get("token")
-      p <- ProjectAPI.byToken(t)
-      u <- UserAPI.by(p)
+      p <- env.projectAPI.byToken(t)
+      u <- env.userAPI.by(p)
     } yield {
       Context(req, u.withRoles(p), List(p.withUser(u)))
     }) getOrElse {
       (for {
         n <- req.session.get("username")
-        u <- UserAPI.by(n)
+        u <- env.userAPI.by(n)
       } yield {
-        Context(req, u, ProjectAPI.listMine(u))
+        Context(req, u, env.projectAPI.listMine(u))
       }) getOrElse Context(req, User.Anonymous)
     }
   }
