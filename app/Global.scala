@@ -2,8 +2,8 @@ import play.api._
 import com.mongodb.casbah.commons.conversions.scala.RegisterJodaTimeConversionHelpers
 import com.codahale.jerkson.Json
 import translator._
-import translator.models._
-import translator.models.Implicits._
+import translator.core._
+import translator.core.Implicits._
 
 object Global extends GlobalSettings {
 
@@ -16,7 +16,7 @@ object Global extends GlobalSettings {
 
 object DataFixtures extends Fixtures {
 
-  import translator.models.Implicits._
+  import translator.core.Implicits._
 
   def refresh = {
     UserDAO.collection.drop

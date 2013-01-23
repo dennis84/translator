@@ -2,7 +2,7 @@ package translator.controllers
 
 import com.roundeights.hasher.Implicits._
 import translator._
-import translator.models._
+import translator.core._
 import translator.forms._
 
 object ProjectController extends BaseController {

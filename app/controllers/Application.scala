@@ -6,7 +6,7 @@ import play.api.http._
 import play.api.i18n.Messages
 import com.codahale.jerkson.Json
 import translator._
-import translator.models._
+import translator.core._
 
 object Application extends BaseController
 

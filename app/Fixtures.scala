@@ -3,7 +3,7 @@ package translator
 import com.mongodb.casbah.Imports._
 import com.roundeights.hasher.Implicits._
 import org.scala_tools.time.Imports._
-import translator.models._
+import translator.core._
 
 trait Fixtures {
 

@@ -1,7 +1,7 @@
 package translator.controllers
 
 import translator._
-import translator.models._
+import translator.core._
 
 object SearchController extends BaseController {
 

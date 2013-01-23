@@ -1,20 +1,14 @@
-package test.translator.controllers
+package test.translator.core
 
 import org.specs2.specification.Scope
 import org.specs2.mutable._
 import translator._
 import translator.core._
 
-class ApplicationSpec extends Specification with Fixtures {
+class LanguageAPISpec extends Specification with Fixtures {
 
-  "SecuredWithProject" should {
-    "allow by user roles" in {
-      val u1 = user1 withRoles(project1)
-      println(u1.roles)
-
-      val u2 = user1 withRoles(project2)
-      println(u2.roles)
-
+  "API" should {
+    "list" in new LanguageContext {
       1 must_== 1
     }
   }
