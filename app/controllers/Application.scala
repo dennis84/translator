@@ -12,7 +12,7 @@ object Application extends BaseController
 
 trait BaseController extends Controller with RequestGetter {
 
-  protected val env = Environment(Play.unsafeApplication)
+  protected val env = Env(Play.unsafeApplication)
 
   def JsonOk(map: Map[String, Any]) = Ok(Json generate map) as JSON
 

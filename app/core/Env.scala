@@ -5,7 +5,7 @@ import com.mongodb.casbah.MongoConnection
 import com.mongodb.ServerAddress
 import com.traackr.scalastic.elasticsearch._
 
-class Environment(app: Application, settings: Settings) {
+class Env(app: Application, settings: Settings) {
   import settings._
 
   // Initialize the mongodb database connection.
@@ -28,8 +28,8 @@ class Environment(app: Application, settings: Settings) {
   lazy val forms = new DataForm(userDAO, projectDAO, langDAO)
 }
 
-object Environment {
+object Env {
 
-  def apply(app: Application): Environment = new Environment(app,
+  def apply(app: Application): Env = new Env(app,
     new Settings(app.configuration.underlying))
 }
