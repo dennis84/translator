@@ -7,10 +7,12 @@ class TranslationIndexer(
   settings: Settings,
   transDAO: TranslationDAO) {
 
+  import settings._
+
   lazy val indexer = Indexer.transport(
-    settings = Map("cluster.name" -> "elasticsearch"),
-    host = "localhost",
-    ports = Seq(9300))
+    settings = Map("cluster.name" -> ElasticsearchCluster),
+    host = ElasticsearchHost,
+    ports = Seq(ElasticsearchPort))
 
   def rebuild = {
     indexer.deleteIndex(Seq("translator"))
