@@ -3,11 +3,11 @@ package translator.core
 import com.novus.salat._
 import com.novus.salat.global._
 import com.novus.salat.dao._
-import com.mongodb.casbah.MongoCollection
+import com.mongodb.casbah.MongoDB
 import com.mongodb.casbah.Imports._
 
-class LanguageDAO
-  extends SalatDAO[DbLanguage, ObjectId](collection = MongoConnection()("translator")("languages")) {
+class LanguageDAO(mongodb: MongoDB)
+  extends SalatDAO[DbLanguage, ObjectId](collection = mongodb("languages")) {
 
   def list(project: Project) =
     find(MongoDBObject("projectId" -> project.id)).toList

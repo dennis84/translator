@@ -9,13 +9,13 @@ class Environment(app: Application, settings: Settings) {
   import settings._
 
   // Initialize the mongodb database connection.
-  lazy val connection = MongoConnection(
+  lazy val mongodb = MongoConnection(
     new ServerAddress(MongoHost, MongoPort))(MongoDbName)
 
-  lazy val langDAO = new LanguageDAO
-  lazy val transDAO = new TranslationDAO
-  lazy val userDAO = new UserDAO
-  lazy val projectDAO = new ProjectDAO
+  lazy val langDAO = new LanguageDAO(mongodb)
+  lazy val transDAO = new TranslationDAO(mongodb)
+  lazy val userDAO = new UserDAO(mongodb)
+  lazy val projectDAO = new ProjectDAO(mongodb)
 
   // Initialize the elasticsearch indexer.
   lazy val search = new TranslationIndexer(settings, transDAO)

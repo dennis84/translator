@@ -3,12 +3,12 @@ package translator.core
 import com.novus.salat._
 import com.novus.salat.global._
 import com.novus.salat.dao._
-import com.mongodb.casbah.MongoCollection
+import com.mongodb.casbah.MongoDB
 import com.mongodb.casbah.Imports._
 import com.mongodb.casbah.map_reduce.MapReduceInlineOutput
 
-class TranslationDAO
-  extends SalatDAO[DbTranslation, ObjectId](collection = MongoConnection()("translator")("translations")) {
+class TranslationDAO(mongodb: MongoDB)
+  extends SalatDAO[DbTranslation, ObjectId](collection = mongodb("translations")) {
 
   def all: List[Translation] =
     find(MongoDBObject()).toList map(makeTranslation(_))

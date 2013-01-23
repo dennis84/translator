@@ -4,10 +4,10 @@ import com.novus.salat._
 import com.novus.salat.global._
 import com.novus.salat.dao._
 import com.mongodb.casbah.Imports._
-import com.mongodb.casbah.MongoCollection
+import com.mongodb.casbah.MongoDB
 
-class UserDAO
-  extends SalatDAO[DbUser, ObjectId](collection = MongoConnection()("translator")("users")) {
+class UserDAO(mongodb: MongoDB)
+  extends SalatDAO[DbUser, ObjectId](collection = mongodb("users")) {
 
   def list(project: DbProject): List[User] =
     find(MongoDBObject("roles.projectId" -> project.id)).toList map(makeUser(_))
