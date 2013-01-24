@@ -25,6 +25,6 @@ $ Code mistakes
 - (%) Versioning
 - (!) CLI Toolbelt
 - (!) Wordpress Plugin
-
+- (!) Modile version
 
 ```
