@@ -8,6 +8,8 @@ class Settings(config: Config) {
   val MongoHost = getString("mongo.host")
   val MongoPort = getInt("mongo.port")
   val MongoDbName = getString("mongo.db_name")
+  val MongoUser = getString("mongo.user")
+  val MongoPassword = getString("mongo.password")
 
   val ElasticsearchHost = getString("elasticsearch.host")
   val ElasticsearchPort = getInt("elasticsearch.port")

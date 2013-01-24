@@ -12,6 +12,8 @@ class Env(app: Application, settings: Settings) {
   lazy val mongodb = MongoConnection(
     new ServerAddress(MongoHost, MongoPort))(MongoDbName)
 
+  mongodb.authenticate(MongoUser, MongoPassword)
+
   lazy val langDAO = new LanguageDAO(mongodb)
   lazy val transDAO = new TranslationDAO(mongodb)
   lazy val userDAO = new UserDAO(mongodb)
