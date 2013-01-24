@@ -2,6 +2,7 @@ package translator.core
 
 import com.novus.salat.annotations._
 import com.mongodb.casbah.Imports._
+import translator.core.Implicits._
 
 case class DbProject(
   val name: String,
@@ -24,21 +25,18 @@ case class Project(
 
   def withUser(u: User) = copy(admin = Some(u))
 
-  def withStats(translations: List[Translation], languages: List[Language]) = copy(
-    progress = Some(languages.map { lang =>
-      lang.code -> (translations.filter { trans =>
-        trans.code == lang.code &&
-        trans.text != "" &&
-        trans.status == Status.Active
-      }.length.toFloat) / translations.map(_.name).distinct.length * 100
-    }.toMap),
-    nbWords = Some(languages.map { lang =>
-      lang.code -> (translations.filter { trans =>
-        trans.code == lang.code &&
-        trans.status == Status.Active
-      }.map(_.nbWords).reduceLeftOption(_+_).getOrElse(0))
-    }.toMap)
-  )
+  def withStats(trans: List[Translation], langs: List[Language]) = {
+    val pct = (l: Language) => List(
+      trans.filterTranslated(_.code == l.code).length.toFloat,
+      trans.uniqueNames.length.toFloat) reduceLeft(100 * _ / _)
+
+    val nb = (l: Language) =>
+      trans.filterTranslated(_.code == l.code).map(_.nbWords).reduceLeftOption(_+_).getOrElse(0)
+
+    copy(
+      progress = Some(langs.map(l => l.code -> pct(l)).toMap),
+      nbWords = Some(langs.map(l => l.code -> nb(l)).toMap))
+  }
 
   def encode = DbProject(name, adminId, token, open, repo, id)
 

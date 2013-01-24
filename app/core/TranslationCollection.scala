@@ -4,6 +4,16 @@ import translator.core.Implicits._
 
 class TranslationCollection(list: List[Translation]) {
 
+  def uniqueNames = list map(_.name) distinct
+
+  def filterTranslated(f: Translation => Boolean) =
+    list filter { trans =>
+      trans.text != "" &&
+      (trans.status == Status.Active ||
+       trans.status == Status.Inactive) &&
+      f(trans)
+    }
+
   def filterUntranslated =
     list filter { trans =>
       trans.text == "" &&
