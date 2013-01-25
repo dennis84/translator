@@ -13,6 +13,8 @@ $ Code mistakes
 - (%) Import results status
 - (!) Github sync schema
 - (!) Add creadtedAt to translations
+- (!) Modile version
+. (!) Add user: find like username
 
 # Milestone: 1.1
 - ($) Prevent for js object zombies. Make a view renderer which removes the
@@ -25,6 +27,5 @@ $ Code mistakes
 - (%) Versioning
 - (!) CLI Toolbelt
 - (!) Wordpress Plugin
-- (!) Modile version
 
 ```
