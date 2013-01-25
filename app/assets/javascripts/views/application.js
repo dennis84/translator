@@ -17,6 +17,7 @@ define([
       this.$el.html(_.template(applicationTemplate, {}))
       $("body").html(this.el)
       this.navigation.render()
+      window.vent.trigger("application:ready")
     },
 
     renderErrors: function (view, response) {

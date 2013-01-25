@@ -6,6 +6,7 @@ define([
   "collections/translation",
   "collections/user",
   "views/application",
+  "views/application_mobile",
   "views/user_profile",
   "views/user_new",
   "views/start",
@@ -19,9 +20,9 @@ define([
   "views/sync",
   "views/manual"
 ], function (User, Project, Languages, Projects, Translations, Users,
-  ApplicationView, UserProfileView, UserNewView, StartView, DashboardView,
-  ProjectView, ProjectNewView, TranslationsView, LanguagesView, UsersView,
-  ImportView, SyncView, ManualView) {
+  ApplicationView, ApplicationMobileView, UserProfileView, UserNewView,
+  StartView, DashboardView, ProjectView, ProjectNewView, TranslationsView,
+  LanguagesView, UsersView, ImportView, SyncView, ManualView) {
 
   var Router = Backbone.Router.extend({
     routes: {
@@ -59,6 +60,9 @@ define([
     window.user = new User
     window.project = new Project
     window.man = new ManualView
+
+    window.vent = _.extend({}, Backbone.Events)
+    window.mobileApp = new ApplicationMobileView
 
     router.on("route:dashboard", function () {
       var view = new DashboardView
