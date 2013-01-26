@@ -25,7 +25,7 @@ define([], function () {
         }
       })
 
-      $(document).on("touchmove", function(e) {
+      $(document).on("touchstart", function (e) {
         e.preventDefault()
       })
     },
