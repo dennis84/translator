@@ -24,6 +24,10 @@ define([], function () {
           view.initializeHammer()
         }
       })
+
+      $(document).on("touchmove", function(e) {
+        e.preventDefault()
+      })
     },
 
     initializeHammer: function () {
