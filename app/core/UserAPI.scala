@@ -11,7 +11,7 @@ class UserAPI(userDAO: UserDAO) {
 
   def by(username: String): Option[User] = userDAO.byUsername(username)
 
-  def contributors(p: Project): List[User] = userDAO.list(p)
+  def contributors(p: Project): List[User] = userDAO.list(p) map(_.withRoles(p))
 
   def create(
     project: Project,
@@ -36,4 +36,14 @@ class UserAPI(userDAO: UserDAO) {
 
   def authenticate(u: String, p: String): Option[User] =
     userDAO byCredentials(u, p.sha512)
+
+  def usernamesLike(username: String): List[String] =
+    userDAO.listLike(username) map(_.username)
+
+  def add(p: Project, n: String, r: List[String]): Option[User] = for {
+    u <- userDAO.byUsername(n)
+    roles = u.rawRoles ++ r.map(DbRole(_, p.id))
+    user = u.copy(rawRoles = roles)
+    wc = userDAO.save(user)
+  } yield user.withRoles(p)
 }

@@ -12,10 +12,21 @@ class UserDAO(mongodb: MongoDB)
   def list(project: DbProject): List[User] =
     find(MongoDBObject("roles.projectId" -> project.id)).toList map(makeUser(_))
 
+  def listLike(username: String) =
+    find(MongoDBObject(
+      "username" -> """^%s.*$""".format(username).r
+    )).toList map(makeUser(_))
+
   def byId(id: ObjectId): Option[User] = findOneById(id).map(makeUser(_))
 
   def byUsername(username: String): Option[User] =
     findOne(MongoDBObject("username" -> username)) map(makeUser(_))
+
+  def byUsernameAndProject(username:String, p: Project): Option[User] =
+    findOne(MongoDBObject(
+      "username" -> username,
+      "roles.projectId" -> p.id
+    )) map(makeUser _)
 
   def byCredentials(username: String, password: String): Option[User] =
     findOne(MongoDBObject(

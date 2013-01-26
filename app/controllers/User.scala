@@ -45,4 +45,18 @@ object UserController extends BaseController {
       }
     )
   }
+
+  def add(project: String) = WithProject(project, Role.ADMIN) { implicit ctx =>
+    env.forms.addUser.bindFromRequest.fold(
+      formWithErrors => JsonBadRequest(formWithErrors.errors),
+      formData =>
+        JsonOk(env.userAPI.add(ctx.project, formData._1, formData._2) map(_.serialize))
+    )
+  }
+
+  def usernames = Open { implicit ctx =>
+    get("username") map { u =>
+      JsonOk(env.userAPI.usernamesLike(u))
+    } getOrElse JsonOk(List())
+  }
 }

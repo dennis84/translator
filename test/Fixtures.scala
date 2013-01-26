@@ -13,6 +13,7 @@ trait Fixtures {
 
   private val _user1 = User("d.dietrich84@gmail.com", "demo" sha512)
   private val _user2 = User("frank.drebin.1984@gmail.com", "demo" sha512)
+  val user3 = User("text@example.com", "demo" sha512)
   
   private val _project1 = Project("acme", "12345678", _user1.id, open = false)
   private val _project2 = Project("foo", "123456", _user2.id, open = true)

@@ -1,4 +1,4 @@
-!(function ($) {
+(function ($) {
   "use strict"
 
   function maybeManuiplate(value) {
@@ -56,4 +56,4 @@
       return memo
     }, {})
   }
-})(jQuery)
+})(jQuery);

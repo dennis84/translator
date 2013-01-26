@@ -48,9 +48,7 @@ define([
         model: new User,
         collection: this.collection
       })
-
-      window.app.removePane(1)
-      window.app.addPane(userAdd.render(), "spaceless6")
+      userAdd.render()
     }
   })
 

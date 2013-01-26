@@ -1,9 +1,11 @@
-!(function () {
+(function () {
   function jsonRequest(method, url, data, success) {
     return $.ajax({
       "type": method,
       "url": url,
-      "data": data,
+      "data": JSON.stringify(data),
+      "dataType": "json",
+      "contentType": "application/json",
       "success": success
     })
   }
@@ -19,4 +21,4 @@
   $.deleteJSON = function (url, success) {
     return jsonRequest("DELETE", url, {}, success)
   }
-})(jQuery)
+})(jQuery);

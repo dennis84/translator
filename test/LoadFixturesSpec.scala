@@ -18,7 +18,7 @@ class LoadFixturesSpec extends Specification with Fixtures {
       env.transDAO.collection.drop
       env.langDAO.collection.drop
 
-      env.userDAO.insert(user1, user2)
+      env.userDAO.insert(user1, user2, user3)
       env.projectDAO.insert(project1, project2)
       env.transDAO.insert(
         trans1en, trans1de, trans1fr, trans1es, trans1it, trans1de1, trans1pt1,

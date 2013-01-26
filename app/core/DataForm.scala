@@ -23,6 +23,13 @@ class DataForm(
     "roles"    -> list(text)
   ))
 
+  def addUser(implicit ctx: ProjectContext[_]) = Form(tuple(
+    "username" -> nonEmptyText
+      .verifying("error.username_does_not_exists", !usernameTaken(_))
+      .verifying("error.user_already_added", contributorExists(_, ctx.project)),
+    "roles"    -> list(text)
+  ))
+
   lazy val updateUser = Form(single(
     "password" -> nonEmptyText
   ))
@@ -65,4 +72,7 @@ class DataForm(
 
   private def languageCodeTaken(code: String, p: Project) =
     langDAO.byCode(p, code).isEmpty
+
+  private def contributorExists(username: String, p: Project) =
+    userDAO.byUsernameAndProject(username, p).isEmpty
 }
