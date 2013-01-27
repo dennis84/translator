@@ -48,6 +48,11 @@ class TranslationAPISpec extends Specification with Fixtures {
       val t2 = env.transAPI.create("de", "hello_world", "Foo")
       t2.get.status must_== Status.Inactive
     }
+
+    "search" in new TranslationContext {
+      val r = env.transAPI.search(project1, "hello")
+      println(r)
+    }
   }
 
   trait TranslationContext extends Scope with TestEnv {

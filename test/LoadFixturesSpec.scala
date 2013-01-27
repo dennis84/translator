@@ -27,16 +27,6 @@ class LoadFixturesSpec extends Specification with Fixtures {
         trans4en, trans4de, trans4fr)
       env.langDAO.insert(language1, language2, language3, language4, language5,
         language6, language7, language8, language9)
-
-      env.search.rebuild
-
-      env.transDAO.all map { trans =>
-        env.search.indexer.index("translator", "translation", trans.id, Json generate Map(
-          "name" -> trans.name,
-          "text" -> trans.text))
-      }
-
-      env.search.indexer.refresh()
     }
   }
 

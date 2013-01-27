@@ -55,4 +55,10 @@ object TranslationController extends BaseController {
       case None => JsonBadRequest(Map("error" -> "fails"))
     }
   }
+
+  def search(project: String) = WithProject(project) { implicit ctx =>
+    get("term") map { term =>
+      JsonOk(env.transAPI.search(ctx.project, term) map(_.serialize))
+    } getOrElse JsonOk(List())
+  }
 }

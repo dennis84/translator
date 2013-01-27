@@ -9,7 +9,6 @@
 ```
 
 # Requirements
-elasticsearch
 mongodb
 
 # Install play 2.0.4

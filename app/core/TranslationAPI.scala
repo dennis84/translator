@@ -1,14 +1,11 @@
 package translator.core
 
-import org.elasticsearch.index.query._, FilterBuilders._, QueryBuilders._
-import org.elasticsearch.search._, facet._, terms._, sort._, SortBuilders._, builder._
 import com.mongodb.casbah.Imports._
 import translator._
 
 class TranslationAPI(
   transDAO: TranslationDAO,
-  langDAO: LanguageDAO,
-  indexer: TranslationIndexer) {
+  langDAO: LanguageDAO) {
 
   import Implicits._
 
@@ -38,17 +35,24 @@ class TranslationAPI(
   def list(p: Project, name: String): List[Translation] =
     transDAO.listByName(p, name) fixed(langDAO.list(p))
 
-  def search(p: Project, term: String): List[Entry] = {
-    val ids = indexer.indexer.search(query = queryString(term)).hits.hits.toList.map { searchResponse =>
-      new ObjectId(searchResponse.id)
-    }
+  def search(p: Project, term: String): List[Entry] =
+    langDAO.primary(p) map { l =>
+      val langs = langDAO.list(p)
+      val makeEntry = (t: Translation) =>
+        Entry(t, p, langs, transDAO.listByName(p, t.name))
 
-    val langs = langDAO.list(p)
-
-    transDAO.listByIds(p, ids) map { t =>
-      Entry(t, p, langs, transDAO.listByName(p, t.name))
-    }
-  }
+      transDAO.listLike(p, term).foldLeft(List.empty[Entry]) {
+        (entries, t) =>
+          t match {
+            case t if(t.code == l.code) => entries :+ makeEntry(t)
+            case t if(entries.exists(_.name == t.name)) => entries
+            case t => transDAO.byNameAndCode(p, t.name, l.code) match {
+              case Some(e) => entries :+ makeEntry(e)
+              case None => entries
+            }
+          }
+      }
+    } getOrElse Nil
 
   def create(
     code: String,

@@ -12,6 +12,9 @@ case class Entry(
   val nbUntranslated: Int,
   val progress: Float) {
 
+  val name = trans.name
+  val code = trans.code
+
   def nbUntranslated(langs: List[String]) =
     children.filterUntranslated(langs).length
 
@@ -23,6 +26,8 @@ case class Entry(
     "nb_must_activated" -> nbMustActivated,
     "nb_untranslated" -> nbUntranslated,
     "progress" -> progress)
+
+  override def toString = trans.toString
 }
 
 object Entry {

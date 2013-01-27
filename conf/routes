@@ -23,9 +23,9 @@ POST    /:project/translations              translator.controllers.TranslationCo
 PUT     /:project/translations/:id          translator.controllers.TranslationController.update(project, id)
 DELETE  /:project/translations/:id          translator.controllers.TranslationController.delete(project, id)
 POST    /:project/translations/:id/activate translator.controllers.TranslationController.activate(project, id)
+GET     /:project/search/translations       translator.controllers.TranslationController.search(project)
 
 GET     /:project/export/translations       translator.controllers.ExportController.translations(project)
-GET     /:project/search/translations       translator.controllers.SearchController.translations(project)
 
 GET     /:project/languages                 translator.controllers.LanguageController.list(project)
 POST    /:project/languages                 translator.controllers.LanguageController.create(project)

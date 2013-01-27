@@ -5,7 +5,6 @@ import com.novus.salat.global._
 import com.novus.salat.dao._
 import com.mongodb.casbah.MongoDB
 import com.mongodb.casbah.Imports._
-import com.mongodb.casbah.map_reduce.MapReduceInlineOutput
 
 class TranslationDAO(mongodb: MongoDB)
   extends SalatDAO[DbTranslation, ObjectId](collection = mongodb("translations")) {
@@ -41,6 +40,14 @@ class TranslationDAO(mongodb: MongoDB)
     )).toList map {
       makeTranslation(_) withProject(project)
     }
+
+  def listLike(p: Project, t: String): List[Translation] =
+    find(MongoDBObject(
+      "projectId" -> p.id,
+      "$or" -> DBList(
+        "name" -> """^.*(?i)%s.*""".format(t).r,
+        "text" -> """^.*(?i)%s.*""".format(t).r
+      ))).toList map(makeTranslation _)
 
   def byId(id: ObjectId): Option[Translation] =
     findOneById(id) map(makeTranslation(_))
