@@ -11,7 +11,7 @@ import translator.core.Implicits._
 class LoadFixturesSpec extends Specification with Fixtures {
 
   "Fixtures" should {
-    "refresh database and search indices" in new FixtureContext {
+    "refresh database" in new FixtureContext {
       // This spec is a workaround to execute a load fixture command.
       env.userDAO.collection.drop
       env.projectDAO.collection.drop
