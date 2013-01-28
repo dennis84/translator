@@ -8,7 +8,6 @@ define([
   "views/application",
   "views/application_mobile",
   "views/user_profile",
-  "views/user_new",
   "views/start",
   "views/dashboard",
   "views/project",
@@ -20,7 +19,7 @@ define([
   "views/sync",
   "views/manual"
 ], function (User, Project, Languages, Projects, Translations, Users,
-  ApplicationView, ApplicationMobileView, UserProfileView, UserNewView,
+  ApplicationView, ApplicationMobileView, UserProfileView,
   StartView, DashboardView, ProjectView, ProjectNewView, TranslationsView,
   LanguagesView, UsersView, ImportView, SyncView, ManualView) {
 

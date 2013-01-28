@@ -36,10 +36,8 @@ define([
       var userEdit = new UserEditView({
         model: new User,
         collection: this.collection
-      })
-
-      window.app.removePane(1)
-      window.app.addPane(userEdit.render(), "spaceless6")
+      })      
+      userEdit.render()
     },
 
     addUser: function (e) {

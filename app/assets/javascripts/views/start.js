@@ -1,8 +1,8 @@
 define([
   "helpers/form_error",
   "text!templates/user_login.html",
-  "text!templates/user_new.html"
-], function (Error, loginTemplate, userNewTemplate) {
+  "text!templates/user_signup.html"
+], function (Error, loginTemplate, userSignupTemplate) {
 
   var module = Backbone.View.extend({
     id: "start",
@@ -19,7 +19,7 @@ define([
     },
 
     render: function (type) {
-      var template = ("sign_in" === type) ? loginTemplate : userNewTemplate
+      var template = ("sign_in" === type) ? loginTemplate : userSignupTemplate
 
       this.$el.html(_.template(template, this.model.toJSON()))
       $("body").html(this.el)

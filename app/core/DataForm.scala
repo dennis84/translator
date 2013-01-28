@@ -23,6 +23,10 @@ class DataForm(
     "roles"    -> list(text)
   ))
 
+  lazy val updateRoles = Form(single(
+    "roles" -> list(text)
+  ))
+
   def addUser(implicit ctx: ProjectContext[_]) = Form(tuple(
     "username" -> nonEmptyText
       .verifying("error.username_does_not_exists", !usernameTaken(_))
@@ -30,7 +34,7 @@ class DataForm(
     "roles"    -> list(text)
   ))
 
-  lazy val updateUser = Form(single(
+  lazy val me = Form(single(
     "password" -> nonEmptyText
   ))
 

@@ -52,7 +52,7 @@ define([
 
     cancel: function (e) {
       e.preventDefault()
-      console.log("cancel")
+      this.$el.remove()
     }
   })
 

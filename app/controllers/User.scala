@@ -21,10 +21,10 @@ object UserController extends BaseController {
   }
 
   def updateCurrent = Secured { implicit ctx =>
-    env.forms.updateUser.bindFromRequest.fold(
+    env.forms.me.bindFromRequest.fold(
       formWithErrors => JsonBadRequest(Map("error" -> "fail")),
       formData =>
-        JsonOk(env.userAPI.update(ctx.user, formData) map(_.serialize))
+        JsonOk(env.userAPI.updatePassword(ctx.user, formData) map(_.serialize))
     )
   }
 
@@ -43,6 +43,14 @@ object UserController extends BaseController {
         val (username, password, roles) = formData
         JsonOk(env.userAPI.create(ctx.project, username, password, roles) map(_.serialize))
       }
+    )
+  }
+
+  def update(project: String, id: String) = WithProject(project, Role.ADMIN) { implicit ctx =>
+    env.forms.updateRoles.bindFromRequest.fold(
+      formWithErrors => JsonBadRequest(formWithErrors.errors),
+      formData =>
+        JsonOk(env.userAPI.updateRoles(ctx.project, id, formData) map(_.serialize))
     )
   }
 

@@ -1,14 +1,16 @@
 define([
+  "helpers/form",
   "helpers/form_error",
   "text!templates/user_edit.html"
-], function (Error, userEditTemplate) {
+], function (formHelper, Error, userEditTemplate) {
 
   var module = Backbone.View.extend({
     id: "user-edit",
     className: "user-edit pane-edit",
 
     events: {
-      "click .save": "save"
+      "click .save": "save",
+      "click .cancel": "cancel"
     },
 
     initialize: function () {
@@ -16,8 +18,15 @@ define([
     },
 
     render: function () {
-      this.$el.html(_.template(userEditTemplate, this.model.toJSON()))
-      return this
+      var data = _.extend(this.model.toJSON(), {
+        "formHelper": formHelper,
+        "isNew": this.model.isNew()
+      })
+
+      this.$el.html(_.template(userEditTemplate, data))
+      window.app.removePane(1)
+      window.app.addPane(this, "spaceless6")
+      $("select").chosen()
     },
 
     renderErrors: function (model, response) {
@@ -32,11 +41,22 @@ define([
       }
 
       this.model.set(data)
-      this.collection.create(this.model, { wait: true })
+      if (this.model.isNew()) {
+        this.collection.create(this.model, { wait: true })
+        var successMessage = "User Created"
+      } else {
+        this.model.save()
+        var successMessage = "User Saved"
+      }
 
       this.model.on("sync", function () {
-        window.app.addMessage("success", "User Created")
+        window.app.addMessage("success", successMessage)
       })
+    },
+
+    cancel: function (e) {
+      e.preventDefault()
+      this.$el.remove()
     }
   })
 

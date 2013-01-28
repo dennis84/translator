@@ -28,11 +28,20 @@ class UserAPI(userDAO: UserDAO) {
     _ <- userDAO.insert(u)
   } yield u.withRoles(project)
 
-  def update(before: User, password: String): Option[User] = for {
+  def updatePassword(before: User, password: String): Option[User] = for {
     u <- userDAO.byId(before.id)
     up = u.copy(password = password.sha512)
     wc = userDAO.save(up)
   } yield up
+
+  def updateRoles(p: Project, id: String, r: List[String]) = for {
+    u <- userDAO.byId(id)
+    up = u.copy(
+      rawRoles = u.rawRoles.filterNot {
+        _.projectId == p.id
+      } ++ r.map(DbRole(_, p.id)))
+    wc = userDAO.save(up)
+  } yield up.withRoles(p)
 
   def authenticate(u: String, p: String): Option[User] =
     userDAO byCredentials(u, p.sha512)

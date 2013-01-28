@@ -3,15 +3,16 @@
 
   <div class="padding10">
     <label for="username">Username</label>
-    <input type="text" name="username">
+    <input type="text" name="username" value="{{ username }}">
 
+    {% if (true === isNew) { %}
     <label for="password">Password</label>
     <input type="password" name="password">
+    {% } %}
 
     <label for="roles">Role</label>
     <select name="roles" multiple="multiple">
-      <option value="ROLE_ADMIN">Admin</option>
-      <option value="ROLE_AUTHOR">Author</option>
+      {{ formHelper.options({"ROLE_ADMIN": "Admin", "ROLE_AUTHOR": "Author"}, roles) }}
     </select>
   </div>
 
