@@ -12,16 +12,16 @@ class ProjectDAO(mongodb: MongoDB)
   def listByIds(ids: List[ObjectId]): List[Project] =
     find(MongoDBObject(
       "_id" -> MongoDBObject("$in" -> ids)
-    )).toList map(makeProject(_))
+    )).toList map(makeProject _)
 
   def byId(id: ObjectId) =
-    findOneById(id) map(makeProject(_))
+    findOneById(id) map(makeProject _)
 
   def byToken(token: String) =
-    findOne(MongoDBObject("token" -> token)) map(makeProject(_))
+    findOne(MongoDBObject("token" -> token)) map(makeProject _)
 
   def byName(name: String) =
-    findOne(MongoDBObject("name" -> name)) map(makeProject(_))
+    findOne(MongoDBObject("name" -> name)) map(makeProject _)
 
   private def makeProject(p: DbProject) =
     Project(p.name, p.token, p.adminId, open = p.open, repo = p.repo, id = p.id)

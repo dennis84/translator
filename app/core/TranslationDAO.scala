@@ -9,9 +9,6 @@ import com.mongodb.casbah.Imports._
 class TranslationDAO(mongodb: MongoDB)
   extends SalatDAO[DbTranslation, ObjectId](collection = mongodb("translations")) {
 
-  def all: List[Translation] =
-    find(MongoDBObject()).toList map(makeTranslation(_))
-
   def list(project: Project): List[Translation] =
     find(MongoDBObject("projectId" -> project.id)).toList
       .map(makeTranslation(_) withProject(project))

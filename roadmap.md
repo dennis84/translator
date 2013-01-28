@@ -10,7 +10,6 @@ $ Code mistakes
 
 # Milestone: 1.0
 - (%) Update entries with filter if adding or changing a translation
-- (%) Import results status
 - (!) Github sync schema
 - (!) Add creadtedAt to translations
 - (!) Modile version

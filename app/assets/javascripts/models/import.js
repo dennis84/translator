@@ -1,6 +1,12 @@
-define([], function () {
+define([
+  "collections/translation"
+], function (Translations) {
 
   var module = Backbone.Model.extend({
+    initialize: function () {
+      this.translations = new Translations
+    },
+
     upload: function (fileList, fields) {
       if (window.project.isNew()) {
         throw new Error("There must be a current project")
@@ -12,6 +18,7 @@ define([], function () {
 
       var reader = new FileReader
         , file = fileList[0]
+        , translations = this.translations
 
       reader.onloadend = function (a, b, c) {
         _.extend(fields, {
@@ -20,7 +27,9 @@ define([], function () {
         })
 
         $.postJSON("/" + window.project.id + "/import", fields, function (data) {
-          console.log(data)
+          _.each(data, function (trans) {
+            translations.add(trans)
+          })
         })
       }
 

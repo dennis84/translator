@@ -1,24 +1,47 @@
-<center class="padding10">
-  <h1>Import</h1>
+<div class="scrollable">
+  <div class="toolbar">
+    <h1><i class="icon-hand-left"></i> Import</h1>
+  </div>
+  
+  <div class="sub-toolbar import-toolbar">
+    <form class="form-inline">
+      <div class="pull-left">
+        <label for="language">Language</label>
+        <select name="language">
+          {% _.each(languages, function (language) { %}
+          <option value="{{ language.code }}">{{ language.code }}</option>
+          {% }) %}
+        </select>
 
-  <p class="muted">
-    Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy 
-    eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam 
-    voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet 
-    clita kasd gubergren.
-  </p>
-  <br>
+        <input id="file" type="file">
+      </div>
 
-  <form>
-    <label for="language">Language</label>
-    <select name="language">
-      {% _.each(languages, function (language) { %}
-      <option value="{{ language.code }}">{{ language.code }}</option>
-      {% }) %}
-    </select>
-    <input id="file" type="file">
-    <br>
+      <div class="pull-right">
+        <span class="btn btn-primary upload"><i class="icon-save"></i> Upload</span>
+      </div>
+    </form>
+  </div>
 
-    <span class="btn btn-primary upload"><i class="icon-save"></i> Upload</span>
-  </form>
-</center>
+  <table class="table table-toolbar">
+    <tbody>
+      <tr>
+        <td>Nb Processed</td>
+        <td id="nb-processed">0</td>
+      </tr>
+
+      <tr>
+        <td>Nb Inserted</td>
+        <td id="nb-inserted">0</td>
+      </tr>
+
+      <tr>
+        <td>Nb Skipped</td>
+        <td id="nb-skipped">0</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <table class="table pane-table">
+    <tbody id="import-result-list"></tbody>
+  </table>
+</div>

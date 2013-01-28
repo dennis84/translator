@@ -14,7 +14,7 @@ class LanguageDAO(mongodb: MongoDB)
       .map(makeLanguage(_).withProject(project))
 
   def byId(id: ObjectId) =
-    findOneById(id) map(makeLanguage(_))
+    findOneById(id) map(makeLanguage _)
 
   def byCode(project: Project, code: String) =
     findOne(MongoDBObject(
