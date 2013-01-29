@@ -9,6 +9,11 @@ import com.mongodb.casbah.Imports._
 class TranslationDAO(mongodb: MongoDB)
   extends SalatDAO[DbTranslation, ObjectId](collection = mongodb("translations")) {
 
+  def all(p: Project): List[Translation] =
+    find(MongoDBObject(
+      "projectId" -> p.id
+    )).toList map(makeTranslation _)
+
   def list(project: Project): List[Translation] =
     find(MongoDBObject("projectId" -> project.id)).toList
       .map(makeTranslation(_) withProject(project))
@@ -57,7 +62,7 @@ class TranslationDAO(mongodb: MongoDB)
       makeTranslation(_) withProject(p)
     }
 
-  def byNameAndCode(p: Project, name: String, code: String) =
+  def byNameAndCode(p: Project, name: String, code: String): Option[Translation] =
     findOne(MongoDBObject(
       "name" -> name,
       "code" -> code,
@@ -82,6 +87,6 @@ class TranslationDAO(mongodb: MongoDB)
       "name" -> name
     )).toList foreach(remove(_))
 
-  private def makeTranslation(t: DbTranslation) =
+  private def makeTranslation(t: DbTranslation): Translation =
     Translation(t.code, t.name, t.text, t.author, Status(t.status), t.projectId, id = t.id)
 }

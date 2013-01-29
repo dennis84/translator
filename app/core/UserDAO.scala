@@ -12,7 +12,7 @@ class UserDAO(mongodb: MongoDB)
   def list(project: DbProject): List[User] =
     find(MongoDBObject("roles.projectId" -> project.id)).toList map(makeUser(_))
 
-  def listLike(username: String) =
+  def listLike(username: String): List[User] =
     find(MongoDBObject(
       "username" -> """^%s.*$""".format(username).r
     )).toList map(makeUser(_))

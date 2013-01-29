@@ -14,15 +14,15 @@ class ProjectDAO(mongodb: MongoDB)
       "_id" -> MongoDBObject("$in" -> ids)
     )).toList map(makeProject _)
 
-  def byId(id: ObjectId) =
+  def byId(id: ObjectId): Option[Project] =
     findOneById(id) map(makeProject _)
 
-  def byToken(token: String) =
+  def byToken(token: String): Option[Project] =
     findOne(MongoDBObject("token" -> token)) map(makeProject _)
 
-  def byName(name: String) =
+  def byName(name: String): Option[Project] =
     findOne(MongoDBObject("name" -> name)) map(makeProject _)
 
-  private def makeProject(p: DbProject) =
+  private def makeProject(p: DbProject): Project =
     Project(p.name, p.token, p.adminId, open = p.open, repo = p.repo, id = p.id)
 }

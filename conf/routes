@@ -35,4 +35,8 @@ DELETE  /:project/languages/:id             translator.controllers.LanguageContr
 
 POST    /:project/import                    translator.controllers.ImportController.translations(project)
 
+GET     /embed/:project                     translator.controllers.EmbedController.index(project)
+GET     /embed/:project/:lang               translator.controllers.EmbedController.translations(project, lang)
+POST    /embed/:project/:lang               translator.controllers.EmbedController.submit(project, lang)
+
 GET     /assets/*file                       controllers.Assets.at(path="/public", file)

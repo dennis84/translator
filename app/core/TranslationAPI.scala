@@ -35,6 +35,21 @@ class TranslationAPI(
   def list(p: Project, name: String): List[Translation] =
     transDAO.listByName(p, name) fixed(langDAO.list(p))
 
+  def listByLang(p: Project, lang: String): List[Translation] = {
+    val all = transDAO.all(p)
+    val names = all.map(_.name).distinct
+
+    names.map { name ⇒
+      all.find(trans ⇒
+        trans.code == lang &&
+        trans.name == name &&
+        trans.status == Status.Active
+      ) getOrElse {
+        Translation.empty(lang, name, p)
+      }
+    }
+  }
+
   def search(p: Project, term: String): List[Entry] =
     langDAO.primary(p) map { l ⇒
       val langs = langDAO.list(p)
@@ -61,17 +76,20 @@ class TranslationAPI(
   )(implicit ctx: ProjectContext[_]): Option[Translation] =
     for {
       c ← langDAO.validateCode(ctx.project, code)
+      e = transDAO.byNameAndCode(ctx.project, name, code)
+      if (!e.isDefined || (e.isDefined && e.get.text != text))
       d = Translation(c, name, text, ctx.user, ctx.project)
       s ← this.findStatus(d, ctx.user)
       t = d.copy(status = s)
       _ ← transDAO.insert(t)
     } yield t
 
-  def update(id: String, text: String): Option[Translation] = for {
-    t ← transDAO.byId(id)
-    u = t.copy(text = text)
-    wc = transDAO.save(u)
-  } yield u
+  def update(id: String, text: String): Option[Translation] =
+    for {
+      t ← transDAO.byId(id)
+      u = t.copy(text = text)
+      wc = transDAO.save(u)
+    } yield u
 
   def switch(user: User, project: Project, id: String): Option[Translation] =
     for {

@@ -21,7 +21,7 @@ class LanguageAPI(langDAO: LanguageDAO) {
     wc = langDAO.save(u)
   } yield u
 
-  def delete(p: Project, id: String) = for {
+  def delete(p: Project, id: String): Option[Language] = for {
     l ← langDAO.byId(id)
     wc = langDAO.remove(l.encode)
   } yield l

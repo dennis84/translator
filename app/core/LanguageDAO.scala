@@ -9,20 +9,20 @@ import com.mongodb.casbah.Imports._
 class LanguageDAO(mongodb: MongoDB)
   extends SalatDAO[DbLanguage, ObjectId](collection = mongodb("languages")) {
 
-  def list(project: Project) =
+  def list(project: Project): List[Language] =
     find(MongoDBObject("projectId" -> project.id)).toList
       .map(makeLanguage(_).withProject(project))
 
-  def byId(id: ObjectId) =
+  def byId(id: ObjectId): Option[Language] =
     findOneById(id) map(makeLanguage _)
 
-  def byCode(project: Project, code: String) =
+  def byCode(project: Project, code: String): Option[Language] =
     findOne(MongoDBObject(
       "code" -> code,
       "projectId" -> project.id
     )) map(makeLanguage(_).withProject(project))
 
-  def primary(project: Project) =
+  def primary(project: Project): Option[Language] =
     find(MongoDBObject("projectId" -> project.id)).limit(1).toList
       .map(makeLanguage(_).withProject(project))
       .headOption
