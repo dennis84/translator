@@ -22,7 +22,7 @@ case class User(
   def isAnon = roles contains "ROLE_ANONYMOUS"
 
   def withRoles(p: Project) = copy(roles =
-    rawRoles.filter { role =>
+    rawRoles.filter { role ⇒
       role.projectId == p.id
     }.map(_.role))
 

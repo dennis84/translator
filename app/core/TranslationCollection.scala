@@ -6,8 +6,8 @@ class TranslationCollection(list: List[Translation]) {
 
   def uniqueNames = list map(_.name) distinct
 
-  def filterTranslated(f: Translation => Boolean) =
-    list filter { trans =>
+  def filterTranslated(f: Translation ⇒ Boolean) =
+    list filter { trans ⇒
       trans.text != "" &&
       (trans.status == Status.Active ||
        trans.status == Status.Inactive) &&
@@ -15,14 +15,14 @@ class TranslationCollection(list: List[Translation]) {
     }
 
   def filterUntranslated =
-    list filter { trans =>
+    list filter { trans ⇒
       trans.text == "" &&
      (trans.status == Status.Active ||
       trans.status == Status.Empty)
     }
 
   def filterUntranslated(langs: List[String]) =
-    list filter { trans =>
+    list filter { trans ⇒
       trans.text == "" &&
      (trans.status == Status.Active ||
       trans.status == Status.Empty) &&
@@ -30,10 +30,10 @@ class TranslationCollection(list: List[Translation]) {
     }
 
   def filterMustActivated =
-    list.groupBy(_.code).filter { case (code, trans) =>
+    list.groupBy(_.code).filter { case (code, trans) ⇒
       trans.exists(_.status == Status.Inactive) &&
       (!trans.exists(_.status == Status.Active) ||
-        trans.exists(t => t.status == Status.Active && t.text == ""))
+        trans.exists(t ⇒ t.status == Status.Active && t.text == ""))
     }.map(_._2).flatten.toList
 
   def filterActivatable =
@@ -43,7 +43,7 @@ class TranslationCollection(list: List[Translation]) {
     list filter(_.status == Status.Active)
 
   def filterCompleted =
-    list.filter { trans =>
+    list.filter { trans ⇒
       trans.text != "" &&
       (trans.status == Status.Active ||
        trans.status == Status.Inactive)
@@ -54,17 +54,17 @@ class TranslationCollection(list: List[Translation]) {
 
   private def makeItFixed(langs: List[String]): List[Translation] =
     (for {
-      h <- list.headOption
-      p <- h.project
+      h ← list.headOption
+      p ← h.project
       if (!list.isEmpty)
     } yield {
       val codes = list.filterActive.map(_.code)
       val diff = langs.diff(codes)
-      val unsorted = (list ++ diff.map { c =>
+      val unsorted = (list ++ diff.map { c ⇒
         Translation.empty(c, h.name, p)
       }) sortBy(_.status.id)
 
-      langs map { l =>
+      langs map { l ⇒
         unsorted.filter(_.code == l)
       } flatten
     }) getOrElse list

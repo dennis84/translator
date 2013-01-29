@@ -19,23 +19,23 @@ class UserAPI(userDAO: UserDAO) {
     password: String,
     roles: List[String]
   ): Option[User] = for {
-    _ <- Some("")
+    _ ← Some("")
     u = User(
       username,
       password,
       rawRoles = roles.map(DbRole(_, project.id))
     )
-    _ <- userDAO.insert(u)
+    _ ← userDAO.insert(u)
   } yield u.withRoles(project)
 
   def updatePassword(before: User, password: String): Option[User] = for {
-    u <- userDAO.byId(before.id)
+    u ← userDAO.byId(before.id)
     up = u.copy(password = password.sha512)
     wc = userDAO.save(up)
   } yield up
 
   def updateRoles(p: Project, id: String, r: List[String]) = for {
-    u <- userDAO.byId(id)
+    u ← userDAO.byId(id)
     up = u.copy(
       rawRoles = u.rawRoles.filterNot {
         _.projectId == p.id
@@ -50,7 +50,7 @@ class UserAPI(userDAO: UserDAO) {
     userDAO.listLike(username) map(_.username)
 
   def add(p: Project, n: String, r: List[String]): Option[User] = for {
-    u <- userDAO.byUsername(n)
+    u ← userDAO.byUsername(n)
     roles = u.rawRoles ++ r.map(DbRole(_, p.id))
     user = u.copy(rawRoles = roles)
     wc = userDAO.save(user)

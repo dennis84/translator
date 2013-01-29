@@ -14,7 +14,7 @@ case class Status(
 object Status {
 
   def apply(id: Int): Status = (for {
-    s <- all.find(_.id == id)
+    s ← all.find(_.id == id)
   } yield s) getOrElse new Status(id)
 
   def Active   = new Status(10, Some("active"))

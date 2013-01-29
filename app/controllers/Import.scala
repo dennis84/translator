@@ -12,10 +12,10 @@ object ImportController extends BaseController {
     "language" -> nonEmptyText
   ))
 
-  def translations(project: String) = WithProject(project, Role.ADMIN) { implicit ctx =>
+  def translations(project: String) = WithProject(project, Role.ADMIN) { implicit ctx ⇒
     form.bindFromRequest.fold(
-      formWithErrors => JsonBadRequest(formWithErrors.errors),
-      formData => {
+      formWithErrors ⇒ JsonBadRequest(formWithErrors.errors),
+      formData ⇒ {
         val (c, t, l) = formData
         JsonOk(env.transAPI.inject(ctx.project, ctx.user, c, t, l) map(_.serialize))
       }

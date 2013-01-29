@@ -33,7 +33,7 @@ class TranslationParserSpec extends Specification {
                    |msgstr "(.+)"""".stripMargin.r
 
       val result = (for {
-        ex(id, txt) <- ex findAllIn str
+        ex(id, txt) ← ex findAllIn str
       } yield (id -> txt)) toMap
 
       1 must_== 1

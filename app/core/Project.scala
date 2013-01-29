@@ -26,16 +26,16 @@ case class Project(
   def withUser(u: User) = copy(admin = Some(u))
 
   def withStats(trans: List[Translation], langs: List[Language]) = {
-    val pct = (l: Language) => List(
+    val pct = (l: Language) ⇒ List(
       trans.filterTranslated(_.code == l.code).length.toFloat,
       trans.uniqueNames.length.toFloat) reduceLeft(100 * _ / _)
 
-    val nb = (l: Language) =>
+    val nb = (l: Language) ⇒
       trans.filterTranslated(_.code == l.code).map(_.nbWords).reduceLeftOption(_+_).getOrElse(0)
 
     copy(
-      progress = Some(langs.map(l => l.code -> pct(l)).toMap),
-      nbWords = Some(langs.map(l => l.code -> nb(l)).toMap))
+      progress = Some(langs.map(l ⇒ l.code -> pct(l)).toMap),
+      nbWords = Some(langs.map(l ⇒ l.code -> nb(l)).toMap))
   }
 
   def encode = DbProject(name, adminId, token, open, repo, id)

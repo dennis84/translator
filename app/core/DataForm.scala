@@ -13,8 +13,8 @@ class DataForm(
   lazy val login = Form(tuple(
     "username" -> nonEmptyText,
     "password" -> nonEmptyText
-  ) verifying ("error.authentication", fields => fields match {
-    case (u, p) => userDAO.byCredentials(u, p.sha512).isDefined
+  ) verifying ("error.authentication", fields ⇒ fields match {
+    case (u, p) ⇒ userDAO.byCredentials(u, p.sha512).isDefined
   }))
 
   lazy val createUser = Form(tuple(
@@ -43,8 +43,8 @@ class DataForm(
     "username"  -> nonEmptyText.verifying("error.username_taken", usernameTaken _),
     "password"  -> nonEmptyText,
     "password2" -> nonEmptyText
-  ) verifying ("error.password_mismatch", fields => fields match {
-    case (n, u, p, p2) => p == p2
+  ) verifying ("error.password_mismatch", fields ⇒ fields match {
+    case (n, u, p, p2) ⇒ p == p2
   }))
 
   lazy val newProject = Form(single(

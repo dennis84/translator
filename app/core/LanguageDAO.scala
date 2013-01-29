@@ -28,8 +28,8 @@ class LanguageDAO(mongodb: MongoDB)
       .headOption
 
   def validateCode(project: Project, code: String): Option[String] = code match {
-    case "" => primary(project) map(_.code)
-    case _  => byCode(project, code).map(_.code)
+    case "" ⇒ primary(project) map(_.code)
+    case _  ⇒ byCode(project, code).map(_.code)
   }
 
   private def makeLanguage(l: DbLanguage): Language =
