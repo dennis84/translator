@@ -22,6 +22,7 @@ case class Entry(
     "id" -> trans.id.toString,
     "code" -> trans.code,
     "name" -> trans.name,
+    "status" -> Status.Active.toString,
     "nb_activatable" -> nbActivatable,
     "nb_must_activated" -> nbMustActivated,
     "nb_untranslated" -> nbUntranslated,

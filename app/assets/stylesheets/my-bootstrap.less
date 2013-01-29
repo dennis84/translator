@@ -295,6 +295,9 @@ form {
     font-size: 11px;
     margin-bottom: 0;
   }
+  select {
+    width: 100%;
+  }
   input[type="text"],
   input[type="password"],
   textarea {
@@ -306,6 +309,11 @@ form {
   }
   .form-actions {
     background-color: #f0f0f0;
+  }
+  &.form-inline {
+    select {
+      width: 220px;
+    }
   }
 }
 

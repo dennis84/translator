@@ -13,7 +13,6 @@ $ Code mistakes
 - (!) Github sync schema
 - (!) Add creadtedAt to translations
 - (!) Modile version
-. (!) Add user: find like username
 
 # Milestone: 1.1
 - ($) Prevent for js object zombies. Make a view renderer which removes the
@@ -22,6 +21,7 @@ $ Code mistakes
 
 # Milestone: 1.x
 - (!) Scala 2.10 (Better wait for full Salat support)
+- (%) ReactiveMongo
 - (%) Sync
 - (%) Versioning
 - (!) CLI Toolbelt

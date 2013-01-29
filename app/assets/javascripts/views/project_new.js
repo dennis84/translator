@@ -5,7 +5,7 @@ define([
 
   var module = Backbone.View.extend({
     id: "project-new",
-    className: "project-new pane-edit",
+    className: "project-new",
 
     events: {
       "click .save": "save",
@@ -19,7 +19,7 @@ define([
     render: function () {
       this.$el.html(_.template(projectNewTemplate, this.model.toJSON()))
       window.app.removePanes()
-      window.app.addPane(this, "spaceless4")
+      window.app.addPane(this, "spaceless10")
     },
 
     renderErrors: function (model, response) {
