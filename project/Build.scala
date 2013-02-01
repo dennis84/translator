@@ -1,32 +1,17 @@
 import sbt._
 import Keys._
-import Project._
+import play.Project._
 
-trait Resolvers {
-  val sonatype = "sonatype" at "http://oss.sonatype.org/content/repositories/releases"
-  val sonatypeS = "sonatype snapshots" at "http://oss.sonatype.org/content/repositories/snapshots"
-  val typesafe = "typesafe.com" at "http://repo.typesafe.com/typesafe/releases/"
-  val codahale = "repo.codahale.com" at "http://repo.codahale.com/"
-  val iliaz = "iliaz.com" at "http://scala.iliaz.com/"
-}
+object ApplicationBuild extends Build {
 
-trait Dependencies {
-  val salat = "com.novus" %% "salat" % "1.9.1"
-  val hasher = "com.roundeights" % "hasher" % "0.3" from "http://cloud.github.com/downloads/Nycto/Hasher/hasher_2.9.1-0.3.jar"
-  val scalaTime = "com.github.nscala-time" %% "nscala-time" % "0.2.0"
-}
+  val appName         = "translator"
+  val appVersion      = "1.0-SNAPSHOT"
 
-object ApplicationBuild extends Build with Resolvers with Dependencies {
+  val appDependencies = Seq(
+    "org.reactivemongo" %% "play2-reactivemongo" % "0.8",
+    "com.roundeights" % "hasher" % "0.3")
 
-  private val buildSettings = Project.defaultSettings ++ Seq(
-    scalaVersion := "2.9.1",
-    organization := "com.github.dennis84",
-    version := "1.0",
-    resolvers := Seq(iliaz, codahale, sonatype, sonatypeS, typesafe),
-    scalacOptions := Seq("-deprecation", "-unchecked")
-  )
-
-  lazy val translator = PlayProject("translator", settings = buildSettings).settings(
-    libraryDependencies ++= Seq(salat, hasher, scalaTime)
+  val main = play.Project(appName, appVersion, appDependencies).settings(
+    scalacOptions := Seq("-deprecation", "-unchecked", "-feature")
   )
 }
