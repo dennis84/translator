@@ -5,8 +5,10 @@ import reactivemongo.bson._
 
 object Doc {
 
-  def randomID: String = BSONObjectID.generate.stringify
+  def mkID: String = BSONObjectID.generate.stringify
 
-  def makeBSONArray(list: List[String]): BSONArray =
+  def mkBSONArray(list: List[String]): BSONArray =
     list.foldLeft(BSONArray()) { _ ++ BSONObjectID(_) }
+
+  def mkToken: String = java.util.UUID.randomUUID.toString
 }

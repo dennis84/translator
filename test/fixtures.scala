@@ -6,12 +6,12 @@ import translator.core._
 
 trait Fixtures {
 
-  private val _user1 = User(Doc.randomID, "d.dietrich84@gmail.com", "demo")
-  private val _user2 = User(Doc.randomID, "frank.drebin.1984@gmail.com", "demo")
-  val user3 = User(Doc.randomID, "text@example.com", "demo")
+  private val _user1 = User(Doc.mkID, "d.dietrich84@gmail.com", "demo")
+  private val _user2 = User(Doc.mkID, "frank.drebin.1984@gmail.com", "demo")
+  val user3 = User(Doc.mkID, "text@example.com", "demo")
 
-  private val _project1 = Project(Doc.randomID, "acme", "12345678", _user1.id, open = false)
-  private val _project2 = Project(Doc.randomID, "foo", "123456", _user2.id, open = true)
+  private val _project1 = Project(Doc.mkID, "acme", "12345678", _user1.id, open = false)
+  private val _project2 = Project(Doc.mkID, "foo", "123456", _user2.id, open = true)
   
   val role1 = Role("ROLE_ADMIN", _project1.id)
   val role2 = Role("ROLE_AUTHOR", _project2.id)
@@ -25,7 +25,7 @@ trait Fixtures {
   val project2 = _project2.withUser(user2)
 
   def makeLang(c: String, n: String, p: Project) =
-    Lang(Doc.randomID, c, n, p.id, Some(p))
+    Lang(Doc.mkID, c, n, p.id, Some(p))
 
   lazy val lang1 = makeLang("en", "English", project1)
   lazy val lang2 = makeLang("de", "German", project1)
@@ -39,7 +39,7 @@ trait Fixtures {
   lazy val lang9 = makeLang("fr", "French", project2)
 
   def makeTrans(c: String, n: String, t: String, u: User, s: Status, p: Project) =
-    Trans(Doc.randomID, c, n, t, u.username, s, p.id, Some(p))
+    Trans(Doc.mkID, c, n, t, u.username, s, p.id, Some(p))
 
   lazy val trans1en  = makeTrans("en", "hello_world", "Hello World", user1, Status.Active, project1)
   lazy val trans1de  = makeTrans("de", "hello_world", "Hallo Welt", user1, Status.Active, project1)

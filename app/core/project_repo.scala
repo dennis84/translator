@@ -18,7 +18,7 @@ class ProjectRepo(val collection: DefaultCollection) {
         id = doc.getAs[BSONObjectID]("_id").get.stringify,
         name = doc.getAs[BSONString]("name").get.value,
         token = doc.getAs[BSONString]("token").get.value,
-        adminId = doc.getAs[BSONString]("adminId").get.value,
+        adminId = doc.getAs[BSONObjectID]("adminId").get.stringify,
         open = doc.getAs[BSONBoolean]("open").get.value,
         repo = doc.getAs[BSONString]("repo").get.value)
     }
@@ -48,8 +48,19 @@ class ProjectRepo(val collection: DefaultCollection) {
 
   def listByIds(ids: List[String]): Future[List[Project]] =
     collection.find(BSONDocument(
-      "_id" -> BSONDocument("$in" -> Doc.makeBSONArray(ids)))) toList
+      "_id" -> BSONDocument("$in" -> Doc.mkBSONArray(ids)))) toList
 
-  def insert(projects: Project*) =
+  def insert(p: Project): Future[LastError] =
+    collection.insert(p)
+
+  def insert(projects: Project*): Future[Int] =
     collection.insert(Enumerator(projects: _*), 100)
+
+  def update(p: Project): Future[LastError] =
+    collection.update(BSONDocument(
+      "_id" -> BSONObjectID(p.id)), p)
+
+  def remove(p: Project): Future[LastError] =
+    collection.remove(BSONDocument(
+      "_id" -> BSONObjectID(p.id)))
 }

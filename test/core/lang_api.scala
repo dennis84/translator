@@ -34,17 +34,13 @@ class LangApiSpec extends Specification with Fixtures {
 
   trait LangContext extends Scope with TestEnv {
     try {
-      Await.result(env.projectRepo.collection.drop(), timeout)
       Await.result(env.langRepo.collection.drop(), timeout)
-      Await.result(env.projectRepo.collection.create(), timeout)
       Await.result(env.langRepo.collection.create(), timeout)
     } catch {
       case _: Throwable => println("Collections could not resetted.")
     }
 
     val langs = List(lang1, lang2, lang3, lang4, lang5, lang6, lang7, lang8, lang9)
-
-    Await.result(env.projectRepo.insert(project1, project2), timeout)
     Await.result(env.langRepo.insert(langs: _*), timeout)
   }
 }

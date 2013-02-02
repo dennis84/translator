@@ -1,6 +1,9 @@
 package translator
 package core
 
+import scala.concurrent._
+import play.api.libs.json._
+
 class ProjectApi(
   projectRepo: ProjectRepo,
   userRepo: UserRepo,
@@ -9,20 +12,20 @@ class ProjectApi(
 
   def full(implicit ctx: ProjectContext[_]): Project = ctx.project withUser(ctx.user)
 
-  // def byId(id: String): Option[Project] = projectDAO.byId(id)
+  def listMine(u: User): Future[JsValue] =
+    projectRepo.listByIds(u.dbRoles.map(_.projectId)) map { list ⇒
+      Json.toJson(list.map(_.toJson))
+    }
 
-  // def byToken(token: String): Option[Project] = projectDAO.byToken(token)
-
-  // def listMine(user: User): List[Project] =
-  //   projectDAO.listByIds(user.rawRoles.map(_.projectId))
-
-  // def create(name: String, user: User): Option[Project] = for {
-  //   _ ← Some("")
-  //   p = Project(name, uuid, user.id)
-  //   u = user.copy(rawRoles = user.rawRoles :+ Role.Admin(p.id))
-  //   wc = userDAO.save(u)
-  //   _ ← projectDAO.insert(p)
-  // } yield p
+  def create(name: String, user: User) =
+    for {
+      e ← projectRepo.byName(name)
+      if(!e.isDefined)
+      p = Project(Doc.mkID, name, Doc.mkToken, user.id)
+      u = user.copy(dbRoles = Role.Admin(p.id) :: user.dbRoles)
+      _ ← userRepo.update(u)
+      f ← projectRepo.insert(p).map(_ ⇒ p.toJson)
+    } yield f
 
   // def update(id: String, repo: String, open: Boolean): Option[Project] = for {
   //   p ← projectDAO.byId(id)

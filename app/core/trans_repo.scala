@@ -6,6 +6,7 @@ import reactivemongo.api._
 import reactivemongo.bson._
 import reactivemongo.bson.handlers._
 import reactivemongo.core.commands.LastError
+import play.api.libs.iteratee.Enumerator
 import language._
 
 class TransRepo(val collection: DefaultCollection) {
@@ -69,7 +70,7 @@ class TransRepo(val collection: DefaultCollection) {
   def listByIds(p: Project, ids: List[String]): Future[List[Trans]] =
     collection.find(BSONDocument(
       "projectId" -> BSONObjectID(p.id),
-      "_id" -> BSONDocument("$in" -> Doc.makeBSONArray(ids)))) toList
+      "_id" -> BSONDocument("$in" -> Doc.mkBSONArray(ids)))) toList
 
   def listActive(p: Project, code: String): Future[List[Trans]] =
     collection.find(BSONDocument(

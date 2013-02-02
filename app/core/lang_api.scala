@@ -15,7 +15,7 @@ class LangApi(langRepo: LangRepo) {
     for {
       c ← langRepo.byCode(p, code)
       if(!c.isDefined)
-      l = Lang(Doc.randomID, code, name, p.id, Some(p))
+      l = Lang(Doc.mkID, code, name, p.id, Some(p))
       f ← langRepo.insert(l).map(_ ⇒ l.toJson)
     } yield f
 

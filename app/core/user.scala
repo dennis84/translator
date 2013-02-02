@@ -21,7 +21,7 @@ case class User(
 
 object User {
 
-  def Anonymous = User(Doc.randomID, "anonymous", "", "", List(Role.ANONYMOUS))
+  def Anonymous = User(Doc.mkID, "anonymous", "", "", List(Role.ANONYMOUS))
 }
 
 case class Role(

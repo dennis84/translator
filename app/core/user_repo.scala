@@ -5,6 +5,8 @@ import scala.concurrent._
 import reactivemongo.api._
 import reactivemongo.bson._
 import reactivemongo.bson.handlers._
+import reactivemongo.core.commands.LastError
+import play.api.libs.iteratee.Enumerator
 import language._
 
 class UserRepo(val collection: DefaultCollection) {
@@ -17,10 +19,10 @@ class UserRepo(val collection: DefaultCollection) {
         username = doc.getAs[BSONString]("username").get.value,
         password = doc.getAs[BSONString]("password").get.value,
         email = doc.getAs[BSONString]("email").get.value,
-        dbRoles = doc.getAs[BSONArray]("dbRoles").get.toTraversable.iterator.map { _.value match {
+        dbRoles = doc.getAs[BSONArray]("dbRoles").get.iterator.map { _.value match {
           case role: BSONDocument ⇒ Role(
             role.toTraversable.getAs[BSONString]("role").get.value,
-            role.toTraversable.getAs[BSONString]("projectId").get.value)
+            role.toTraversable.getAs[BSONObjectID]("projectId").get.stringify)
           case _ ⇒ null
         }}.toList)
     }
@@ -32,11 +34,10 @@ class UserRepo(val collection: DefaultCollection) {
       "username" -> BSONString(user.username),
       "password" -> BSONString(user.password),
       "email" -> BSONString(user.email),
-      "dbRoles" -> user.dbRoles.foldLeft(BSONArray()) { (arr, doc) ⇒
-        arr ++ BSONDocument(
-          "role" -> BSONString(doc.role),
-          "projectId" -> BSONObjectID(doc.projectId))
-      })
+      "dbRoles" -> user.dbRoles.map { r ⇒ BSONArray(BSONDocument(
+        "role" -> BSONString(r.role),
+        "projectId" -> BSONObjectID(r.projectId)))
+      }.reduceLeft(_++_))
   }
 
   def byId(id: String): Future[Option[User]] =
@@ -63,4 +64,18 @@ class UserRepo(val collection: DefaultCollection) {
   def listLike(n: String): Future[List[User]] =
     collection.find(BSONDocument(
       "username" -> BSONString("""/^%s.*$/""" format n))) toList
+
+  def insert(u: User): Future[LastError] =
+    collection.insert(u)
+
+  def insert(users: User*): Future[Int] =
+    collection.insert(Enumerator(users: _*), 100)
+
+  def update(u: User): Future[LastError] =
+    collection.update(BSONDocument(
+      "_id" -> BSONObjectID(u.id)), u)
+
+  def remove(u: User): Future[LastError] =
+    collection.remove(BSONDocument(
+      "_id" -> BSONObjectID(u.id)))
 }
