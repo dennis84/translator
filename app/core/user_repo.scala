@@ -57,7 +57,7 @@ class UserRepo(val collection: DefaultCollection) {
       "username" -> BSONString(n),
       "password" -> BSONString(p))) headOption
 
-  def list(p: Project): Future[List[User]] =
+  def listByProject(p: Project): Future[List[User]] =
     collection.find(BSONDocument(
       "roles.projectId" -> BSONObjectID(p.id))) toList
 

@@ -1,14 +1,16 @@
 package translator
 package core
 
+import scala.concurrent._
+import play.api.libs.json._
+
 class UserApi(userRepo: UserRepo) {
 
-  // def by(project: Project): Option[User] =
-  //   userDAO.byId(project.adminId)
-
-  // def by(username: String): Option[User] = userDAO.byUsername(username)
-
-  // def contributors(p: Project): List[User] = userDAO.list(p) map(_.withRoles(p))
+  // @todo with roles
+  def contributors(p: Project) =
+    userRepo.listByProject(p) map { list ⇒
+      Json.toJson(list.map(_.toJson))
+    }
 
   // def create(
   //   project: Project,

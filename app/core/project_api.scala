@@ -10,14 +10,16 @@ class ProjectApi(
   transRepo: TransRepo,
   langRepo: LangRepo) {
 
-  def full(implicit ctx: ProjectContext[_]): Project = ctx.project withUser(ctx.user)
+  // @todo with stats
+  def full(implicit ctx: ProjectContext[_]): Project =
+    ctx.project withUser(ctx.user)
 
   def listMine(u: User): Future[JsValue] =
     projectRepo.listByIds(u.dbRoles.map(_.projectId)) map { list ⇒
       Json.toJson(list.map(_.toJson))
     }
 
-  def create(name: String, user: User) =
+  def create(name: String, user: User): Future[JsValue] =
     for {
       e ← projectRepo.byName(name)
       if(!e.isDefined)
@@ -27,24 +29,28 @@ class ProjectApi(
       f ← projectRepo.insert(p).map(_ ⇒ p.toJson)
     } yield f
 
-  // def update(id: String, repo: String, open: Boolean): Option[Project] = for {
-  //   p ← projectDAO.byId(id)
-  //   project = p.copy(repo = Some(repo), open = open)
-  //   wc = projectDAO.save(project.encode)
-  // } yield project withStats(
-  //   transDAO.list(project),
-  //   langDAO.list(project))
+  // @todo with stats
+  def update(id: String, repo: String, open: Boolean): Future[JsValue] =
+    for {
+      e ← projectRepo.byId(id)
+      if(e.isDefined)
+      p = e.get.copy(repo = repo, open = open)
+      f ← projectRepo.update(p).map(_ ⇒ p.toJson)
+    } yield f
 
-  // def signup(
-  //   projectName: String,
-  //   username: String,
-  //   password: String
-  // ): Option[(User, Project)] = for {
-  //   _ ← Some("")
-  //   u = User(username, password sha512)
-  //   _ ← userDAO.insert(u)
-  //   p ← create(projectName, u)
-  // } yield (u, p)
-
-  // private def uuid = java.util.UUID.randomUUID.toString
+  def signup(
+    projectName: String,
+    username: String,
+    password: String
+  ): Future[JsValue] = for {
+    ep ← projectRepo.byName(projectName)
+    if(!ep.isDefined)
+    eu ← userRepo.byUsername(username)
+    if(!eu.isDefined)
+    tu = User(Doc.mkID, username, password)
+    p = Project(Doc.mkID, projectName, Doc.mkToken, tu.id)
+    u = tu.copy(dbRoles = List(Role.Admin(p.id)))
+    _ ← userRepo.insert(u)
+    f ← projectRepo.insert(p).map(_ ⇒ p.toJson)
+  } yield f
 }

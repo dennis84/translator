@@ -5,6 +5,7 @@ import org.specs2.specification.Scope
 import org.specs2.mutable._
 import play.api.libs.json._
 import test.translator._
+import translator.core.User
 
 class ProjectApiSpec extends Specification with Fixtures {
 
@@ -21,6 +22,19 @@ class ProjectApiSpec extends Specification with Fixtures {
       val id = (p \ "id").as[String]
       val u = Await.result(env.userRepo.byId(user1.id), timeout).get
       u.dbRoles.map(_.projectId) must contain(id)
+    }
+
+    "update" in new ProjectContext {
+      val p = Await.result(env.projectApi.update(project1.id, "foo", true), timeout)
+      (p \ "repo").as[String] mustEqual "foo"
+      (p \ "open").as[Boolean] mustEqual true
+    }
+
+    "signup" in new ProjectContext {
+      val p = Await.result(env.projectApi.signup("bar", "dennis84", "demo"), timeout)
+      (p \ "name").as[String] mustEqual "bar"
+
+      Await.result(env.userRepo.byUsername("dennis84"), timeout) must beSome[User]
     }
   }
 
