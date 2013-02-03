@@ -11,7 +11,7 @@ class LangApiSpec extends Specification with Fixtures {
 
   sequential
 
-  "LangApiSpec" should {
+  "The lang api" should {
     "list" in new LangContext {
       (Await.result(env.langApi.list(project1), timeout) \\ "code") map(
         _.as[String]) mustEqual List("en", "de", "fr", "es", "it", "pt")

@@ -19,7 +19,7 @@ class UserRepo(val collection: DefaultCollection) {
         username = doc.getAs[BSONString]("username").get.value,
         password = doc.getAs[BSONString]("password").get.value,
         email = doc.getAs[BSONString]("email").get.value,
-        dbRoles = doc.getAs[BSONArray]("dbRoles").get.iterator.map { _.value match {
+        dbRoles = doc.getAs[BSONArray]("roles").get.iterator.map { _.value match {
           case role: BSONDocument ⇒ Role(
             role.toTraversable.getAs[BSONString]("role").get.value,
             role.toTraversable.getAs[BSONObjectID]("projectId").get.stringify)
@@ -34,7 +34,7 @@ class UserRepo(val collection: DefaultCollection) {
       "username" -> BSONString(user.username),
       "password" -> BSONString(user.password),
       "email" -> BSONString(user.email),
-      "dbRoles" -> user.dbRoles.map { r ⇒ BSONArray(BSONDocument(
+      "roles" -> user.dbRoles.map { r ⇒ BSONArray(BSONDocument(
         "role" -> BSONString(r.role),
         "projectId" -> BSONObjectID(r.projectId)))
       }.reduceLeft(_++_))

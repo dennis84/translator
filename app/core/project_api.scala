@@ -3,6 +3,7 @@ package core
 
 import scala.concurrent._
 import play.api.libs.json._
+import translator.core.errors._
 
 class ProjectApi(
   projectRepo: ProjectRepo,
@@ -22,12 +23,12 @@ class ProjectApi(
   def create(name: String, user: User): Future[JsValue] =
     for {
       e ← projectRepo.byName(name)
-      if(!e.isDefined)
+      e1 = Error("project_already_exists").when(e.isDefined)
       p = Project(Doc.mkID, name, Doc.mkToken, user.id)
       u = user.copy(dbRoles = Role.Admin(p.id) :: user.dbRoles)
       _ ← userRepo.update(u)
       f ← projectRepo.insert(p).map(_ ⇒ p.toJson)
-    } yield f
+    } yield validate(e1)(f)
 
   // @todo with stats
   def update(id: String, repo: String, open: Boolean): Future[JsValue] =

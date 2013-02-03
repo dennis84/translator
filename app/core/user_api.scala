@@ -3,6 +3,8 @@ package core
 
 import scala.concurrent._
 import play.api.libs.json._
+import scala.util.{Failure, Success}
+import translator.core.errors._
 
 class UserApi(userRepo: UserRepo) {
 
@@ -11,6 +13,12 @@ class UserApi(userRepo: UserRepo) {
     userRepo.listByProject(p) map { list ⇒
       Json.toJson(list.map(_.toJson))
     }
+
+  def authenticate(u: String, p: String) =
+    for {
+      u ← userRepo.byCredentials(u, p)
+      e = Error("authentication_failed").when(!u.isDefined)
+    } yield validate(e)(u.get.toJson)
 
   // def create(
   //   project: Project,
@@ -42,9 +50,6 @@ class UserApi(userRepo: UserRepo) {
   //       } ++ r.map(DbRole(_, p.id)))
   //     wc = userDAO.save(up)
   //   } yield up.withRoles(p)
-
-  // def authenticate(u: String, p: String): Option[User] =
-  //   userDAO byCredentials(u, p.sha512)
 
   // def usernamesLike(username: String): List[String] =
   //   userDAO.listLike(username) map(_.username)
