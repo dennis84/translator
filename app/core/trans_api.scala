@@ -3,27 +3,35 @@ package core
 
 import scala.concurrent._
 import play.api.libs.json._
+import scala.concurrent.duration._
 
 class TransApi(
   transRepo: TransRepo,
   langRepo: LangRepo) extends Api {
 
-  // def entries: Future[JsValue] =
-  //   transRepo.list map { list ⇒
-  //     Json.toJson(list.map(_.toJson))
-  //   }
+  def entries(p: Project): Future[JsValue] = api {
+    for {
+      langs ← langRepo.listByProject(p)
+      ml ← langRepo.primary(p)
+      l ← get(ml, "primary_language_not_found")
+      trans ← transRepo.listActive(p, l.code)
+      all ← transRepo.listByNames(p, trans.map(_.name))
+    } yield {
+      val entries = trans.map(t ⇒ Entry(t, p, langs, all.filter(_.name == t.name)))
+      Json.toJson(entries.map(_.toJson))
+    }
+  }
 
-  // def listByName(name: String): Future[JsValue] =
-  //   transRepo.listByName(name) map { list ⇒
-  //     Json.toJson(list.map(_.toJson))
-  //   }
+  // def entries(filter: Filter)(implicit ctx: ProjectContext[_]): List[Entry] = {
+  //   langDAO.primary(ctx.project) map { lang ⇒
+  //     val langs = langDAO.list(ctx.project)
+  //     val trans = transDAO.listActive(ctx.project, lang.code)
+  //     val entries = trans.map(t ⇒
+  //       Entry(t, ctx.project, langs, transDAO.listByName(ctx.project, t.name)))
 
-  // -----------
-
-  // transDAO: TranslationDAO,
-  // langDAO: LanguageDAO) {
-
-  // import Implicits._
+  //     filter.filter(entries)
+  //   } getOrElse Nil
+  // }
 
   // def entry(p: Project, id: String): Option[Entry] = for {
   //   t ← transDAO.byId(id)
@@ -36,17 +44,6 @@ class TransApi(
   // } yield {
   //   transDAO.listActive(project, c) map(t ⇒ t.name -> t.text)
   // }) getOrElse Nil
-
-  // def entries(filter: Filter)(implicit ctx: ProjectContext[_]): List[Entry] = {
-  //   langDAO.primary(ctx.project) map { lang ⇒
-  //     val langs = langDAO.list(ctx.project)
-  //     val trans = transDAO.listActive(ctx.project, lang.code)
-  //     val entries = trans.map(t ⇒
-  //       Entry(t, ctx.project, langs, transDAO.listByName(ctx.project, t.name)))
-
-  //     filter.filter(entries)
-  //   } getOrElse Nil
-  // }
 
   // def list(p: Project, name: String): List[Translation] =
   //   transDAO.listByName(p, name) fixed(langDAO.list(p))

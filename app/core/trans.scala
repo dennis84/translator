@@ -18,4 +18,6 @@ case class Trans(
     "name" -> name,
     "text" -> text,
     "author" -> author)
+
+  override def toString = """%s (%s): %s""" format(name, code, text)
 }

@@ -21,7 +21,7 @@ class TransRepo(val collection: DefaultCollection) {
         doc.getAs[BSONString]("text").get.value,
         doc.getAs[BSONString]("author").get.value,
         Status(doc.getAs[BSONInteger]("status").get.value),
-        doc.getAs[BSONString]("projectId").get.value)
+        doc.getAs[BSONObjectID]("projectId").get.stringify)
     }
   }
 
@@ -67,6 +67,13 @@ class TransRepo(val collection: DefaultCollection) {
       "projectId" -> BSONObjectID(p.id),
       "name" -> BSONString(name))) toList
 
+  def listByNames(p: Project, names: List[String]) =
+    collection.find(BSONDocument(
+      "projectId" -> BSONObjectID(p.id),
+      "name" -> BSONDocument("$in" -> names.foldLeft(BSONArray()) { (arr, name) ⇒
+        arr ++ BSONArray(BSONString(name))
+      }))) toList
+
   def listByIds(p: Project, ids: List[String]): Future[List[Trans]] =
     collection.find(BSONDocument(
       "projectId" -> BSONObjectID(p.id),
@@ -85,14 +92,14 @@ class TransRepo(val collection: DefaultCollection) {
         "name" -> BSONString("""/^.*%s.*/""" format t),
         "text" -> BSONString("""/^.*%s.*/""" format t)))) toList
 
-  // ----
-
   def insert(trans: Trans): Future[LastError] =
     collection.insert(trans)
 
+  def insert(trans: Trans*): Future[Int] =
+    collection.insert(Enumerator(trans: _*), 100)
+
   def update(trans: Trans): Future[LastError] =
     collection.update(BSONDocument("_id" -> BSONObjectID(trans.id)), trans)
-
 
   // def removeEntry(project: Project, name: String) =
   //   find(MongoDBObject(
