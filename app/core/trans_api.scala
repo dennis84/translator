@@ -6,7 +6,7 @@ import play.api.libs.json._
 
 class TransApi(
   transRepo: TransRepo,
-  langRepo: LangRepo) {
+  langRepo: LangRepo) extends Api {
 
   // def entries: Future[JsValue] =
   //   transRepo.list map { list ⇒

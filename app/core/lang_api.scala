@@ -4,33 +4,37 @@ package core
 import scala.concurrent._
 import play.api.libs.json._
 
-class LangApi(langRepo: LangRepo) {
+class LangApi(langRepo: LangRepo) extends Api {
 
-  def list(p: Project): Future[JsValue] =
+  def list(p: Project): Future[JsValue] = api {
     langRepo.listByProject(p) map { list ⇒
       Json.toJson(list.map(_.toJson))
     }
+  }
 
-  def create(p: Project, code: String, name: String): Future[JsValue] =
+  def create(p: Project, code: String, name: String): Future[JsValue] = api {
     for {
       c ← langRepo.byCode(p, code)
-      if(!c.isDefined)
+      _ ← failsIf(c.isDefined, "language_already_exists")
       l = Lang(Doc.mkID, code, name, p.id, Some(p))
       f ← langRepo.insert(l).map(_ ⇒ l.toJson)
     } yield f
+  }
 
-  def update(id: String, code: String, name: String): Future[JsValue] =
+  def update(id: String, code: String, name: String): Future[JsValue] = api {
     for {
       c ← langRepo.byId(id)
-      if(c.isDefined)
+      _ ← failsIf(!c.isDefined, "language_not_found")
       l = c.get.copy(code = code, name = name)
       f ← langRepo.update(l).map(_ ⇒ l.toJson)
     } yield f
+  }
 
-  def delete(p: Project, id: String) =
+  def delete(p: Project, id: String) = api {
     for {
       c ← langRepo.byId(id)
-      if(c.isDefined)
+      _ ← failsIf(!c.isDefined, "language_not_found")
       f ← langRepo.remove(c.get).map(_ ⇒ c.get.toJson)
     } yield f
+  }
 }

@@ -5,6 +5,7 @@ import scala.concurrent.duration._
 import translator.core._
 import com.typesafe.config._
 import play.api.test._
+import play.api.test.Helpers._
 import reactivemongo.bson.handlers.DefaultBSONHandlers
 import language._
 

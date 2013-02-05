@@ -34,10 +34,11 @@ class UserRepo(val collection: DefaultCollection) {
       "username" -> BSONString(user.username),
       "password" -> BSONString(user.password),
       "email" -> BSONString(user.email),
-      "roles" -> user.dbRoles.map { r ⇒ BSONArray(BSONDocument(
-        "role" -> BSONString(r.role),
-        "projectId" -> BSONObjectID(r.projectId)))
-      }.reduceLeft(_++_))
+      "roles" -> user.dbRoles.foldLeft(BSONArray()) { (arr, role) ⇒
+        arr ++ BSONArray(BSONDocument(
+          "role" -> BSONString(role.role),
+          "projectId" -> BSONObjectID(role.projectId)))
+      })
   }
 
   def byId(id: String): Future[Option[User]] =
@@ -63,7 +64,7 @@ class UserRepo(val collection: DefaultCollection) {
 
   def listLike(n: String): Future[List[User]] =
     collection.find(BSONDocument(
-      "username" -> BSONString("""/^%s.*$/""" format n))) toList
+      "username" -> BSONRegex("""^%s.*$""" format n, "i"))) toList
 
   def insert(u: User): Future[LastError] =
     collection.insert(u)

@@ -3,62 +3,71 @@ package core
 
 import scala.concurrent._
 import play.api.libs.json._
-import scala.util.{Failure, Success}
-import translator.core.errors._
 
-class UserApi(userRepo: UserRepo) {
+class UserApi(userRepo: UserRepo) extends Api {
 
   // @todo with roles
-  def contributors(p: Project) =
+  def contributors(p: Project): Future[JsValue] = api {
     userRepo.listByProject(p) map { list ⇒
       Json.toJson(list.map(_.toJson))
     }
+  }
 
-  def authenticate(u: String, p: String) =
+  def authenticate(u: String, p: String): Future[JsValue] = api {
     for {
       u ← userRepo.byCredentials(u, p)
-      e = Error("authentication_failed").when(!u.isDefined)
-    } yield validate(e)(u.get.toJson)
+      user ← get(u, "user_not_found")
+    } yield user.toJson
+  }
 
-  // def create(
-  //   project: Project,
-  //   username: String,
-  //   password: String,
-  //   roles: List[String]
-  // ): Option[User] = for {
-  //   _ ← Some("")
-  //   u = User(
-  //     username,
-  //     password,
-  //     rawRoles = roles.map(DbRole(_, project.id))
-  //   )
-  //   _ ← userDAO.insert(u)
-  // } yield u.withRoles(project)
+  def create(
+    project: Project,
+    username: String,
+    password: String,
+    roles: List[String]
+  ): Future[JsValue] = api {
+    for {
+      e ← userRepo.byUsername(username)
+      _ ← failsIf(e.isDefined, "username_taken")
+      u = User(Doc.mkID, username, password, dbRoles = roles.map(Role(_, project.id)))
+      f ← userRepo.insert(u).map(_ ⇒ u.toJson)
+    } yield f
+  }
 
-  // def updatePassword(before: User, password: String): Option[User] = for {
-  //   u ← userDAO.byId(before.id)
-  //   up = u.copy(password = password.sha512)
-  //   wc = userDAO.save(up)
-  // } yield up
+  def updatePassword(id: String, password: String) = api {
+    for {
+      e ← userRepo.byId(id)
+      u ← get(e, "user_not_found")
+      f ← userRepo.update(u.copy(password = password)).map(_ ⇒ u.toJson)
+    } yield f
+  }
 
-  // def updateRoles(p: Project, id: String, r: List[String]): Option[User] =
-  //   for {
-  //     u ← userDAO.byId(id)
-  //     up = u.copy(
-  //       rawRoles = u.rawRoles.filterNot {
-  //         _.projectId == p.id
-  //       } ++ r.map(DbRole(_, p.id)))
-  //     wc = userDAO.save(up)
-  //   } yield up.withRoles(p)
+  def updateRoles(p: Project, id: String, r: List[String]) = api {
+    for {
+      e ← userRepo.byId(id)
+      u ← get(e, "user_not_found")
+      up = u.copy(
+        dbRoles = u.dbRoles.filterNot(_.projectId == p.id) ++ r.map(Role(_, p.id))
+      )
+      f ← userRepo.update(up).map(_ ⇒ up.toJson)
+    } yield f
+  }
 
-  // def usernamesLike(username: String): List[String] =
-  //   userDAO.listLike(username) map(_.username)
+  def usernamesLike(username: String) = api {
+    userRepo.listLike(username) map { list ⇒
+      Json.toJson(list.map(_.username))
+    }
+  }
 
-  // def add(p: Project, n: String, r: List[String]): Option[User] =
-  //   for {
-  //     u ← userDAO.byUsername(n)
-  //     roles = u.rawRoles ++ r.map(DbRole(_, p.id))
-  //     user = u.copy(rawRoles = roles)
-  //     wc = userDAO.save(user)
-  //   } yield user.withRoles(p)
+  // @todo with roles
+  // @todo write test
+  def add(p: Project, n: String, r: List[String]) = api {
+    for {
+      e ← userRepo.byUsername(n)
+      u ← get(e, "user_not_found")
+      roles = u.dbRoles ++ r.map(Role(_, p.id))
+      user = u.copy(dbRoles = roles)
+      f ← userRepo.update(user).map(_ ⇒ user.toJson)
+    } yield f
+  }
 }
