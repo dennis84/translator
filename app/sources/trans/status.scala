@@ -1,5 +1,5 @@
 package translator
-package core
+package trans
 
 case class Status(
   val id: Int,

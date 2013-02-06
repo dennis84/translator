@@ -3,6 +3,10 @@ package test.translator
 import com.roundeights.hasher.Implicits._
 import reactivemongo.bson._
 import translator.core._
+import translator.user._
+import translator.trans._
+import translator.lang._
+import translator.project._
 
 trait Fixtures {
 

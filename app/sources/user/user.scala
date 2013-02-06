@@ -1,7 +1,8 @@
 package translator
-package core
+package user
 
 import play.api.libs.json._
+import translator.core._
 
 case class User(
   val id: String,

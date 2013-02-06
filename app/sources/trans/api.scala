@@ -1,15 +1,29 @@
 package translator
-package core
+package trans
 
 import scala.concurrent._
 import play.api.libs.json._
 import scala.concurrent.duration._
+import translator.core._
+import translator.project._
+import translator.lang._
+import translator.trans.list._
 
 class TransApi(
   transRepo: TransRepo,
   langRepo: LangRepo) extends Api {
 
-  def entries(p: Project): Future[JsValue] = api {
+  def entry(p: Project, id: String): Future[JsValue] = api {
+    for {
+      mt ← transRepo.byId(id)
+      t ← get(mt, "entry_not_found")
+      l ← langRepo.listByProject(p)
+      c ← transRepo.listByName(p, t.name)
+      e = Entry(t, p, l, c).toJson
+    } yield e
+  }
+
+  def entries(p: Project, f: Filter): Future[JsValue] = api {
     for {
       langs ← langRepo.listByProject(p)
       ml ← langRepo.primary(p)
@@ -18,35 +32,26 @@ class TransApi(
       all ← transRepo.listByNames(p, trans.map(_.name))
     } yield {
       val entries = trans.map(t ⇒ Entry(t, p, langs, all.filter(_.name == t.name)))
-      Json.toJson(entries.map(_.toJson))
+      Json.toJson(f.filter(entries).map(_.toJson))
     }
   }
 
-  // def entries(filter: Filter)(implicit ctx: ProjectContext[_]): List[Entry] = {
-  //   langDAO.primary(ctx.project) map { lang ⇒
-  //     val langs = langDAO.list(ctx.project)
-  //     val trans = transDAO.listActive(ctx.project, lang.code)
-  //     val entries = trans.map(t ⇒
-  //       Entry(t, ctx.project, langs, transDAO.listByName(ctx.project, t.name)))
+  def export(p: Project, code: String): Future[JsValue] = api {
+    for {
+      t ← transRepo.listActive(p, code).map { list ⇒
+        Json.toJson(list.map(t ⇒ Json.obj(t.name -> t.text)))
+      }
+    } yield t
+  }
 
-  //     filter.filter(entries)
-  //   } getOrElse Nil
-  // }
-
-  // def entry(p: Project, id: String): Option[Entry] = for {
-  //   t ← transDAO.byId(id)
-  //   l = langDAO.list(p)
-  //   c = transDAO.listByName(p, t.name)
-  // } yield Entry(t, p, l, c)
-
-  // def export(project: Project, code: String): List[(String, String)] = (for {
-  //   c ← langDAO.validateCode(project, code)
-  // } yield {
-  //   transDAO.listActive(project, c) map(t ⇒ t.name -> t.text)
-  // }) getOrElse Nil
-
-  // def list(p: Project, name: String): List[Translation] =
-  //   transDAO.listByName(p, name) fixed(langDAO.list(p))
+  def list(p: Project, name: String): Future[JsValue] = api {
+    for {
+      l ← langRepo.listByProject(p)
+      t ← transRepo.listByName(p, name).map { list ⇒
+        Json.toJson(list.mkComplete(l).map(_.toJson))
+      }
+    } yield t
+  }
 
   // def listByLang(p: Project, lang: String): List[Translation] = {
   //   val all = transDAO.all(p)

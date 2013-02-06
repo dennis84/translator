@@ -1,7 +1,10 @@
 package translator
-package core
+package trans
 
 import play.api.libs.json._
+import translator.project._
+import translator.lang._
+import translator.trans.list._
 
 case class Entry(
   val trans: Trans,
@@ -14,7 +17,14 @@ case class Entry(
   val progress: Float) {
 
   def toJson = Json.obj(
-    "name" -> trans.name)
+    "id" -> trans.id,
+    "code" -> trans.code,
+    "name" -> trans.name,
+    "status" -> Status.Active.toString,
+    "nb_activatable" -> nbActivatable,
+    "nb_must_activated" -> nbMustActivated,
+    "nb_untranslated" -> nbUntranslated,
+    "progress" -> progress)
 
   override def toString =
     trans.name + ": [" + children.map(_.code).mkString(", ") + "]"
@@ -31,9 +41,9 @@ object Entry {
     trans,
     project,
     langs,
-    children,
-    0,
-    0,
-    0,
-    0F)
+    children.mkComplete(langs),
+    children.filterActivatable.length,
+    children.filterMustActivated.length,
+    children.filterUntranslated.length,
+    100 * children.filterTranslated.length / langs.length)
 }

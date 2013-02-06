@@ -1,7 +1,8 @@
 package translator
-package core
+package lang
 
 import play.api.libs.json._
+import translator.project._
 
 case class Lang(
   val id: String,

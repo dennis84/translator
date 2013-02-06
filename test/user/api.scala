@@ -1,12 +1,12 @@
-package test.translator.core
+package test.translator.user
 
 import scala.concurrent._
 import org.specs2.specification.Scope
 import org.specs2.mutable._
 import play.api.libs.json._
 import test.translator._
-import translator.core.Doc
-import translator.core.Role
+import translator.core._
+import translator.user.Role
 
 class UserApiSpec extends Specification with Fixtures {
 

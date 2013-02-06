@@ -1,5 +1,5 @@
 package translator
-package core
+package user
 
 import scala.concurrent._
 import reactivemongo.api._
@@ -8,6 +8,8 @@ import reactivemongo.bson.handlers._
 import reactivemongo.core.commands.LastError
 import play.api.libs.iteratee.Enumerator
 import language._
+import translator.core._
+import translator.project._
 
 class UserRepo(val collection: DefaultCollection) {
 

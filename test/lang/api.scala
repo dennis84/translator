@@ -1,11 +1,11 @@
-package test.translator.core
+package test.translator.lang
 
 import scala.concurrent._
 import org.specs2.specification.Scope
 import org.specs2.mutable._
 import play.api.libs.json._
 import test.translator._
-import translator.core.Lang
+import translator.lang._
 
 class LangApiSpec extends Specification with Fixtures {
 

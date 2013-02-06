@@ -1,13 +1,12 @@
 package translator
 package controllers
 
-import scala.concurrent._
 import play.api._
 import play.api.mvc._
 
-object PageController extends BaseController {
+object PageController extends Controller {
 
-  def home = Open { implicit ctx ⇒
-    Future(Ok("foo" + ctx.user.username))
+  def home = Action {
+    Ok("foo")
   }
 }

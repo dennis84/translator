@@ -1,7 +1,10 @@
-package translator.core
+package translator
+package trans
 
 import play.api.libs.json._
 import language._
+import translator.project._
+import translator.core._
 
 case class Trans(
   val id: String,
@@ -12,6 +15,8 @@ case class Trans(
   val status: Status,
   val projectId: String,
   val project: Option[Project] = None) {
+
+  def withProject(p: Project) = copy(project = Some(p))
 
   def toJson = Json.obj(
     "id" -> id,

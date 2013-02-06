@@ -1,8 +1,10 @@
 package translator
-package core
+package lang
 
 import scala.concurrent._
 import play.api.libs.json._
+import translator.core._
+import translator.project._
 
 class LangApi(langRepo: LangRepo) extends Api {
 

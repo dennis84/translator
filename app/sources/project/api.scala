@@ -1,8 +1,13 @@
 package translator
-package core
+package project
 
 import scala.concurrent._
 import play.api.libs.json._
+import translator.core._
+import translator.project._
+import translator.user._
+import translator.lang._
+import translator.trans._
 
 class ProjectApi(
   projectRepo: ProjectRepo,
