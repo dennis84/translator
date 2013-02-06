@@ -106,11 +106,12 @@ class TransRepo(val collection: DefaultCollection) {
   def listLike(p: Project, t: String): Future[List[Trans]] =
     collection.find(BSONDocument(
       "projectId" -> BSONObjectID(p.id),
-      "$or" -> BSONDocument(
-        "name" -> BSONString("""/^.*%s.*/""" format t),
-        "text" -> BSONString("""/^.*%s.*/""" format t)))).toList.map { list ⇒
-          list.map(_.withProject(p))
-        }
+      "$or" -> BSONArray(
+        BSONDocument("name" -> BSONRegex("""^.*%s.*""" format t, "i")),
+        BSONDocument("text" -> BSONRegex("""^.*%s.*""" format t, "i"))
+      ))).toList.map { list ⇒
+        list.map(_.withProject(p))
+      }
 
   def insert(trans: Trans): Future[LastError] =
     collection.insert(trans)

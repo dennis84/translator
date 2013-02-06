@@ -26,12 +26,9 @@ class TransApi(
   def entries(p: Project, f: Filter): Future[JsValue] = api {
     for {
       langs ← langRepo.listByProject(p)
-      ml ← langRepo.primary(p)
-      l ← get(ml, "primary_language_not_found")
-      trans ← transRepo.listActive(p, l.code)
-      all ← transRepo.listByNames(p, trans.map(_.name))
+      translations ← transRepo.listByProject(p)
+      entries = translations.mkEntries(langs)
     } yield {
-      val entries = trans.map(t ⇒ Entry(t, p, langs, all.filter(_.name == t.name)))
       Json.toJson(f.filter(entries).map(_.toJson))
     }
   }
@@ -53,39 +50,16 @@ class TransApi(
     } yield t
   }
 
-  // def listByLang(p: Project, lang: String): List[Translation] = {
-  //   val all = transDAO.all(p)
-  //   val names = all.map(_.name).distinct
-
-  //   names.map { name ⇒
-  //     all.find(trans ⇒
-  //       trans.code == lang &&
-  //       trans.name == name &&
-  //       trans.status == Status.Active
-  //     ) getOrElse {
-  //       Translation.empty(lang, name, p)
-  //     }
-  //   }
-  // }
-
-  // def search(p: Project, term: String): List[Entry] =
-  //   langDAO.primary(p) map { l ⇒
-  //     val langs = langDAO.list(p)
-  //     val makeEntry = (t: Translation) ⇒
-  //       Entry(t, p, langs, transDAO.listByName(p, t.name))
-
-  //     transDAO.listLike(p, term).foldLeft(List.empty[Entry]) {
-  //       (entries, t) ⇒
-  //         t match {
-  //           case t if(t.code == l.code) ⇒ entries :+ makeEntry(t)
-  //           case t if(entries.exists(_.name == t.name)) ⇒ entries
-  //           case t ⇒ transDAO.byNameAndCode(p, t.name, l.code) match {
-  //             case Some(e) ⇒ entries :+ makeEntry(e)
-  //             case None ⇒ entries
-  //           }
-  //         }
-  //     }
-  //   } getOrElse Nil
+  def search(p: Project, term: String): Future[JsValue] = api {
+    for {
+      langs ← langRepo.listByProject(p)
+      translations ← transRepo.listLike(p, term)
+      all ← transRepo.listByNames(p, translations.map(_.name))
+      entries = all.mkEntries(langs)
+    } yield {
+      Json.toJson(entries.map(_.toJson))
+    }
+  }
 
   // def create(
   //   code: String,

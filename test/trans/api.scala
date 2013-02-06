@@ -27,5 +27,10 @@ class TransApiSpec extends Specification with Fixtures {
       val r2 = Await.result(env.transApi.list(project1, "bye_bye"), timeout)
       r2.as[List[JsValue]].length mustEqual 6L
     }
+
+    "search" in new TransContext {
+      val r = Await.result(env.transApi.search(project1, "hello"), timeout)
+      println(r)
+    }
   }
 }

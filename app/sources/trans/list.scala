@@ -50,5 +50,19 @@ object list {
           unsorted.filter(_.code == l.code)
         } flatten
       }) getOrElse list
-    }
+
+    def mkEntries(langs: List[Lang]): List[Entry] =
+      (for {
+        lang ← langs.headOption
+        head ← list.headOption
+        project ← head.project
+      } yield {
+        list.filter { trans ⇒
+          trans.status == Status.Active &&
+          trans.code == lang.code
+        } map { trans ⇒
+          Entry(trans, project, langs, list.filter(_.name == trans.name))
+        }
+      }) getOrElse List.empty[Entry]
+  }
 }
