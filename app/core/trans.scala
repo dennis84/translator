@@ -1,6 +1,7 @@
 package translator.core
 
 import play.api.libs.json._
+import language._
 
 case class Trans(
   val id: String,
@@ -20,4 +21,10 @@ case class Trans(
     "author" -> author)
 
   override def toString = """%s (%s): %s""" format(name, code, text)
+}
+
+object Trans {
+
+  def empty(c: String, n: String, p: Project) =
+    Trans(Doc.mkID, c, n, "", "", Status.Empty, p.id, Some(p))
 }
