@@ -9,11 +9,10 @@ import translator.project._
 class UserApi(userRepo: UserRepo) extends Api {
 
   // @todo with roles
-  def contributors(p: Project): Future[JsValue] = api {
+  def contributors(p: Project): Future[JsValue] =
     userRepo.listByProject(p) map { list ⇒
       Json.toJson(list.map(_.toJson))
     }
-  }
 
   def authenticate(u: String, p: String): Future[JsValue] = api {
     for {
@@ -55,11 +54,10 @@ class UserApi(userRepo: UserRepo) extends Api {
     } yield f
   }
 
-  def usernamesLike(username: String) = api {
+  def usernamesLike(username: String) =
     userRepo.listLike(username) map { list ⇒
       Json.toJson(list.map(_.username))
     }
-  }
 
   // @todo with roles
   // @todo write test

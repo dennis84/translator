@@ -3,6 +3,7 @@ package user
 
 import play.api.libs.json._
 import translator.core._
+import translator.project._
 
 case class User(
   val id: String,
@@ -13,6 +14,13 @@ case class User(
   val dbRoles: List[Role] = Nil) {
 
   def isAnon = roles contains Role.ANONYMOUS
+
+  def isAdmin = roles contains Role.ADMIN
+
+  def withRoles(p: Project) = copy(
+    roles = dbRoles.filter { role ⇒
+      role.projectId == p.id
+    }.map(_.role))
 
   def toJson = Json.obj(
     "id" -> id,

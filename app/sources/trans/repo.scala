@@ -122,9 +122,7 @@ class TransRepo(val collection: DefaultCollection) {
   def update(trans: Trans): Future[LastError] =
     collection.update(BSONDocument("_id" -> BSONObjectID(trans.id)), trans)
 
-  // def removeEntry(project: Project, name: String) =
-  //   find(MongoDBObject(
-  //     "projectId" -> project.id,
-  //     "name" -> name
-  //   )).toList foreach(remove(_))
+  def remove(trans: Trans): Future[LastError] =
+    collection.remove(BSONDocument(
+      "_id" -> BSONObjectID(trans.id)))
 }
