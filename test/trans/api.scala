@@ -66,16 +66,5 @@ class TransApiSpec extends Specification with Fixtures {
       val r2 = Await.result(env.transRepo.byId(trans1de1.id), timeout)
       r2 must beNone
     }
-
-//     "inject" in new TransContext {
-//       val json = Json.obj(
-//         "foo" -> "Foo",
-//         "bar" -> "Bar",
-//         "baz" -> "Baz")
-
-//       val admin = user1.withRoles(project1)
-//       val r = Await.result(env.transApi.inject(project1, admin, Json.stringify(json), "json", "en"), timeout)
-//       println(r)
-//     }
   }
 }

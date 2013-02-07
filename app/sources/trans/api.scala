@@ -101,16 +101,26 @@ class TransApi(
     } yield result
   }
 
-  // def inject(p: Project, u: User, content: String, t: String, code: String): List[Translation] =
-  //   Parser.parse(content, t).map { row ⇒
-  //     val (name, text) = row
-  //     transDAO.byNameAndCode(p, name, code) match {
-  //       case Some(trans) ⇒ Some(trans.copy(status = Status.Skipped))
-  //       case None ⇒ for {
-  //         c ← langDAO.validateCode(p, code)
-  //         t = Translation(c, name, text, u, p).copy(status = Status.Active)
-  //         _ ← transDAO.insert(t)
-  //       } yield t
-  //     }
-  //   }.flatten
+  def inject(
+    project: Project,
+    user: User,
+    content: String,
+    importType: String,
+    code: String
+  ): Future[JsValue] = {
+    val futures = Importer.run(content, importType).map { case (name, text) ⇒
+      for {
+        f ← transRepo.byNameAndCode(project, name, code).flatMap { maybeTrans ⇒
+          if(maybeTrans.isDefined) Future(maybeTrans.get.copy(status = Status.Skipped).toJson)
+          else {
+            val trans = Trans(code, name, text, user, project).copy(status = Status.Active)
+            transRepo.insert(trans).map(_ ⇒ trans.toJson)
+          }
+        }
+      } yield f
+    }
+
+    val futureList = Future.fold(futures)(List.empty[JsValue])((list, obj) ⇒ obj +: list)
+    futureList.map(list ⇒ Json.toJson(list))
+  }
 }

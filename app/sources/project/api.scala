@@ -19,11 +19,10 @@ class ProjectApi(
   def full(implicit ctx: ProjectContext[_]): Project =
     ctx.project withUser(ctx.user)
 
-  def listMine(u: User): Future[JsValue] = api {
+  def listMine(u: User): Future[JsValue] =
     projectRepo.listByIds(u.dbRoles.map(_.projectId)) map { list ⇒
       Json.toJson(list.map(_.toJson))
     }
-  }
 
   def create(name: String, user: User): Future[JsValue] = api {
     for {

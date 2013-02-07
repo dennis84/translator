@@ -8,11 +8,10 @@ import translator.project._
 
 class LangApi(langRepo: LangRepo) extends Api {
 
-  def list(p: Project): Future[JsValue] = api {
+  def list(p: Project): Future[JsValue] =
     langRepo.listByProject(p) map { list ⇒
       Json.toJson(list.map(_.toJson))
     }
-  }
 
   def create(p: Project, code: String, name: String): Future[JsValue] = api {
     for {
