@@ -21,27 +21,12 @@ class UserApi(userRepo: UserRepo) extends Api {
     password: String,
     roles: List[String]
   ): Future[Option[User]] =
-    for {
-      maybeUser ← userRepo.byUsername(username)
-    } yield for {
-      user ← maybeUser
-      result = userRepo.byUsername(username)
-    } yield result.flatten
-
-    /* userRepo.byUsername(username).flatMap { _ match { */
-    /*   case Some(user) ⇒ Future(None) */
-    /*   case None ⇒ */
-    /*     val user = User(Doc.mkID, username, password, dbRoles = roles.map(Role(_, project.id))) */
-    /*     userRepo.insert(user).map(_ ⇒ user.some) */
-    /* }} */
-
-
-
-
-/*       existing ← maybeUser.future */
-/*       user = User(Doc.mkID, username, password, dbRoles = roles.map(Role(_, project.id))) */
-/*       result ← userRepo.insert(user).map(_ ⇒ Some(user)) */
-/*     } yield result */
+    userRepo.byUsername(username).flatMap { _ match {
+      case Some(user) ⇒ Future(None)
+      case None ⇒
+        val user = User(Doc.mkID, username, password, dbRoles = roles.map(Role(_, project.id)))
+        userRepo.insert(user).map(_ ⇒ user.some)
+    }}
 
   def updatePassword(id: String, password: String) = api {
     for {

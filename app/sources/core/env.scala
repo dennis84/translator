@@ -19,6 +19,8 @@ class Env(app: Application, conf: Conf) {
   lazy val projectApi = new translator.project.ProjectApi(projectRepo, userRepo, transRepo, langRepo)
   lazy val transApi = new translator.trans.TransApi(transRepo, langRepo)
   lazy val langApi = new translator.lang.LangApi(langRepo)
+
+  lazy val userForm = new translator.user.UserForm(userRepo)
 }
 
 object Env {

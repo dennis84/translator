@@ -4,6 +4,7 @@
 # GET     /update/:id                 translator.controllers.Application.update(id)
 GET     /                             translator.controllers.PageController.home
 
+POST    /authenticate                       translator.controllers.UserController.authenticate
 # GET     /user                         translator.controllers.UserController.current
 
 GET     /assets/*file               controllers.Assets.at(path="/public", file)
