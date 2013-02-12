@@ -7,6 +7,7 @@ import play.api.libs.json._
 import test.translator._
 import translator.core._
 import translator.user.Role
+import translator.user.User
 
 class UserApiSpec extends Specification with Fixtures {
 
@@ -14,24 +15,21 @@ class UserApiSpec extends Specification with Fixtures {
 
   "The user api" should {
     "list contributors" in new UserContext {
-      (Await.result(env.userApi.contributors(project1), timeout) \\ "username") map(
-        _.as[String]) mustEqual List("d.dietrich84@gmail.com", "frank.drebin.1984@gmail.com")
+      val users = Await.result(env.userApi.contributors(project1), timeout)
+      users mustEqual List(user1, user2)
     }
 
     "authenticate" in new UserContext {
       val user = Await.result(env.userApi.authenticate("d.dietrich84@gmail.com", "demo"), timeout)
-      (user \ "username").as[String] mustEqual "d.dietrich84@gmail.com"
-
-      val error = Await.result(env.userApi.authenticate("dennis84", "demo"), timeout)
-      (error \ "error").as[String] mustEqual "user_not_found"
+      user must beSome(user1)
     }
 
     "create" in new UserContext {
       val user = Await.result(env.userApi.create(project1, "foo", "demo", Nil), timeout)
-      (user \ "username").as[String] mustEqual "foo"
+      user must beSome[User]
 
       val error = Await.result(env.userApi.create(project1, "d.dietrich84@gmail.com", "demo", Nil), timeout)
-      (error \ "error").as[String] mustEqual "username_taken"
+      error must beNone
     }
 
     "update password" in new UserContext {

@@ -14,15 +14,14 @@ class TransApi(
   transRepo: TransRepo,
   langRepo: LangRepo) extends Api {
 
-  def entry(p: Project, id: String): Future[JsValue] = api {
+  def entry(p: Project, id: String) =
     for {
       maybeTrans ← transRepo.byId(id)
-      trans ← get(maybeTrans, "entry_not_found")
+      trans ← maybeTrans.future
       langs ← langRepo.listByProject(p)
       children ← transRepo.listByName(p, trans.name)
       entry = Entry(trans, p, langs, children).toJson
     } yield entry
-  }
 
   def entries(p: Project, f: Filter): Future[JsValue] =
     for {
@@ -72,34 +71,31 @@ class TransApi(
       result ← transRepo.insert(transWithStatus)map(_ ⇒ transWithStatus.toJson)
     } yield result
 
-  def update(id: String, text: String): Future[JsValue] = api {
+  def update(id: String, text: String): Future[JsValue] =
     for {
       maybeTrans ← transRepo.byId(id)
-      trans ← get(maybeTrans, "translation_not_found")
+      trans ← maybeTrans.future
       updated = trans.copy(text = text)
       result ← transRepo.update(updated).map(_ ⇒ updated.toJson)
     } yield result
-  }
 
-  def switch(p: Project, id: String): Future[JsValue] = api {
+  def switch(p: Project, id: String): Future[JsValue] =
     for {
       maybeTrans ← transRepo.byId(id)
-      trans ← get(maybeTrans, "translation_not_found")
+      trans ← maybeTrans.future
       maybeBefore ← transRepo.activated(p, trans.name, trans.code)
-      before ← get(maybeBefore, "translation_not_found")
+      before ← maybeBefore.future
       updated = trans.copy(status = Status.Active)
       result ← transRepo.update(updated).map(_ ⇒ updated.toJson)
       removed ← transRepo.remove(before)
     } yield result
-  }
 
-  def delete(p: Project, id: String): Future[JsValue] = api {
+  def delete(p: Project, id: String): Future[JsValue] =
     for {
       maybeTrans ← transRepo.byId(id)
-      trans ← get(maybeTrans, "translation_not_found")
+      trans ← maybeTrans.future
       result ← transRepo.remove(trans).map(_ ⇒ trans.toJson)
     } yield result
-  }
 
   def inject(
     project: Project,

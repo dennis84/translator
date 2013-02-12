@@ -9,31 +9,39 @@ import translator.project._
 class UserApi(userRepo: UserRepo) extends Api {
 
   // @todo with roles
-  def contributors(p: Project): Future[JsValue] =
-    userRepo.listByProject(p) map { list ⇒
-      Json.toJson(list.map(_.toJson))
-    }
+  def contributors(p: Project): Future[List[User]] =
+    userRepo.listByProject(p)
 
-  def authenticate(u: String, p: String): Future[JsValue] = api {
-    for {
-      u ← userRepo.byCredentials(u, p)
-      user ← get(u, "user_not_found")
-    } yield user.toJson
-  }
+  def authenticate(u: String, p: String): Future[Option[User]] =
+    userRepo.byCredentials(u, p)
 
   def create(
     project: Project,
     username: String,
     password: String,
     roles: List[String]
-  ): Future[JsValue] = api {
+  ): Future[Option[User]] =
     for {
-      e ← userRepo.byUsername(username)
-      _ ← failsIf(e.isDefined, "username_taken")
-      u = User(Doc.mkID, username, password, dbRoles = roles.map(Role(_, project.id)))
-      f ← userRepo.insert(u).map(_ ⇒ u.toJson)
-    } yield f
-  }
+      maybeUser ← userRepo.byUsername(username)
+    } yield for {
+      user ← maybeUser
+      result = userRepo.byUsername(username)
+    } yield result.flatten
+
+    /* userRepo.byUsername(username).flatMap { _ match { */
+    /*   case Some(user) ⇒ Future(None) */
+    /*   case None ⇒ */
+    /*     val user = User(Doc.mkID, username, password, dbRoles = roles.map(Role(_, project.id))) */
+    /*     userRepo.insert(user).map(_ ⇒ user.some) */
+    /* }} */
+
+
+
+
+/*       existing ← maybeUser.future */
+/*       user = User(Doc.mkID, username, password, dbRoles = roles.map(Role(_, project.id))) */
+/*       result ← userRepo.insert(user).map(_ ⇒ Some(user)) */
+/*     } yield result */
 
   def updatePassword(id: String, password: String) = api {
     for {
