@@ -1,0 +1,18 @@
+<form>
+  <div class="padding10">
+    <label class="checkbox"><input type="checkbox" name="untranslated" {{ formHelper.checked(untranslated) }}> Untranslated</label>
+
+    <div id="untranslated-config" class="filter-config">
+      <select name="untranslated_languages" multiple="multiple">
+        {{ formHelper.options(languages, untranslated_languages) }}
+      </select>
+    </div>
+
+    <label class="checkbox"><input type="checkbox" name="activatable" {{ formHelper.checked(activatable) }}> Activatable</label>
+  </div>
+
+  <div class="form-actions">
+    <button type="submit" class="btn btn-primary apply"><i class="icon-save"></i> Apply</button>
+    <button class="btn cancel">Cancel</button>
+  </div>
+</form>

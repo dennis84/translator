@@ -1,0 +1,19 @@
+<form>
+  <h2>Add User</h2>
+
+  <div class="padding10">
+    <label for="username">Username</label>
+    <input type="text" name="username" class="username" autocomplete="off">
+
+    <label for="roles">Role</label>
+    <select name="roles" multiple="multiple">
+      <option value="ROLE_ADMIN">Admin</option>
+      <option value="ROLE_AUTHOR">Author</option>
+    </select>
+  </div>
+
+  <div class="form-actions">
+    <button type="submit" class="btn btn-primary save"><i class="icon-save"></i> Save changes</button>
+    <button class="btn cancel">Cancel</button>
+  </div>
+</form>

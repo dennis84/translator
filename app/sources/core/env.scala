@@ -15,12 +15,10 @@ class Env(app: Application, conf: Conf) {
   lazy val projectRepo = new translator.project.ProjectRepo(db("projects"))
   lazy val langRepo = new translator.lang.LangRepo(db("languages"))
 
-  lazy val userApi = new translator.user.UserApi(userRepo)
-  lazy val projectApi = new translator.project.ProjectApi(projectRepo, userRepo, transRepo, langRepo)
-  lazy val transApi = new translator.trans.TransApi(transRepo, langRepo)
-  lazy val langApi = new translator.lang.LangApi(langRepo)
-
-  lazy val userForm = new translator.user.UserForm(userRepo)
+  lazy val userForms = new translator.user.UserForms
+  lazy val langForms = new translator.lang.LangForms
+  lazy val projectForms = new translator.project.ProjectForms
+  lazy val transForms = new translator.trans.TransForms
 }
 
 object Env {

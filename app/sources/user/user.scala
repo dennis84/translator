@@ -25,7 +25,8 @@ case class User(
   def toJson = Json.obj(
     "id" -> id,
     "username" -> username,
-    "email" -> email)
+    "email" -> email,
+    "roles" -> roles)
 }
 
 object User {

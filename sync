@@ -1,0 +1,14 @@
+#!/bin/bash
+
+rsync -rvze --delete /media/debian/home/dennis/projects/translator/ . \
+  --exclude ".git" \
+  --exclude ".git*" \
+  --exclude "logs" \
+  --exclude "project/project" \
+  --exclude "project/target" \
+  --exclude "target" \
+  --exclude "RUNNING_PID" \
+  --exclude "public/thumbs" \
+  --exclude "public/uploads" \
+  --exclude "dist"
+

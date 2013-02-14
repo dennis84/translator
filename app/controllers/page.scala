@@ -7,6 +7,6 @@ import play.api.mvc._
 object PageController extends Controller {
 
   def home = Action {
-    Ok("foo")
+    Ok(views.html.admin())
   }
 }

@@ -1,0 +1,97 @@
+@import "mixins.less";
+
+.chzn-container {
+  .chzn-drop {
+    border: 0;
+    .chzn-results {
+      padding: 0;
+      margin: 0;
+      li {
+        padding: 0 10px;
+        line-height: 28px;
+        background: #fff url(../images/chosen.png) no-repeat;
+      }
+      .active-result {
+        background-position: right -145px;
+      }
+      .result-selected {
+        display: block;
+        background-position: right -95px;
+      }
+      .highlighted {
+        background-color: #fafafa;
+        color: #333;
+      }
+    }
+  }
+}
+
+.chzn-container-single {
+  .chzn-single {
+    padding: 4px 2px;
+    border-color: #ddd;
+    .box-shadow(none);
+    .linear-gradient(top, #f5f5f5, #f1f1f1);
+    .border-radius(3px);
+    div {
+      position: absolute;
+      top: 0;
+      right: 0;
+      height: 28px;
+      width: 20px;
+      background: url(../images/chosen.png) no-repeat;
+      background-position: 0 -243px;
+    }
+  }
+  .chzn-search {
+    display: none;
+  }
+  .chzn-drop {
+    .chzn-results {
+      .active-result {
+        background-position: right -45px;
+      }
+      .result-selected {
+        background-position: right 5px;
+      }
+    }
+  }
+}
+
+.chzn-container-multi {
+  .chzn-choices {
+    padding: 4px 2px;
+    border: 1px solid #dadada;
+    border-top-color: #bbb;
+    background-image: none;
+    .border-radius(3px);
+    .box-shadow(inset 0 1px 0 rgba(0, 0, 0, 0.07));
+    .search-choice {
+      line-height: 20px;
+      padding: 2px;
+      padding-right: 20px;
+      margin: 2px;
+      border: 0;
+      font-weight: bold;
+      background: #f3f3f3;
+      background:linear-gradient(top,#f5f5f5,#f1f1f1);
+      background:-webkit-linear-gradient(top,#f5f5f5,#f1f1f1);
+      .box-shadow(0 1px 2px #aaa);
+      .border-radius(20px);
+      .search-choice-close {
+        top: 5px;
+        width: 16px;
+        height: 16px;
+        background: url(../images/chosen.png) no-repeat;
+        background-position: 0 -200px;
+      }
+      .search-choice-close:hover {
+        background-position: 0 -200px;
+      }
+    }
+  }
+}
+
+.chzn-container-single .chzn-single abbr {
+  background: none;
+}

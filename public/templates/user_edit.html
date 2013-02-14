@@ -1,0 +1,33 @@
+<form>
+  {% if (true === isNew) { %}
+  <h2>Create User</h2>
+  {% } else { %}
+  <h2>Update User</h2>
+  {% } %}
+
+  <div class="padding10">
+    {% if (true === isNew) { %}
+    <label for="username">Username</label>
+    <input type="text" name="username" value="{{ username }}">
+
+    <label for="password">Password</label>
+    <input type="password" name="password">
+    {% } else { %}
+    <label for="username">Username</label>
+    <input type="text" name="username" value="{{ username }}" disabled>
+
+    <label for="password">Password</label>
+    <input type="password" name="password" disabled>
+    {% } %}
+
+    <label for="roles">Roles</label>
+    <select name="roles" multiple="multiple">
+      {{ formHelper.options({"ROLE_ADMIN": "Admin", "ROLE_AUTHOR": "Author"}, roles) }}
+    </select>
+  </div>
+
+  <div class="form-actions">
+    <button type="submit" class="btn btn-primary save"><i class="icon-save"></i> Save changes</button>
+    <button class="btn cancel">Cancel</button>
+  </div>
+</form>

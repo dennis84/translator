@@ -1,0 +1,17 @@
+<td class="check"><input type="checkbox"></td>
+<td>
+  <code>{{ name }}</code>
+  {% if (nb_activatable > 0) { %}
+  <span
+    class="badge {% if (nb_must_activated > 0) { %}badge-important{% } else { %}badge-info{% } %}"
+    title="{{ nb_activatable }} acceptable translation suggestions">
+    {{ nb_activatable }}
+  </span>
+  {% } %}
+</td>
+<td class="progress-row">
+  <div class="progress">
+    <div class="bar" style="width: {{ progress }}%;"></div>
+  </div>
+</td>
+<td class="open"><i class="icon-chevron-right"></i></td>

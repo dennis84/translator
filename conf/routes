@@ -1,10 +1,36 @@
-# GET     /                           translator.controllers.Application.index
-# GET     /show/:id                   translator.controllers.Application.show(id)
-# GET     /create                     translator.controllers.Application.create
-# GET     /update/:id                 translator.controllers.Application.update(id)
-GET     /                             translator.controllers.PageController.home
+GET     /                                   translator.controllers.PageController.home
 
+GET     /user                               translator.controllers.UserController.current
+PUT     /user                               translator.controllers.UserController.updateCurrent
+GET     /:project/user                      translator.controllers.UserController.currentByProject(project)
 POST    /authenticate                       translator.controllers.UserController.authenticate
-# GET     /user                         translator.controllers.UserController.current
+DELETE  /logout                             translator.controllers.UserController.logout
+GET     /:project/users                     translator.controllers.UserController.list(project)
+POST    /:project/users                     translator.controllers.UserController.create(project)
+PUT     /:project/users/:id                 translator.controllers.UserController.update(project, id)
+POST    /:project/add-user                  translator.controllers.UserController.add(project)
+GET     /usernames                          translator.controllers.UserController.usernames
 
-GET     /assets/*file               controllers.Assets.at(path="/public", file)
+POST    /signup                             translator.controllers.ProjectController.signup
+
+GET     /projects                           translator.controllers.ProjectController.list
+GET     /projects/:id                       translator.controllers.ProjectController.read(id)
+POST    /projects                           translator.controllers.ProjectController.create
+PUT     /projects/:id                       translator.controllers.ProjectController.update(id)
+
+GET     /:project/translations/export       translator.controllers.TransController.export(project)
+GET     /:project/translations/:id          translator.controllers.TransController.read(project, id)
+GET     /:project/translations              translator.controllers.TransController.list(project)
+POST    /:project/translations              translator.controllers.TransController.create(project)
+PUT     /:project/translations/:id          translator.controllers.TransController.update(project, id)
+DELETE  /:project/translations/:id          translator.controllers.TransController.delete(project, id)
+POST    /:project/translations/:id/activate translator.controllers.TransController.activate(project, id)
+GET     /:project/search/translations       translator.controllers.TransController.search(project)
+POST    /:project/import                    translator.controllers.TransController.inject(project)
+
+GET     /:project/languages                 translator.controllers.LangController.list(project)
+POST    /:project/languages                 translator.controllers.LangController.create(project)
+PUT     /:project/languages/:id             translator.controllers.LangController.update(project, id)
+DELETE  /:project/languages/:id             translator.controllers.LangController.delete(project, id)
+
+GET     /assets/*file                       controllers.Assets.at(path="/public", file)

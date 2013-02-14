@@ -1,0 +1,47 @@
+<div class="scrollable">
+  <div class="toolbar">
+    <h1><i class="icon-hand-left"></i> Import</h1>
+  </div>
+  
+  <div class="sub-toolbar import-toolbar">
+    <form class="form-inline">
+      <div class="pull-left">
+        <label for="code">Language</label>
+        <select name="code">
+          {% _.each(languages, function (language) { %}
+          <option value="{{ language.code }}">{{ language.code }}</option>
+          {% }) %}
+        </select>
+
+        <input id="file" type="file">
+      </div>
+
+      <div class="pull-right">
+        <span class="btn btn-primary upload"><i class="icon-save"></i> Upload</span>
+      </div>
+    </form>
+  </div>
+
+  <table class="table table-toolbar">
+    <tbody>
+      <tr>
+        <td>Nb Processed</td>
+        <td id="nb-processed">0</td>
+      </tr>
+
+      <tr>
+        <td>Nb Inserted</td>
+        <td id="nb-inserted">0</td>
+      </tr>
+
+      <tr>
+        <td>Nb Skipped</td>
+        <td id="nb-skipped">0</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <table class="table pane-table">
+    <tbody id="import-result-list"></tbody>
+  </table>
+</div>

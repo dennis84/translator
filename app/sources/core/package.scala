@@ -14,8 +14,6 @@ package object core {
   }
 
   implicit class FlatableFuture[A](val f: Future[A]) extends AnyVal {
-    def flatten = f.flatMap {
-      case a: Future[_] ⇒ a
-    }
+    def flatten[B] = f.flatMap[B] { case x: Future[B] ⇒ x }
   }
 }

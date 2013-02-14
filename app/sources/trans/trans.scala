@@ -17,6 +17,8 @@ case class Trans(
   val projectId: String,
   val project: Option[Project] = None) {
 
+  lazy val nbWords = text.split(" ").filterNot(_ == "").length
+
   def withProject(p: Project) = copy(project = Some(p))
 
   def toJson = Json.obj(
