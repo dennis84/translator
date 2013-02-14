@@ -12,7 +12,6 @@ POST    /:project/add-user                  translator.controllers.UserControlle
 GET     /usernames                          translator.controllers.UserController.usernames
 
 POST    /signup                             translator.controllers.ProjectController.signup
-
 GET     /projects                           translator.controllers.ProjectController.list
 GET     /projects/:id                       translator.controllers.ProjectController.read(id)
 POST    /projects                           translator.controllers.ProjectController.create

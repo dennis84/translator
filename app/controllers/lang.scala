@@ -16,11 +16,11 @@ object LangController extends BaseController {
 
   def create(project: String) = WithProject(project, Role.ADMIN) { implicit ctx ⇒
     env.langForms.lang.bindFromRequest.fold(
-      formWithErrors ⇒ Future(BadRequest("failed")), {
+      formWithErrors ⇒ FBadRequest(formWithErrors.errors), {
       case (code, name) ⇒ for {
         maybeLang ← env.langRepo.byCode(ctx.project, code)
         result ← maybeLang.map { lang ⇒
-          Future(BadRequest("failed"))
+          FBadRequest("code" -> "language_already_exists")
         }.getOrElse {
           val lang = Lang(Doc.mkID, code, name, ctx.project.id, Some(ctx.project))
           env.langRepo.insert(lang).map(_ ⇒ Ok(lang.toJson))
@@ -31,13 +31,13 @@ object LangController extends BaseController {
 
   def update(project: String, id: String) = WithProject(project, Role.ADMIN) { implicit ctx ⇒
     env.langForms.lang.bindFromRequest.fold(
-      formWithErrors ⇒ Future(BadRequest("failed")), {
+      formWithErrors ⇒ FBadRequest(formWithErrors.errors), {
       case (code, name) ⇒ for {
         maybeLang ← env.langRepo.byId(id)
         result ← maybeLang.map { lang ⇒
           val updated = lang.copy(code = code, name = name)
           env.langRepo.update(updated).map(_ ⇒ Ok(updated.toJson))
-        }.getOrElse(Future(BadRequest("failed")))
+        }.getOrElse(FBadRequest("global" -> "language_not_found"))
       } yield result
     })
   }
@@ -47,7 +47,7 @@ object LangController extends BaseController {
       maybeLang ← env.langRepo.byId(id)
       result ← maybeLang.map { lang ⇒
         env.langRepo.remove(lang).map(_ ⇒ Ok(lang.toJson))
-      }.getOrElse(Future(BadRequest("failed")))
+      }.getOrElse(FBadRequest("global" -> "language_not_found"))
     } yield result
   }
 }

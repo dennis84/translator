@@ -59,7 +59,7 @@ define([], function () {
 
     signUp: function (data) {
       var model = this
-      $.postJSON("/sign-up", data, function (data) {
+      $.postJSON("/signup", data, function (data) {
         window.authenticated = true
         model.set("password", "")
         model.set("password2", "")

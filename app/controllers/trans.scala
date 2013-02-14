@@ -20,7 +20,7 @@ object TransController extends BaseController {
           children ← env.transRepo.listByName(ctx.project, trans.name)
           entry = Entry(trans, ctx.project, langs, children)
         } yield Ok(entry.toJson)
-      }.getOrElse(Future(NotFound))
+      }.getOrElse(FNotFound)
     } yield result
   }
 
@@ -48,7 +48,7 @@ object TransController extends BaseController {
 
   def create(project: String) = WithProject(project) { implicit ctx ⇒
     env.transForms.trans.bindFromRequest.fold(
-      formWithErrors ⇒ Future(BadRequest("failed")), {
+      formWithErrors ⇒ FBadRequest(formWithErrors.errors), {
       case (code, name, text) ⇒ for {
         maybeTrans ← env.transRepo.activated(ctx.project, name, code)
         trans = Trans(code, name, text, ctx.user, ctx.project)
@@ -62,13 +62,13 @@ object TransController extends BaseController {
 
   def update(project: String, id: String) = WithProject(project, Role.ADMIN) { implicit ctx ⇒
     env.transForms.trans.bindFromRequest.fold(
-      formWithErrors ⇒ Future(BadRequest("failed")), {
+      formWithErrors ⇒ FBadRequest(formWithErrors.errors), {
       case (code, name, text) ⇒ for {
         maybeTrans ← env.transRepo.byId(id)
         result ← maybeTrans.map { trans ⇒
           val updated = trans.copy(text = text)
           env.transRepo.update(updated).map(_ ⇒ Ok(updated.toJson))
-        }.getOrElse(Future(BadRequest("failed")))
+        }.getOrElse(FNotFound)
       } yield result
     })
   }
@@ -86,7 +86,7 @@ object TransController extends BaseController {
           updated = trans.copy(status = Stat.Active)
           result ← env.transRepo.update(updated).map(_ ⇒ Ok(updated.toJson))
         } yield result
-      }.getOrElse(Future(BadRequest("failed")))
+      }.getOrElse(FNotFound)
     } yield result
   }
 
@@ -95,7 +95,7 @@ object TransController extends BaseController {
       maybeBefore ← env.transRepo.byId(id)
       result ← maybeBefore.map { trans ⇒
         env.transRepo.remove(trans).map(_ ⇒ Ok(trans.toJson))
-      }.getOrElse(Future(BadRequest("failed")))
+      }.getOrElse(FNotFound)
     } yield result
   }
 
@@ -107,12 +107,12 @@ object TransController extends BaseController {
         all ← env.transRepo.listByNames(ctx.project, trans.map(_.name))
         entries = all.mkEntries(langs)
       } yield Ok(Json.toJson(entries.map(_.toJson)))
-    } getOrElse Future(Ok(JsArray()))
+    } getOrElse FOk(JsArray())
   }
 
   def inject(project: String) = WithProject(project, Role.ADMIN) { implicit ctx ⇒
     env.transForms.inject.bindFromRequest.fold(
-      formWithErrors ⇒ Future(BadRequest("failed")), {
+      formWithErrors ⇒ FBadRequest(formWithErrors.errors), {
       case (content, importType, code) ⇒ {
         val futures = Importer.run(content, importType).map { case (name, text) ⇒
           for {

@@ -18,6 +18,14 @@ trait BaseController extends Controller with MongoController with RequestGetter 
 
   def FOk(body: JsValue) = Future(Ok(body))
 
+  def FBadRequest(errors: Seq[play.api.data.FormError]) =
+    Future(BadRequest(Errors.fromForm(errors)))
+
+  def FBadRequest(msg: (String, String)) =
+    Future(BadRequest(Errors(msg)))
+
+  def FNotFound = Future(NotFound)
+
   def Open(f: Context[AnyContent] ⇒ Future[Result]): Action[AnyContent] =
     Open(BodyParsers.parse.anyContent)(f)
 

@@ -10,7 +10,7 @@ object UserController extends BaseController {
 
   def authenticate = Open { implicit req ⇒
     env.userForms.signin.bindFromRequest.fold(
-      formWithErrors ⇒ Future(BadRequest("failed")), {
+      formWithErrors ⇒ FBadRequest(formWithErrors.errors), {
       case (username, password) ⇒
         env.userRepo.byCredentials(username, password).map { maybeUser ⇒
           maybeUser.map {
@@ -21,7 +21,7 @@ object UserController extends BaseController {
   }
 
   def logout = Open { implicit ctx ⇒
-    Future(Ok(Json.toJson("")).withNewSession)
+    Future(Ok(JsArray()).withNewSession)
   }
 
   def current = Secured { implicit ctx ⇒
@@ -30,7 +30,7 @@ object UserController extends BaseController {
 
   def updateCurrent = Secured { implicit ctx ⇒
     env.userForms.me.bindFromRequest.fold(
-      formWithErrors ⇒ Future(BadRequest("failed")), {
+      formWithErrors ⇒ FBadRequest(formWithErrors.errors), {
       case (password, _) ⇒ {
         val user = ctx.user.copy(password = password)
         env.userRepo.update(user).map(_ ⇒ Ok(user.toJson))
@@ -49,11 +49,11 @@ object UserController extends BaseController {
 
   def create(project: String) = WithProject(project, Role.ADMIN) { implicit ctx ⇒
     env.userForms.create.bindFromRequest.fold(
-      formWithErrors ⇒ Future(BadRequest("failed")), {
+      formWithErrors ⇒ FBadRequest(formWithErrors.errors), {
       case (username, password, roles) ⇒ for {
         maybeUser ← env.userRepo.byUsername(username)
         result ← maybeUser.map { user ⇒
-          Future(BadRequest("failed"))
+          FBadRequest("username" -> "username_taken")
         }.getOrElse {
           val user = User(Doc.mkID, username, password, dbRoles = roles.map(Role(_, ctx.project.id)))
           env.userRepo.insert(user).map(_ ⇒ Ok(user.withRoles(ctx.project).toJson))
@@ -64,8 +64,8 @@ object UserController extends BaseController {
 
   def update(project: String, id: String) = WithProject(project, Role.ADMIN) { implicit ctx ⇒
     env.userForms.update.bindFromRequest.fold(
-      formWithErrors ⇒ Future(BadRequest("failed")),
-      roles ⇒ for {
+      formWithErrors ⇒ FBadRequest(formWithErrors.errors), {
+      case roles ⇒ for {
         maybeUser ← env.userRepo.byId(id)
         result ← maybeUser.map { user ⇒
           val updated = user.copy(
@@ -74,14 +74,14 @@ object UserController extends BaseController {
             } ++ roles.map(Role(_, ctx.project.id)))
 
           env.userRepo.update(updated).map(_ ⇒ Ok(updated.withRoles(ctx.project).toJson))
-        }.getOrElse(Future(Ok("")))
+        }.getOrElse(FNotFound)
       } yield result
-    )
+    })
   }
 
   def add(project: String) = WithProject(project, Role.ADMIN) { implicit ctx ⇒
     env.userForms.add.bindFromRequest.fold(
-      formWithErrors ⇒ Future(BadRequest("failed")), {
+      formWithErrors ⇒ FBadRequest(formWithErrors.errors), {
       case (username, roles) ⇒ for {
         maybeUser ← env.userRepo.byUsername(username)
         result ← maybeUser.map { user ⇒
@@ -89,7 +89,7 @@ object UserController extends BaseController {
             user.dbRoles ++ roles.map(Role(_, ctx.project.id)))
 
           env.userRepo.update(updated).map(_ ⇒ Ok(updated.withRoles(ctx.project).toJson))
-        }.getOrElse(Future(Ok("")))
+        }.getOrElse(FNotFound)
       } yield result
     })
   }

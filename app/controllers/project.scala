@@ -22,11 +22,11 @@ object ProjectController extends BaseController {
 
   def create = Secured { implicit ctx ⇒
     env.projectForms.create.bindFromRequest.fold(
-      formWithErrors ⇒ Future(BadRequest("failed")),
+      formWithErrors ⇒ FBadRequest(formWithErrors.errors),
       name ⇒ for {
         maybeProject ← env.projectRepo.byName(name)
         result ← maybeProject.map { project ⇒
-          Future(BadRequest("failed"))
+          FBadRequest("name" -> "project_name_taken")
         }.getOrElse {
           val project = Project(Doc.mkID, name, Doc.mkToken, ctx.user.id)
           val updatedUser = ctx.user.copy(
@@ -43,7 +43,7 @@ object ProjectController extends BaseController {
 
   def update(id: String) = WithProject(id, Role.ADMIN) { implicit ctx ⇒
     env.projectForms.update.bindFromRequest.fold(
-      formWithErrors ⇒ Future(BadRequest("failed")), {
+      formWithErrors ⇒ FBadRequest(formWithErrors.errors), {
       case (repo, open) ⇒ {
         val updated = ctx.project.copy(repo = repo, open = open)
         env.projectRepo.update(updated).map(_ ⇒ Ok(updated.toJson))
@@ -53,24 +53,28 @@ object ProjectController extends BaseController {
 
   def signup = Open { implicit req ⇒
     env.projectForms.signup.bindFromRequest.fold(
-      formWithErrors ⇒ Future(BadRequest("failed")), {
-      case (name, username, password, _) ⇒ (for {
+      formWithErrors ⇒ FBadRequest(formWithErrors.errors), {
+      case (name, username, password, _) ⇒
+      for {
         maybeProject ← env.projectRepo.byName(name)
-        maybeUser ← env.userRepo.byUsername(username)
-      } yield (for {
-        project ← maybeProject
-        user ← maybeUser
-      } yield {
-        Future(BadRequest("failed"))
-      }).getOrElse {
-        val user = User(Doc.mkID, username, password)
-        val project = Project(Doc.mkID, name, Doc.mkToken, user.id)
-        val userWithProject = user.copy(dbRoles = List(Role.Admin(project.id)))
-        for {
-          _ ← env.userRepo.insert(userWithProject)
-          f ← env.projectRepo.insert(project).map(_ ⇒ Ok(project.toJson))
-        } yield f
-      }).flatten
+        result ← maybeProject.map { project ⇒
+          FBadRequest("name" -> "project_name_taken")
+        }.getOrElse(for {
+          maybeUser ← env.userRepo.byUsername(username)
+          result ← maybeUser.map { user ⇒
+            FBadRequest("username" -> "username_taken")
+          }.getOrElse {
+            val user = User(Doc.mkID, username, password)
+            val project = Project(Doc.mkID, name, Doc.mkToken, user.id)
+            val userWithProject = user.copy(dbRoles = List(Role.Admin(project.id)))
+            for {
+              _ ← env.userRepo.insert(userWithProject)
+              f ← env.projectRepo.insert(project).map(_ ⇒
+                Ok(project.toJson).withSession("username" -> username))
+            } yield f
+          }
+        } yield result)
+      } yield result
     })
   }
 }

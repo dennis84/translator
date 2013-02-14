@@ -15,10 +15,7 @@ $ Code mistakes
 - (!) Modile version
 - ($) Check side effects of trans dao byNameAndCode if many translations exists
 - (!) Unbind user update events after submit form
-- (!) Import
-- (!) Export
 - (!) Api Calls with token
-- (!) Error handling / messages
 
 # Milestone: 1.1
 - ($) Prevent for js object zombies. Make a view renderer which removes the
