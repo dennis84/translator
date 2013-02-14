@@ -30,9 +30,9 @@ trait BaseController extends Controller with MongoController with RequestGetter 
     Open(BodyParsers.parse.anyContent)(f)
 
   def Open[A](p: BodyParser[A])(f: Context[A] ⇒ Future[Result]): Action[A] =
-    Action(p)(req ⇒ Async {
+    Action(p)(implicit req ⇒ Async {
       for {
-        ctx ← makeContext(req)
+        ctx ← makeContext
         res ← f(ctx)
       } yield res
     })
@@ -70,16 +70,29 @@ trait BaseController extends Controller with MongoController with RequestGetter 
       } yield result
     }
 
-  private def makeContext[A](req: Request[A]): Future[Context[A]] =
+  private def makeContext[A]()(implicit req: Request[A]): Future[Context[A]] =
     (for {
-      username ← req.session.get("username")
+      token ← get("token")
     } yield for {
-      maybeUser ← env.userRepo.byUsername(username)
-      result ← maybeUser.map { user ⇒
-        env.projectRepo.listByIds(user.dbRoles.map(_.projectId)).map(list ⇒ Context(req, user, list))
+      maybeProject ← env.projectRepo.byToken(token)
+      result ← maybeProject.map { project ⇒
+        env.userRepo.byId(project.adminId).map { maybeUser ⇒
+          maybeUser.map { user ⇒
+            Context(req, user.withRoles(project), List(project.withUser(user)))
+          }.getOrElse(Context(req, User.Anonymous))
+        }
       }.getOrElse(Future(Context(req, User.Anonymous)))
     } yield result).getOrElse {
-      Future(Context(req, User.Anonymous))
+      (for {
+        username ← req.session.get("username")
+      } yield for {
+        maybeUser ← env.userRepo.byUsername(username)
+        result ← maybeUser.map { user ⇒
+          env.projectRepo.listByIds(user.dbRoles.map(_.projectId)).map(list ⇒ Context(req, user, list))
+        }.getOrElse(Future(Context(req, User.Anonymous)))
+      } yield result).getOrElse {
+        Future(Context(req, User.Anonymous))
+      }
     }
 }
 
