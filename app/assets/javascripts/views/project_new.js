@@ -31,7 +31,8 @@ define([
       this.model.set(this.$el.find("form").serializeObject())
       this.collection.create(this.model, { wait: true })
 
-      this.model.on("sync", function () {
+      this.model.on("sync", function (model) {
+        model.off("sync")
         window.app.addMessage("success", "Project Created")
         window.man.project()
       })

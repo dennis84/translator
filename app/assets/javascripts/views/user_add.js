@@ -45,7 +45,8 @@ define([
       this.model.set(data)
       this.collection.addUser(this.model)
 
-      this.model.on("sync", function () {
+      this.model.on("sync", function (model) {
+        model.off("sync")
         window.app.addMessage("success", "User Added")
       })
     },

@@ -28,9 +28,9 @@ define([
       var view = this
 
       var refresh = function () {
-        view.model.on("sync", function () {
-          $("#translation-list [data-id=" + view.model.id + "]")
-            .replaceWith(view.render().el)
+        view.model.on("sync", function (model) {
+          module.off("sync")
+          $("#translation-list [data-id=" + view.model.id + "]").replaceWith(view.render().el)
         })
 
         view.model.fetch()

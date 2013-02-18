@@ -22,7 +22,8 @@ define([], function () {
       }
 
       clone.save()
-      clone.on("sync", function () {
+      clone.on("sync", function (m) {
+        m.off("sync")
         model.set("password", "")
       }, this)
     },

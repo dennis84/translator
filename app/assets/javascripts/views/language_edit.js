@@ -36,7 +36,8 @@ define([
         var successMessage = "Language Saved"
       }
 
-      this.model.on("sync", function () {
+      this.model.on("sync", function (model) {
+        model.off("sync")
         window.app.addMessage("success", successMessage)
       })
     },

@@ -42,6 +42,7 @@ define([
       }
 
       this.model.on("sync", function (model) {
+        model.off("sync")
         window.app.addMessage("success", "Translation created")
       })
 
