@@ -4,50 +4,31 @@ package lang
 import scala.concurrent._
 import reactivemongo.api._
 import reactivemongo.bson._
-import reactivemongo.bson.handlers._
 import reactivemongo.core.commands.LastError
 import play.api.libs.iteratee.Enumerator
-import language._
 import translator.core._
 import translator.project._
 
 class LangRepo(val collection: DefaultCollection) {
 
-  implicit object LangBSONReader extends BSONReader[Lang] {
-    def fromBSON(document: BSONDocument): Lang = {
-      val doc = document.toTraversable
-      Lang(
-        doc.getAs[BSONObjectID]("_id").get.stringify,
-        doc.getAs[BSONString]("code").get.value,
-        doc.getAs[BSONString]("name").get.value,
-        doc.getAs[BSONObjectID]("projectId").get.stringify)
-    }
-  }
-
-  implicit object LangBSONWriter extends BSONWriter[Lang] {
-    def toBSON(lang: Lang) = BSONDocument(
-      "_id" -> BSONObjectID(lang.id),
-      "code" -> BSONString(lang.code),
-      "name" -> BSONString(lang.name),
-      "projectId" -> BSONObjectID(lang.projectId))
-  }
+  import mapping._
 
   def byId(id: String): Future[Option[Lang]] =
     collection.find(BSONDocument(
-      "_id" -> BSONObjectID(id))) headOption
+      "_id" -> BSONObjectID(id))).headOption
 
   def byCode(p: Project, code: String): Future[Option[Lang]] =
     collection.find(BSONDocument(
       "projectId" -> BSONObjectID(p.id),
-      "code" -> BSONString(code))) headOption
+      "code" -> BSONString(code))).headOption
 
   def primary(p: Project): Future[Option[Lang]] =
     collection.find(BSONDocument(
-      "projectId" -> BSONObjectID(p.id))) headOption
+      "projectId" -> BSONObjectID(p.id))).headOption
 
   def listByProject(p: Project): Future[List[Lang]] =
     collection.find(BSONDocument(
-      "projectId" -> BSONObjectID(p.id))) toList
+      "projectId" -> BSONObjectID(p.id))).toList
 
   def insert(lang: Lang): Future[LastError] =
     collection.insert(lang)

@@ -2,7 +2,6 @@ package translator
 package trans
 
 import play.api.libs.json._
-import language._
 import translator.project._
 import translator.core._
 import translator.user._
@@ -29,7 +28,7 @@ case class Trans(
     "author" -> author,
     "status" -> status.toString)
 
-  override def toString = """%s (%s): %s""" format(name, code, text)
+  override def toString = """%s (%s): %s""".format(name, code, text)
 }
 
 object Trans {

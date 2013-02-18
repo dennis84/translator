@@ -1,7 +1,6 @@
 package translator
 package trans
 
-import language._
 import translator.lang._
 
 object list {
@@ -49,7 +48,7 @@ object list {
         langs map { l ⇒
           unsorted.filter(_.code == l.code)
         } flatten
-      }) getOrElse list
+      }).getOrElse(list)
 
     def mkEntries(langs: List[Lang]): List[Entry] =
       (for {
@@ -63,6 +62,6 @@ object list {
         } map { trans ⇒
           Entry(trans, project, langs, list.filter(_.name == trans.name))
         }
-      }) getOrElse List.empty[Entry]
+      }).getOrElse(List.empty[Entry])
   }
 }

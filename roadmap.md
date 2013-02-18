@@ -13,7 +13,7 @@ $ Code mistakes
 - (!) Github sync schema
 - (!) Add creadtedAt to translations
 - (!) Modile version
-- (!) Unbind user update events after submit form
+- (!) Security (Auth)
 
 # Milestone: 1.1
 - ($) Prevent for js object zombies. Make a view renderer which removes the
@@ -27,6 +27,6 @@ $ Code mistakes
 - (!) Wordpress Plugin
 - (%) Embeded form
 - (!) Inactive translations in stats make no sense in embedded form
-- ($) Use api classes again
+- (?) Use api classes again
 
 ```

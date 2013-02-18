@@ -8,7 +8,6 @@ object ApplicationBuild extends Build {
   val appVersion = "1.0-SNAPSHOT"
 
   val appDependencies = Seq(
-    "org.scalaz" %% "scalaz-core" % "7.0.0-M7",
     "org.reactivemongo" %% "play2-reactivemongo" % "0.8",
     "com.roundeights" % "hasher" % "0.3")
 
