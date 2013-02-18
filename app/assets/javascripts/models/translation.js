@@ -43,7 +43,9 @@ define([], function () {
       status: "empty",
       nb_activatable: null,
       nb_must_activated: null,
-      progress: null
+      nb_fixed: null,
+      progress: null,
+      progress_fixed: null
     }
   })
 

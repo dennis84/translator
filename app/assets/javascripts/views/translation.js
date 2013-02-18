@@ -29,7 +29,7 @@ define([
 
       var refresh = function () {
         view.model.on("sync", function (model) {
-          module.off("sync")
+          model.off("sync")
           $("#translation-list [data-id=" + view.model.id + "]").replaceWith(view.render().el)
         })
 

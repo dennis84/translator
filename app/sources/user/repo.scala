@@ -32,7 +32,7 @@ class UserRepo(val collection: DefaultCollection) {
 
   def listByProject(p: Project): Future[List[User]] =
     collection.find(BSONDocument(
-      "roles.projectId" -> BSONObjectID(p.id))) toList
+      "roles.projectId" -> BSONObjectID(p.id))).toList
 
   def listLike(n: String): Future[List[User]] =
     collection.find(BSONDocument(

@@ -1,10 +1,5 @@
 #! /bin/bash
 
-# $ trans add
-# > [lang]: de
-# > [name]: hello_world
-# > [text]: Hello World
-
 token="12345678"
 api="http://localhost:8000"
 project="511d01130deb2001007c6fdf"
@@ -35,7 +30,13 @@ add() {
 }
 
 man() {
-  echo "man"
+  echo "usage: trans <subcommand>"
+  echo
+  echo "Available subcommands are:"
+  echo "    add    Adds a new active or inactive translation wheather the"
+  echo "           translation name exists or not."
+  echo
+
 }
 
 case $1 in

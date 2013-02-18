@@ -14,6 +14,7 @@ case class Entry(
   val nbActivatable: Int,
   val nbMustActivated: Int,
   val nbUntranslated: Int,
+  val nbFixed: Int,
   val progress: Float) {
 
   def toJson = Json.obj(
@@ -24,7 +25,9 @@ case class Entry(
     "nb_activatable" -> nbActivatable,
     "nb_must_activated" -> nbMustActivated,
     "nb_untranslated" -> nbUntranslated,
-    "progress" -> progress)
+    "nb_fixed" -> nbFixed,
+    "progress" -> progress,
+    "progress_fixed" -> 100F * nbFixed / langs.length)
 
   override def toString =
     trans.name + ": [" + children.map(_.code).mkString(", ") + "]"
@@ -45,5 +48,7 @@ object Entry {
     children.filterActivatable.length,
     children.filterMustActivated.length,
     children.filterUntranslated.length,
-    100 * children.filterTranslated.length / langs.length)
+    children.filterFixed.map(_.code).distinct.length,
+    100 * children.filterTranslated.length / langs.length
+  )
 }

@@ -20,6 +20,13 @@ object list {
         trans.status == Status.Empty)
       }
 
+    def filterFixed: List[Trans] = {
+      list.groupBy(_.code).map { case (code, trans) ⇒
+        if(trans.exists(_.status == Status.Active)) Nil
+        else trans.filter(_.status == Status.Inactive)
+      }.toList.flatten
+    }
+
     def filterActivatable =
       list filter(_.status == Status.Inactive)
 
@@ -45,9 +52,9 @@ object list {
           Trans.empty(c, h.name, p)
         }) sortBy(_.status.id)
 
-        langs map { l ⇒
+        langs.map { l ⇒
           unsorted.filter(_.code == l.code)
-        } flatten
+        }.flatten
       }).getOrElse(list)
 
     def mkEntries(langs: List[Lang]): List[Entry] =
