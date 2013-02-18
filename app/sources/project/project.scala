@@ -36,6 +36,7 @@ case class Project(
   def toJson = Json.obj(
     "id" -> id,
     "name" -> name,
+    "token" -> token,
     "open" -> open,
     "repo" -> repo,
     "progress" -> progress,

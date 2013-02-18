@@ -1,0 +1,44 @@
+#! /bin/bash
+
+# $ trans add
+# > [lang]: de
+# > [name]: hello_world
+# > [text]: Hello World
+
+token="12345678"
+api="http://localhost:8000"
+project="511d01130deb2001007c6fdf"
+
+make_request() {
+  curl \
+    --header "Content-type: application/json" \
+    --request $1 \
+    --data "$2" \
+    "$api/$project/translations?token=$token"
+}
+
+add() {
+  echo -n "[lang]: "
+  read lang
+
+  echo -n "[name]: "
+  read name
+
+  echo -n "[text]: "
+  read text
+
+  make_request POST "{
+    \"code\": \"$lang\", 
+    \"name\": \"$name\",
+    \"text\": \"$text\"
+  }"
+}
+
+man() {
+  echo "man"
+}
+
+case $1 in
+  "add") add ;;
+  *) man ;;
+esac

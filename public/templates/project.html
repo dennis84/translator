@@ -1,30 +1,46 @@
-<div class="padding10">
+<div class="toolbar">
   <h1><i class="icon-list-alt"></i> {{ name }}</h1>
-  <button class="edit btn btn-primary">Edit</button>
-
-  <table class="table table-boxed">
-    <thead>
-      <tr>
-        <th>Language</th>
-        <th>Progress</th>
-        <th>Done</th>
-        <th>Words</th>
-      </tr>
-    </thead>
-
-    <tbody>
-      {% _.each(progress, function (percentage, lang) { %}
-      <tr>
-        <td class="language-row">{{ lang }}</td>
-        <td class="progress-row">
-          <div class="progress">
-            <div class="bar" style="width: {{ percentage }}%"></div>
-          </div>
-        </td>
-        <td>{{ percentage }}%</td>
-        <td>{{ nb_words[lang] }}</td>
-      </tr>
-      {% }) %}
-    </tbody>
-  </table>
 </div>
+  
+<div class="sub-toolbar import-toolbar">
+  <button class="edit btn btn-primary">Edit</button>
+</div>
+
+<table class="table table-toolbar">
+  <tbody>
+    <tr>
+      <td>ID</td>
+      <td>{{ id }}</td>
+    </tr>
+    <tr>
+      <td>Token</td>
+      <td>{{ token }}</td>
+    </tr>
+  </tbody>
+</table>
+
+<table class="table table-toolbar">
+  <thead>
+    <tr>
+      <th>Language</th>
+      <th>Progress</th>
+      <th>Done</th>
+      <th>Words</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    {% _.each(progress, function (percentage, lang) { %}
+    <tr>
+      <td class="language-row">{{ lang }}</td>
+      <td class="progress-row">
+        <div class="progress">
+          <div class="bar" style="width: {{ percentage }}%"></div>
+        </div>
+      </td>
+      <td>{{ percentage }}%</td>
+      <td>{{ nb_words[lang] }}</td>
+    </tr>
+    {% }) %}
+  </tbody>
+</table>

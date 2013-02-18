@@ -13,9 +13,7 @@ $ Code mistakes
 - (!) Github sync schema
 - (!) Add creadtedAt to translations
 - (!) Modile version
-- ($) Check side effects of trans dao byNameAndCode if many translations exists
 - (!) Unbind user update events after submit form
-- (!) Api Calls with token
 
 # Milestone: 1.1
 - ($) Prevent for js object zombies. Make a view renderer which removes the

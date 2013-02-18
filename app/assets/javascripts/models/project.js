@@ -12,6 +12,7 @@ define([], function () {
     defaults: {
       id: null,
       name: "",
+      token: "",
       progress: "",
       nb_words: "",
       open: "",
