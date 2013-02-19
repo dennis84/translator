@@ -24,7 +24,10 @@ trait BaseController extends Controller with MongoController with RequestGetter 
   def FBadRequest(msg: (String, String)) =
     Future(BadRequest(Errors(msg)))
 
-  def FNotFound = Future(NotFound)
+  def FNotFound(msg: (String, String)) =
+    Future(NotFound(Errors(msg)))
+  
+  def FNotFound = Future(NotFound(Json.obj("" -> "")))
 
   def Open(f: Context[AnyContent] ⇒ Future[Result]): Action[AnyContent] =
     Open(BodyParsers.parse.anyContent)(f)

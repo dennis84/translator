@@ -3,11 +3,15 @@ package core
 
 import play.api.Application
 import reactivemongo.api._
+import reactivemongo.core.actors.Authenticate
 
 class Env(app: Application, conf: Conf) {
   import conf._
 
-  lazy val connection = MongoConnection(List(MongoHost + ":" + MongoPort))
+  lazy val connection = MongoConnection(
+    List(MongoHost + ":" + MongoPort),
+    List(Authenticate(MongoDbName, MongoUser, MongoPassword)))
+
   lazy val db = connection(MongoDbName)
 
   lazy val transRepo = new translator.trans.TransRepo(db("translations"))

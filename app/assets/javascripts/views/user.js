@@ -16,6 +16,7 @@ define([
 
     render: function () {
       this.$el.html(_.template(userTemplate, this.model.toJSON()))
+      this.$el.attr("data-id", this.model.id)
       return this
     },
 

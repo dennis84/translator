@@ -2,6 +2,7 @@ package translator
 package controllers
 
 import scala.concurrent._
+import com.github.nscala_time.time.Imports._
 import play.api.libs.json._
 import translator.core._
 import translator.trans._
@@ -66,7 +67,7 @@ object TransController extends BaseController {
       case (code, name, text) ⇒ for {
         maybeTrans ← env.transRepo.byId(id)
         result ← maybeTrans.map { trans ⇒
-          val updated = trans.copy(text = text)
+          val updated = trans.copy(text = text, updatedAt = DateTime.now)
           env.transRepo.update(updated).map(_ ⇒ Ok(updated.toJson))
         }.getOrElse(FNotFound)
       } yield result

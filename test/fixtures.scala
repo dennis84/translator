@@ -1,6 +1,7 @@
 package test.translator
 
 import com.roundeights.hasher.Implicits._
+import com.github.nscala_time.time.Imports._
 import reactivemongo.bson._
 import translator.core._
 import translator.user._
@@ -43,7 +44,7 @@ trait Fixtures {
   lazy val lang9 = makeLang("fr", "French", project2)
 
   def makeTrans(c: String, n: String, t: String, u: User, s: Status, p: Project) =
-    Trans(Doc.mkID, c, n, t, u.username, s, p.id, Some(p))
+    Trans(Doc.mkID, c, n, t, u.username, s, DateTime.now, DateTime.now, p.id, Some(p))
 
   lazy val trans1en  = makeTrans("en", "hello_world", "Hello World", user1, Status.Active, project1)
   lazy val trans1de  = makeTrans("de", "hello_world", "Hallo Welt", user1, Status.Active, project1)

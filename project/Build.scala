@@ -8,6 +8,7 @@ object ApplicationBuild extends Build {
   val appVersion = "1.0-SNAPSHOT"
 
   val appDependencies = Seq(
+    "com.github.nscala-time" %% "nscala-time" % "0.2.0",
     "org.reactivemongo" %% "play2-reactivemongo" % "0.8",
     "com.roundeights" % "hasher" % "0.3")
 

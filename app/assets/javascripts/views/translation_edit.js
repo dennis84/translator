@@ -10,7 +10,9 @@ define([
 
     render: function () {
       var data = _.extend(this.model.toJSON(), {
-        "admin": window.user.isAdmin()
+        "admin": window.user.isAdmin(),
+        "created_at": this.formatDate(this.model.get("created_at")),
+        "updated_at": this.formatDate(this.model.get("updated_at"))
       })
 
       this.$el.html(_.template(translationEditTemplate, data))
@@ -28,6 +30,11 @@ define([
       this.model.destroy({ wait: true })
       this.$el.remove()
       window.app.addMessage("success", "Translation Suggestion Removed")
+    },
+
+    formatDate: function (timestamp) {
+      var d = new Date(timestamp)
+      return d.toString("yyyy-MM-dd")
     }
   })
 

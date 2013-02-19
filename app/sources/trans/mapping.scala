@@ -1,6 +1,7 @@
 package translator
 package trans
 
+import org.joda.time.DateTime
 import reactivemongo.bson._
 import reactivemongo.bson.handlers._
 
@@ -16,6 +17,8 @@ object mapping {
         doc.getAs[BSONString]("text").get.value,
         doc.getAs[BSONString]("author").get.value,
         Status(doc.getAs[BSONInteger]("status").get.value),
+        new DateTime(doc.getAs[BSONDateTime]("createdAt").get.value),
+        new DateTime(doc.getAs[BSONDateTime]("updatedAt").get.value),
         doc.getAs[BSONObjectID]("projectId").get.stringify)
     }
   }
@@ -28,6 +31,8 @@ object mapping {
       "text" -> BSONString(trans.text),
       "author" -> BSONString(trans.author),
       "status" -> BSONInteger(trans.status.id),
+      "createdAt" -> BSONDateTime(trans.createdAt.getMillis),
+      "updatedAt" -> BSONDateTime(trans.updatedAt.getMillis),
       "projectId" -> BSONObjectID(trans.projectId))
   }
 }

@@ -7,7 +7,7 @@
 <div class="translation-request-item">
   <blockquote>
     <p>{{ text }}</p>
-    <small>by <cite>{{ author }}</cite></small>
+    <small>by <cite>{{ author }}</cite> on {{ created_at }}</small>
     {% if (true === admin) { %}
     <a href="#" class="accept">accept</a>
     <a href="#" class="reject">reject</a>

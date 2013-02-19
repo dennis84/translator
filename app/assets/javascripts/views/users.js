@@ -11,7 +11,8 @@ define([
 
     events: {
       "click .create": "create",
-      "click .add": "addUser"
+      "click .add": "addUser",
+      "click .remove": "removeUser"
     },
 
     initialize: function () {
@@ -47,6 +48,23 @@ define([
         collection: this.collection
       })
       userAdd.render()
+    },
+
+    removeUser: function (e) {
+      e.preventDefault()
+      var view = this
+      this.$(".check input:checked").each(function (i, el) {
+        var user = $(el).closest("tr")
+        var model = view.collection.get(user.attr("data-id"))
+
+        model.on("sync", function () {
+          model.off("sync")
+          view.collection.remove(model)
+          $(user).remove()
+        })
+
+        model.destroy()
+      })
     }
   })
 

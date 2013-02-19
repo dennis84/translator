@@ -11,13 +11,11 @@ $ Code mistakes
 # Milestone: 1.0
 - (%) Update entries with filter if adding or changing a translation
 - (!) Github sync schema
-- (!) Add creadtedAt to translations
-- (!) Modile version
 - (!) Security (Auth)
+- (!) Project token must be only visible for admins
+- (!) Project edit is only visible/possible for admins
 
 # Milestone: 1.1
-- ($) Prevent for js object zombies. Make a view renderer which removes the
-      current views before render the new one.
 - (!) Paginate translations (infinite scroll)
 
 # Milestone: 1.x
@@ -28,5 +26,6 @@ $ Code mistakes
 - (%) Embeded form
 - (!) Inactive translations in stats make no sense in embedded form
 - (?) Use api classes again
+- (!) Improve mobile version
 
 ```

@@ -41,6 +41,8 @@ define([], function () {
       text: "",
       author: "",
       status: "empty",
+      created_at: null,
+      updated_at: null,
       nb_activatable: null,
       nb_must_activated: null,
       nb_fixed: null,

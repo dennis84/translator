@@ -8,6 +8,7 @@ DELETE  /logout                             translator.controllers.UserControlle
 GET     /:project/users                     translator.controllers.UserController.list(project)
 POST    /:project/users                     translator.controllers.UserController.create(project)
 PUT     /:project/users/:id                 translator.controllers.UserController.update(project, id)
+DELETE  /:project/users/:id                 translator.controllers.UserController.remove(project, id)
 POST    /:project/add-user                  translator.controllers.UserController.add(project)
 GET     /usernames                          translator.controllers.UserController.usernames
 

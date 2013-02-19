@@ -94,6 +94,19 @@ object UserController extends BaseController {
     })
   }
 
+  def remove(project: String, id: String) = WithProject(project, Role.ADMIN) { implicit ctx ⇒
+    for {
+      maybeUser ← env.userRepo.byId(id)
+      result ← maybeUser.map(user ⇒ user match {
+        case _ if(user.id == ctx.project.adminId) ⇒ FBadRequest("global" -> "cannot_remove_admin_user")
+        case _ ⇒ {
+          val updated = user.copy(dbRoles = user.dbRoles.filterNot(_.projectId == ctx.project.id))
+          env.userRepo.update(updated).map(_ ⇒ Ok(updated.toJson))
+        }
+      }).getOrElse(FNotFound)
+    } yield result
+  }
+
   def usernames = Open { implicit ctx ⇒
     get("username").map { u ⇒
       env.userRepo.listLike(u).map(

@@ -13,7 +13,6 @@ define([], function () {
     } else {
       el.find("[name=" + this.name + "]").addClass("form-error").after(error)
     }
-    
   }
 
   return Error
