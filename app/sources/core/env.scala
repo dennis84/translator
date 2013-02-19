@@ -7,8 +7,8 @@ import reactivemongo.api._
 class Env(app: Application, conf: Conf) {
   import conf._
 
-  lazy val connection = MongoConnection(List("localhost:27017"))
-  lazy val db = connection("translator")
+  lazy val connection = MongoConnection(List(MongoHost + ":" + MongoPort))
+  lazy val db = connection(MongoDbName)
 
   lazy val transRepo = new translator.trans.TransRepo(db("translations"))
   lazy val userRepo = new translator.user.UserRepo(db("users"))
