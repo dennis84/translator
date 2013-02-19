@@ -17,7 +17,10 @@ object ProjectController extends BaseController {
     for {
       trans ← env.transRepo.listByProject(ctx.project)
       langs ← env.langRepo.listByProject(ctx.project)
-    } yield Ok(ctx.project.withUser(ctx.user).withStats(trans, langs).toJson)
+      project = ctx.project.withStats(trans, langs)
+      tokenJson = Json.obj("token" -> project.token)
+      projectJson = if(ctx.user.isAdmin) project.toJson ++ tokenJson else project.toJson
+    } yield Ok(projectJson)
   }
 
   def create = Secured { implicit ctx ⇒
