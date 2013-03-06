@@ -12,9 +12,9 @@ case class Project(
   val name: String,
   val token: String,
   val adminId: String,
-  val admin: Option[User] = None,
   val open: Boolean = false,
   val repo: String = "",
+  val admin: Option[User] = None,
   val progress: Option[Map[String, Float]] = None,
   val nbWords: Option[Map[String, Int]] = None) {
 

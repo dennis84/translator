@@ -10,8 +10,8 @@ case class User(
   val username: String,
   val password: String,
   val email: String = "",
-  val roles: List[String] = Nil,
-  val dbRoles: List[Role] = Nil) {
+  val dbRoles: List[Role] = Nil,
+  val roles: List[String] = Nil) {
 
   def isAnon = roles contains Role.ANONYMOUS
 
@@ -31,7 +31,7 @@ case class User(
 
 object User {
 
-  def Anonymous = User(Doc.mkID, "anonymous", "", "", List(Role.ANONYMOUS))
+  def Anonymous = User(Doc.mkID, "anonymous", "", "", Nil, List(Role.ANONYMOUS))
 }
 
 case class Role(

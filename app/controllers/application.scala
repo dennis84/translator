@@ -5,14 +5,13 @@ import scala.concurrent._
 import play.api._
 import play.api.mvc._
 import play.api.libs.json._
-import play.modules.reactivemongo.MongoController
 import translator.core._
 import translator.user._
 import translator.project._
 
 object Application extends BaseController
 
-trait BaseController extends Controller with MongoController with RequestGetter {
+trait BaseController extends Controller with RequestGetter {
 
   lazy val env = Env(Play.unsafeApplication)
 
