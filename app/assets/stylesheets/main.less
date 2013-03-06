@@ -182,11 +182,13 @@ body {
 
 
 /* =============================================================================
-   Login
+   Signin / Signup
    ========================================================================== */
 
-.login {
+.signin,
+.signup {
   margin-top: 120px;
+  .boxed();
   h1 {
     font-size: 16px;
     text-transform: uppercase;
@@ -204,25 +206,6 @@ body {
     padding: 4px 0;
     margin-top: 10px;
   }
-}
-
-
-/* =============================================================================
-   Framebox
-   ========================================================================== */
-
-.framebox {
-  .frameboxMixin();
-  .inner {
-    padding: 10px;
-  }
-}
-
-.frameboxMixin (@radius: 3px, @shadow: 0 3px 7px rgba(0, 0, 0, 0.3)) {
-  background: #fff;
-  .border-radius(@radius);
-  .box-shadow(@shadow);
-  .background-clip(padding-box);
 }
 
 
